@@ -1,0 +1,17 @@
+{
+  "name": "logica",
+  "version": "1.0.0",
+  "description": "An logical instrument for programmers.",
+  "main": "logica.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "PSI",
+  "license": "BSD-2-Clause",
+  "dependencies": {
+    "speaker": "^0.3.0",
+    "wav": "^1.0.1"
+  },
+  "devDependencies": {
+  }
+}

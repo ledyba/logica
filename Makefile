@@ -1,4 +1,5 @@
 .PHONY: all
 
 all:
-	@node main.js test.wav
+	@node test/test.js test.wav
+	rm test.wav

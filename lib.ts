@@ -1,22 +1,9 @@
-var wav = require('wav');
-var Speaker = require('speaker');
-var vm = require('vm');
-var fs = require('fs');
+import wav = require('wav');
+import Speaker = require('speaker');
+import vm = require('vm');
+import fs = require('fs');
 
-class Logica {
-    /**
-     * @param {wav.Writer} writer 
-     */
-    constructor(writer) {
-        this.writer_ = writer;
-    }
-    /**
-     * 
-     */
-    test() {
-        this.writer_.write(new Buffer([1, 2, 3]));
-    }
-}
+import Logica from './src/logica'
 
 /**
  * 
@@ -29,14 +16,15 @@ function play(score) {
     w.pipe(r);
     r.on('format', function (format) {
         //TODO: great log.
-        console.info("Format");
-        w.pipe(new Speaker(format));
+        console.info("Format:");
+        console.info(format);
+        w.pipe(Speaker(format));
     });
-    if(argv.length > 0) {
+    if (argv.length > 0) {
         var fname = argv.shift();
         console.log("Write to ", fname);
         var fw = wav.FileWriter(fname);
-        r.pipe(fw);
+        w.pipe(fw);
     }
     score(argv, new Logica(w));
 }

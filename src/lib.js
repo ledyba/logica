@@ -1,4 +1,4 @@
 import Logica from './logica'
-import Stream from './stream'
+import {Stream, BufferSource, ScriptSource} from './stream'
 
-export {Logica, Stream};
+export {Logica, Stream, BufferSource, ScriptSource};

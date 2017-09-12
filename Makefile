@@ -1,5 +1,7 @@
-.PHONY: all
+.PHONY: all test
 
 all:
-	@node test/test.js test.wav
-	rm test.wav
+	`npm bin`/babel-node score.js > score.wav
+
+test:
+	`npm bin`/babel-node --presets es2015 test/test.js

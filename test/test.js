@@ -1,5 +1,6 @@
-var logica = require("../lib");
+import Logica from '../src/logica'
 
-logica.play(function(argv, lg){
-    lg.test();
+var logica = new Logica();
+logica.play(function(){
+
 });

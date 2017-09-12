@@ -2,16 +2,15 @@
   "name": "logica",
   "version": "1.0.0",
   "description": "An logical instrument for programmers.",
-  "main": "lib.js",
+  "main": "src/logica.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "PSI",
   "license": "BSD-2-Clause",
   "dependencies": {
-    "speaker": "^0.3.0",
-    "wav": "^1.0.1"
+    "babel-cli": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1"
   },
-  "devDependencies": {
-  }
+  "devDependencies": {}
 }

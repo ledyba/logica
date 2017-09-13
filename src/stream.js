@@ -31,7 +31,7 @@ export class Stream {
   /**
    * @param {number=} from 
    * @param {number=} to 
-   * @param {Float64Array} buf
+   * @param {Float32Array} buf
    */
   calc(from, to, buf) {
     from = from || 0;
@@ -82,7 +82,7 @@ export class ScriptSource extends Stream {
   /**
    * @param {number=} from 
    * @param {number=} to 
-   * @param {Float64Array} buf
+   * @param {Float32Array} buf
    */
   calc(from, to, buf) {
     from = from || 0;

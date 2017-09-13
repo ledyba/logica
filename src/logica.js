@@ -28,7 +28,7 @@ export default class Logica {
       console.error("No length.");
       return;
     }
-    var fbuf = new Float64Array(length);
+    var fbuf = new Float32Array(length);
     master.calc(0, length, fbuf);
     var buf = Buffer.alloc(length * 2);
     var off = 0;

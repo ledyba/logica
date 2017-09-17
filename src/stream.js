@@ -88,11 +88,11 @@ export class ScriptSource extends Stream {
     from = from || 0;
     to = to || 0;
 
-    var ch = this.channels;
-    var rate = this.sampleRate;
-    var func = this.func_;
+    let ch = this.channels;
+    let rate = this.sampleRate;
+    let func = this.func_;
     
-    for(var i=from;i<to;i+=ch) {
+    for(let i=from;i<to;i+=ch) {
       func(i / (rate * ch), buf.subarray(i, i+ch));
     }
   }

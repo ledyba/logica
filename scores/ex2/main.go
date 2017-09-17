@@ -12,7 +12,7 @@ func makeNoteStream(freq float64) logica.Stream {
 	stream := func(_ *logica.StreamSpec, t float64, buff []float32) {
 		pi2 := math.Pi * 2
 
-		f := freq + 0.5*math.Sin(t*freq*3.5*pi2)*math.Exp(-(t*10))
+		f := freq + 0.5*math.Sin(t*freq*3.5*pi2)*math.Exp(-(t))
 		v := float32(math.Sin(t*pi2*f) * math.Exp(-t))
 		buff[0] = v
 		buff[1] = v
@@ -51,7 +51,7 @@ func main() {
 	t.AddNote(5, 10)
 	t.AddNote(4, 10)
 	t.AddNote(2, 20)
-	t.Write()
+	t.End()
 
 	spec := &logica.StreamSpec{
 		Channels:   2,

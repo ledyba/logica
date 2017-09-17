@@ -66,9 +66,10 @@ func (track *ScoreTrack) AddRest(duration float64) {
 	track.offset += duration / bpm
 }
 
-func (track *ScoreTrack) Write() {
+func (track *ScoreTrack) End() {
 	score := track.score
 	for _, pos := range track.notes {
 		score.Notes = append(score.Notes, pos)
 	}
+	track.score = nil
 }

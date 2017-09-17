@@ -37,5 +37,5 @@ func main() {
 		Channels:   2,
 		SampleRate: 44100,
 	}
-	logica.Play(spec, stream, os.Stdout, 0.8, 100)
+	logica.Play(spec, stream, os.Stdout, 0.8, 0, 100)
 }

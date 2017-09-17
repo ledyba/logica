@@ -48,7 +48,7 @@ func writeHeader(spec *StreamSpec, out io.Writer, length float64) {
 }
 
 // Play ...
-func Play(spec *StreamSpec, stream Stream, out io.Writer, scale float32, duration float64) {
+func Play(spec *StreamSpec, stream Stream, out io.Writer, scale float32, offset, duration float64) {
 	if duration < 0 {
 		duration = stream.Duration()
 	}
@@ -59,7 +59,7 @@ func Play(spec *StreamSpec, stream Stream, out io.Writer, scale float32, duratio
 	fbuf := make([]float32, int(5*spec.Channels*spec.SampleRate))
 	buf := make([]byte, len(fbuf)*2)
 
-	idx := 0
+	idx := spec.ToIdx(offset)
 	for idx < endIdx || endless {
 		fbufMax := len(fbuf)
 		if !endless && endIdx-idx < fbufMax {

@@ -64,5 +64,5 @@ func main() {
 	}
 	mix.Sort()
 
-	logica.Play(spec, mix, os.Stdout, 0.8, -1)
+	logica.Play(spec, mix, os.Stdout, 0.8, 0, -1)
 }

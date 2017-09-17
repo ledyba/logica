@@ -24,33 +24,33 @@ func main() {
 	score := traditional.NewScore(180, traditional.CMajor())
 	t := score.NewTrack(0)
 	t.AddNote(0, 1)
-	t.AddNote(-5, 1)
+	t.AddNote(-3, 1)
 	t.AddNote(0, 2)
 
-	t.AddNote(2, 2)
-	t.AddNote(5, 2)
+	t.AddNote(1, 2)
+	t.AddNote(3, 2)
 
-	t.AddNote(4, .75)
-	t.AddNote(5, .75)
-	t.AddNote(4, .75)
-	t.AddNote(2, 1)
+	t.AddNote(2, .75)
+	t.AddNote(3, .75)
+	t.AddNote(2, .75)
+	t.AddNote(1, 1)
 	t.AddNote(0, 1)
 
-	t.AddNote(2, 2)
-	t.AddNote(-5, 2)
+	t.AddNote(1, 2)
+	t.AddNote(-3, 2)
 
 	t.AddNote(0, 1)
+	t.AddNote(1, 1)
+	t.AddNote(2, 2)
+
+	t.AddNote(3, 2)
 	t.AddNote(2, 1)
+	t.AddNote(1, 1)
+
 	t.AddNote(4, 2)
-
-	t.AddNote(5, 2)
-	t.AddNote(4, 1)
+	t.AddNote(3, 1)
 	t.AddNote(2, 1)
-
-	t.AddNote(7, 2)
-	t.AddNote(5, 1)
-	t.AddNote(4, 1)
-	t.AddNote(2, 2)
+	t.AddNote(1, 2)
 	t.Close()
 
 	spec := &logica.StreamSpec{

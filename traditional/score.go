@@ -52,10 +52,10 @@ type ScoreTrack struct {
 	notes  []*Note
 }
 
-func (track *ScoreTrack) AddNote(deg int, beats float64) *Note {
+func (track *ScoreTrack) AddNote(tone int, beats float64) *Note {
 	score := track.score
 	bpm := score.Bpm
-	note := score.Scale.MakeNote(deg)
+	note := score.Scale.MakeNote(tone)
 	note.Offset = track.offset
 	note.Duration = beats / (bpm / 60.0)
 	track.offset += note.Duration

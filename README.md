@@ -4,7 +4,7 @@ Go言語で「音楽」を記述するためのフレームワーク、ないし
 
 ## Examples
 
-[https://github.com/ledyba/logica/tree/master/scores](github.com/ledyba/logica/scores)
+[github.com/ledyba/logica/scores](https://github.com/ledyba/logica/tree/master/scores)
 
 ## 目標（あるいは標語）
 

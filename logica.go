@@ -4,6 +4,8 @@ import (
 	"encoding/binary"
 	"io"
 
+	"math"
+
 	log "github.com/Sirupsen/logrus"
 )
 
@@ -17,7 +19,7 @@ func (spec *StreamSpec) TimeOf(idx int) float64 {
 }
 
 func (spec *StreamSpec) ToIdx(offset float64) int {
-	return int(offset * float64(spec.SampleRate*spec.Channels))
+	return int(offset*float64(spec.SampleRate)) * int(spec.Channels)
 }
 
 type Stream interface {
@@ -27,7 +29,7 @@ type Stream interface {
 
 func writeHeader(spec *StreamSpec, out io.Writer, length float64) {
 	headerLen := uint((4 + 4) + 4 + 4 + (4 + 16) + (4 + 4))
-	bodyLen := uint(length * float64(spec.Channels*spec.SampleRate*2))
+	bodyLen := uint(length*float64(spec.SampleRate)) * spec.Channels * 2
 	if length < 0 {
 		bodyLen = 0
 	}
@@ -54,9 +56,9 @@ func Play(spec *StreamSpec, stream Stream, out io.Writer, scale float32, offset,
 	}
 	writeHeader(spec, out, duration)
 	endless := duration < 0
-	endIdx := int(duration * float64(spec.Channels*spec.SampleRate))
+	endIdx := int(math.Ceil(duration*float64(spec.SampleRate))) * int(spec.Channels)
 
-	fbuf := make([]float32, int(5*spec.Channels*spec.SampleRate))
+	fbuf := make([]float32, int(5*spec.SampleRate)*int(spec.Channels))
 	buf := make([]byte, len(fbuf)*2)
 
 	idx := spec.ToIdx(offset)

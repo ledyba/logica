@@ -1,6 +1,9 @@
 package traditional
 
-import "sort"
+import (
+	"math"
+	"sort"
+)
 
 type Note struct {
 	Offset     float64 /* in sec */
@@ -66,10 +69,13 @@ func (track *ScoreTrack) AddRest(duration float64) {
 	track.offset += duration / bpm
 }
 
-func (track *ScoreTrack) End() {
+func (track *ScoreTrack) Close() {
 	score := track.score
 	for _, pos := range track.notes {
 		score.Notes = append(score.Notes, pos)
 	}
+	// Closed.
+	track.score = nil
+	track.offset = math.NaN()
 	track.score = nil
 }

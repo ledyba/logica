@@ -51,7 +51,7 @@ func main() {
 	t.AddNote(5, 10)
 	t.AddNote(4, 10)
 	t.AddNote(2, 20)
-	t.End()
+	t.Close()
 
 	spec := &logica.StreamSpec{
 		Channels:   2,

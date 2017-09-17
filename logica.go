@@ -12,12 +12,17 @@ type StreamSpec struct {
 	SampleRate uint
 }
 
-func (spec *StreamSpec) timeOf(idx uint) float64 {
-	return float64(idx) / float64(spec.SampleRate)
+func (spec *StreamSpec) TimeOf(idx int) float64 {
+	return float64(idx) / float64(spec.SampleRate*spec.Channels)
+}
+
+func (spec *StreamSpec) ToIdx(offset float64) int {
+	return int(offset * float64(spec.SampleRate*spec.Channels))
 }
 
 type Stream interface {
-	calc(spec *StreamSpec, from uint, buff []float32)
+	Calc(spec *StreamSpec, from int, buff []float32)
+	Duration() float64
 }
 
 func writeHeader(spec *StreamSpec, out io.Writer, length float64) {
@@ -43,21 +48,24 @@ func writeHeader(spec *StreamSpec, out io.Writer, length float64) {
 }
 
 // Play ...
-func Play(spec *StreamSpec, stream Stream, out io.Writer, length float64) {
-	writeHeader(spec, out, length)
-	endless := length < 0
-	endIdx := uint(length * float64(spec.Channels*spec.SampleRate))
+func Play(spec *StreamSpec, stream Stream, out io.Writer, duration float64) {
+	if duration < 0 {
+		duration = stream.Duration()
+	}
+	writeHeader(spec, out, duration)
+	endless := duration < 0
+	endIdx := int(duration * float64(spec.Channels*spec.SampleRate))
 
 	fbuf := make([]float32, int(5*spec.Channels*spec.SampleRate))
 	buf := make([]byte, len(fbuf)*2)
 
-	idx := uint(0)
+	idx := 0
 	for idx < endIdx || endless {
-		fbufMax := uint(len(fbuf))
+		fbufMax := len(fbuf)
 		if !endless && endIdx-idx < fbufMax {
 			fbufMax = endIdx - idx
 		}
-		stream.calc(spec, idx, fbuf[:fbufMax])
+		stream.Calc(spec, idx, fbuf[:fbufMax])
 		for i, f := range fbuf[:fbufMax] {
 			binary.LittleEndian.PutUint16(buf[i*2:], uint16(int16(f*(65536/2-1))))
 		}

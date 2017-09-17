@@ -21,36 +21,36 @@ func makeNoteStream(freq float64) logica.Stream {
 }
 
 func main() {
-	score := traditional.NewScore(30, traditional.CMajor())
+	score := traditional.NewScore(180, traditional.CMajor())
 	t := score.NewTrack(0)
-	t.AddNote(0, 10)
-	t.AddNote(-5, 10)
-	t.AddNote(0, 20)
+	t.AddNote(0, 1)
+	t.AddNote(-5, 1)
+	t.AddNote(0, 2)
 
-	t.AddNote(2, 20)
-	t.AddNote(5, 20)
+	t.AddNote(2, 2)
+	t.AddNote(5, 2)
 
-	t.AddNote(4, 7.5)
-	t.AddNote(5, 7.5)
-	t.AddNote(4, 7.5)
-	t.AddNote(2, 10)
-	t.AddNote(0, 10)
+	t.AddNote(4, .75)
+	t.AddNote(5, .75)
+	t.AddNote(4, .75)
+	t.AddNote(2, 1)
+	t.AddNote(0, 1)
 
-	t.AddNote(2, 20)
-	t.AddNote(-5, 20)
+	t.AddNote(2, 2)
+	t.AddNote(-5, 2)
 
-	t.AddNote(0, 10)
-	t.AddNote(2, 10)
-	t.AddNote(4, 20)
+	t.AddNote(0, 1)
+	t.AddNote(2, 1)
+	t.AddNote(4, 2)
 
-	t.AddNote(5, 20)
-	t.AddNote(4, 10)
-	t.AddNote(2, 10)
+	t.AddNote(5, 2)
+	t.AddNote(4, 1)
+	t.AddNote(2, 1)
 
-	t.AddNote(7, 20)
-	t.AddNote(5, 10)
-	t.AddNote(4, 10)
-	t.AddNote(2, 20)
+	t.AddNote(7, 2)
+	t.AddNote(5, 1)
+	t.AddNote(4, 1)
+	t.AddNote(2, 2)
 	t.Close()
 
 	spec := &logica.StreamSpec{

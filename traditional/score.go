@@ -52,21 +52,21 @@ type ScoreTrack struct {
 	notes  []*Note
 }
 
-func (track *ScoreTrack) AddNote(deg int, duration float64) *Note {
+func (track *ScoreTrack) AddNote(deg int, beats float64) *Note {
 	score := track.score
 	bpm := score.Bpm
 	note := score.Scale.MakeNote(deg)
 	note.Offset = track.offset
-	note.Duration = duration / bpm
+	note.Duration = beats / (bpm / 60.0)
 	track.offset += note.Duration
 	note.SeekOffset = 0
 	track.notes = append(track.notes, note)
 	return note
 }
 
-func (track *ScoreTrack) AddRest(duration float64) {
+func (track *ScoreTrack) AddRest(beats float64) {
 	bpm := track.score.Bpm
-	track.offset += duration / bpm
+	track.offset += beats / (bpm / 60.0)
 }
 
 func (track *ScoreTrack) Close() {

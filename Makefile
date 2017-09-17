@@ -1,8 +1,8 @@
 .PHONY: all play video test claen
 
 all:
-	go build "github.com/ledyba/logica/..."
-	go build "github.com/ledyba/logica/scores/..."
+	go build -o .bin/ex1 "github.com/ledyba/logica/scores/ex1"
+	go build -o .bin/ex2 "github.com/ledyba/logica/scores/ex2"
 
 SCORE := ex2
 SRCS := $(shell find . -type d -name scores -prune -o -type f -name \*.go)

@@ -2,6 +2,7 @@
 
 all:
 	go build "github.com/ledyba/logica/..."
+	go build "github.com/ledyba/logica/scores/..."
 
 SCORE := ex2
 SRCS := $(shell find . -type d -name scores -prune -o -type f -name \*.go)

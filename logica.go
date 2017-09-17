@@ -48,7 +48,7 @@ func writeHeader(spec *StreamSpec, out io.Writer, length float64) {
 }
 
 // Play ...
-func Play(spec *StreamSpec, stream Stream, out io.Writer, duration float64) {
+func Play(spec *StreamSpec, stream Stream, out io.Writer, scale float32, duration float64) {
 	if duration < 0 {
 		duration = stream.Duration()
 	}
@@ -67,6 +67,7 @@ func Play(spec *StreamSpec, stream Stream, out io.Writer, duration float64) {
 		}
 		stream.Calc(spec, idx, fbuf[:fbufMax])
 		for i, f := range fbuf[:fbufMax] {
+			f *= scale
 			if f > 1.0 {
 				log.Errorf("Overlevel: %v at %f.02[sec]", f, spec.TimeOf(i+idx))
 				f = 1.0

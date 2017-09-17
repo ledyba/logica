@@ -70,8 +70,7 @@ func Play(spec *StreamSpec, stream Stream, out io.Writer, duration float64) {
 			if f > 1.0 {
 				log.Errorf("Overlevel: %v at %f.02[sec]", f, spec.TimeOf(i+idx))
 				f = 1.0
-			}
-			if f < -1.0 {
+			} else if f < -1.0 {
 				log.Errorf("Overlevel: %v at %f.02[sec]", f, spec.TimeOf(i+idx))
 				f = -1.0
 			}

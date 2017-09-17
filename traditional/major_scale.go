@@ -48,7 +48,7 @@ func (m *MajorScale) MakeNote(tone int) *Note {
 		mod += 7
 		div -= 1
 		if mod+div*7 != tone {
-			log.Fatalf("Not match: mod(%d) + div(%d) * 7 != %v", mod, div, tone)
+			log.Fatalf("[BUG] Not match: mod(%d) + div(%d) * 7 != %v", mod, div, tone)
 		}
 	}
 	deg := div*12 + m.name[mod]

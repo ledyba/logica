@@ -1,6 +1,10 @@
 package traditional
 
-import "math"
+import (
+	"math"
+
+	log "github.com/Sirupsen/logrus"
+)
 
 type MajorScale struct {
 	base float64
@@ -43,6 +47,9 @@ func (m *MajorScale) MakeNote(tone int) *Note {
 	if mod < 0 {
 		mod += 7
 		div -= 1
+		if mod+div*7 != tone {
+			log.Fatalf("Not match: mod(%d) + div(%d) * 7 != %v", mod, div, tone)
+		}
 	}
 	deg := div*12 + m.name[mod]
 	// @see: http://drumimicopy.com/audio-frequency/

@@ -52,7 +52,7 @@ type ScoreTrack struct {
 	notes  []*Note
 }
 
-func (track *ScoreTrack) AddNote(tone int, beats float64) *Note {
+func (track *ScoreTrack) AddNote(beats float64, tone int) *Note {
 	score := track.score
 	bpm := score.Bpm
 	note := score.Scale.MakeNote(tone)
@@ -62,6 +62,41 @@ func (track *ScoreTrack) AddNote(tone int, beats float64) *Note {
 	note.SeekOffset = 0
 	track.notes = append(track.notes, note)
 	return note
+}
+func (track *ScoreTrack) Fork(n int, f func(subtracks []*ScoreTrack)) {
+	subs := make([]*ScoreTrack, n)
+	for i := range subs {
+		subs[i] = &ScoreTrack{
+			score:  track.score,
+			offset: track.offset,
+			notes:  make([]*Note, 0),
+		}
+	}
+	f(subs)
+	for _, sub := range subs {
+		for _, n := range sub.notes {
+			track.notes = append(track.notes, n)
+		}
+		if track.offset < sub.offset {
+			track.offset = sub.offset
+		}
+	}
+}
+func (track *ScoreTrack) AddNotes(beats float64, tones ...int) []*Note {
+	score := track.score
+	bpm := score.Bpm
+	notes := make([]*Note, len(tones))
+	duration := beats / (bpm / 60.0)
+	for i := range notes {
+		note := score.Scale.MakeNote(tones[i])
+		note.Offset = track.offset
+		note.Duration = duration
+		note.SeekOffset = 0
+		track.notes = append(track.notes, note)
+		notes[i] = note
+	}
+	track.offset += duration
+	return notes
 }
 
 func (track *ScoreTrack) AddRest(beats float64) {

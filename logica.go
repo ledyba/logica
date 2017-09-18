@@ -71,10 +71,10 @@ func Play(spec *StreamSpec, stream Stream, out io.Writer, scale float32, offset,
 		for i, f := range fbuf[:fbufMax] {
 			f *= scale
 			if f > 1.0 {
-				log.Errorf("Overlevel: %v at %f.02[sec]", f, spec.TimeOf(i+idx))
+				log.Errorf("Sound cracking: %.4f at %.3f[sec]", f, spec.TimeOf(i+idx))
 				f = 1.0
 			} else if f < -1.0 {
-				log.Errorf("Overlevel: %v at %f.02[sec]", f, spec.TimeOf(i+idx))
+				log.Errorf("Sound cracking: %.4f at %.3f[sec]", f, spec.TimeOf(i+idx))
 				f = -1.0
 			}
 			binary.LittleEndian.PutUint16(buf[i*2:], uint16(int16(f*(65536/2-1))))

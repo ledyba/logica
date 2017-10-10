@@ -34,35 +34,35 @@ func main() {
 	score := traditional.NewScore(180, scale)
 	t := score.NewTrack(0)
 
-	t.Note(1, 0).Ok()
-	t.Note(1, -3).Ok()
-	t.Note(2, 0).Ok()
+	t.Note(0, 1).Ok()
+	t.Note(-3, 1).Ok()
+	t.Note(0, 2).Ok()
 
-	t.Note(2, 1).Ok()
-	t.Note(2, 3).Note(1, -3).Note(1, -2).Done(2)
+	t.Note(1, 2).Ok()
+	t.Note(3, 2).Note(-3, 1).Note(-2, 1).Done(2)
 
-	t.Note(.75, 2).Note(.75, -2).Ok()
-	t.Note(.75, 3).Ok()
-	t.Note(.75, 2).Ok()
+	t.Note(2, .75).Note(-2, .75).Ok()
+	t.Note(3, .75).Ok()
+	t.Note(2, .75).Ok()
 
-	t.Note(1, 1).Note(1, -3).Ok()
-	t.Note(1, 0).Ok()
+	t.Note(1, 1).Note(-3, 1).Ok()
+	t.Note(0, 1).Ok()
 
-	t.Note(2, 1).Ok()
-	t.Note(2, -1).Note(2, -4).Ok()
+	t.Note(1, 2).Ok()
+	t.Note(-1, 2).Note(-4, 2).Ok()
 
-	t.Note(1, 0).Ok()
+	t.Note(0, 1).Ok()
 	t.Note(1, 1).Ok()
 	t.Note(2, 2).Ok()
 
-	t.Note(2, 3).Ok()
-	t.Note(1, 2).Ok()
+	t.Note(3, 2).Ok()
+	t.Note(2, 1).Ok()
 	t.Note(1, 1).Ok()
 
-	t.Note(2, 4).Ok()
-	t.Note(1, 3).Ok()
-	t.Note(1, 2).Ok()
+	t.Note(4, 2).Ok()
+	t.Note(3, 1).Ok()
 	t.Note(2, 1).Ok()
+	t.Note(1, 2).Ok()
 	t.Close()
 
 	spec := &logica.StreamSpec{
@@ -76,5 +76,5 @@ func main() {
 	}
 	mix.Sort()
 
-	logica.Play(spec, mix, os.Stdout, 0.3, 0, -1)
+	logica.Play(spec, mix, os.Stdout, 0.25, 0, -1)
 }

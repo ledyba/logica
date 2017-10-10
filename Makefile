@@ -5,7 +5,7 @@ all:
 	go build -o .bin/ex2 "github.com/ledyba/logica/scores/ex2"
 	go build -o .bin/ex3 "github.com/ledyba/logica/scores/ex3"
 
-SCORE := ex3
+SCORE := ex2
 SRCS := $(shell find . -type d -name scores -prune -o -type f -name \*.go)
 SRCS += $(shell find scores/$(SCORE) -type f -name \*.go)
 

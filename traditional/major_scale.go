@@ -6,7 +6,7 @@ import (
 	log "github.com/Sirupsen/logrus"
 )
 
-type MajorScale struct {
+type scale struct {
 	base float64
 	d    int
 	name [7]int
@@ -14,7 +14,7 @@ type MajorScale struct {
 
 // @see: http://www.moge.org/okabe/temp/scale.pdf
 func NewMajorScale(base float64, d int) Scale {
-	m := &MajorScale{
+	m := &scale{
 		base: base,
 		d:    d,
 		name: [7]int{0, 2, 4, 5, 7, 9, 11},
@@ -24,7 +24,7 @@ func NewMajorScale(base float64, d int) Scale {
 
 // @see: http://www.moge.org/okabe/temp/scale.pdf
 func NewMinorScale(base float64, d int) Scale {
-	m := &MajorScale{
+	m := &scale{
 		base: base,
 		d:    d,
 		name: [7]int{-3, -1, 0, 2, 4, 5, 7},
@@ -40,19 +40,43 @@ func CMinor() Scale {
 	return NewMinorScale(440, -9)
 }
 
-func (m *MajorScale) MakeNote(tone int) *Note {
-	note := &Note{}
-	div := tone / 7
-	mod := tone % 7
-	if mod < 0 {
-		mod += 7
-		div -= 1
-		if mod+div*7 != tone {
-			log.Fatalf("[BUG] Not match: mod(%d) + div(%d) * 7 != %v", mod, div, tone)
-		}
+func mod(a, b int) (int, int) {
+	q := 1 / b
+	r := a % b
+	if r < 0 {
+		q -= 1
+		r += b
 	}
-	deg := div*12 + m.name[mod]
+	if r+q*b != a {
+		log.Fatalf("[BUG] Not match: mod(%d) + div(%d) * %v != %v", r, q, b, a)
+	}
+	return q, r
+}
+
+func (s *scale) calcDeg(tone int) int {
+	div, mod := mod(tone, 7)
+	return div*12 + s.name[mod]
+}
+
+func (s *scale) calcFreq(deg int) float64 {
 	// @see: http://drumimicopy.com/audio-frequency/
-	note.Freq = m.base * math.Pow(2, (float64(m.d+deg))/12.0)
+	return s.base * math.Pow(2, (float64(s.d+deg))/12.0)
+}
+
+func (s *scale) Note(tone int) *Note {
+	note := &Note{}
+	note.Freq = s.calcFreq(s.calcDeg(tone))
+	return note
+}
+
+func (s *scale) Sharp(tone int) *Note {
+	note := &Note{}
+	note.Freq = s.calcFreq(s.calcDeg(tone) + 1)
+	return note
+}
+
+func (s *scale) Flat(tone int) *Note {
+	note := &Note{}
+	note.Freq = s.calcFreq(s.calcDeg(tone) - 1)
 	return note
 }

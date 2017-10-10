@@ -30,42 +30,39 @@ func makeNoteStream(freq float64) logica.Stream {
 }
 
 func main() {
-	score := traditional.NewScore(180, traditional.NewMajorScale(440, 0))
+	scale := traditional.NewMajorScale(440, 0)
+	score := traditional.NewScore(180, scale)
 	t := score.NewTrack(0)
 
-	t.AddNote(1, 0)
-	t.AddNote(1, -3)
-	t.AddNote(2, 0)
+	t.Note(1, 0).Ok()
+	t.Note(1, -3).Ok()
+	t.Note(2, 0).Ok()
 
-	t.AddNote(2, 1)
-	t.Fork(2, func(ts []*traditional.ScoreTrack) {
-		ts[0].AddNote(2, 3)
-		ts[1].AddNote(1, -3)
-		ts[1].AddNote(1, -2)
-	})
+	t.Note(2, 1).Ok()
+	t.Note(2, 3).Note(1, -3).Note(1, -2).Done(2)
 
-	t.AddNotes(.75, 2, -2)
-	t.AddNote(.75, 3)
-	t.AddNote(.75, 2)
+	t.Note(.75, 2).Note(.75, -2).Ok()
+	t.Note(.75, 3).Ok()
+	t.Note(.75, 2).Ok()
 
-	t.AddNotes(1, 1, -3)
-	t.AddNote(1, 0)
+	t.Note(1, 1).Note(1, -3).Ok()
+	t.Note(1, 0).Ok()
 
-	t.AddNote(2, 1)
-	t.AddNotes(2, -1, -4)
+	t.Note(2, 1).Ok()
+	t.Note(2, -1).Note(2, -4).Ok()
 
-	t.AddNote(1, 0)
-	t.AddNote(1, 1)
-	t.AddNote(2, 2)
+	t.Note(1, 0).Ok()
+	t.Note(1, 1).Ok()
+	t.Note(2, 2).Ok()
 
-	t.AddNote(2, 3)
-	t.AddNote(1, 2)
-	t.AddNote(1, 1)
+	t.Note(2, 3).Ok()
+	t.Note(1, 2).Ok()
+	t.Note(1, 1).Ok()
 
-	t.AddNote(2, 4)
-	t.AddNote(1, 3)
-	t.AddNote(1, 2)
-	t.AddNote(2, 1)
+	t.Note(2, 4).Ok()
+	t.Note(1, 3).Ok()
+	t.Note(1, 2).Ok()
+	t.Note(2, 1).Ok()
 	t.Close()
 
 	spec := &logica.StreamSpec{
@@ -79,5 +76,5 @@ func main() {
 	}
 	mix.Sort()
 
-	logica.Play(spec, mix, os.Stdout, 0.4, 0, -1)
+	logica.Play(spec, mix, os.Stdout, 0.3, 0, -1)
 }

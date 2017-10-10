@@ -53,29 +53,30 @@ func mod(a, b int) (int, int) {
 	return q, r
 }
 
-func (s *scale) calcDeg(tone int) int {
-	div, mod := mod(tone, 7)
-	return div*12 + s.name[mod]
+func (s *scale) calcDeg(tone Tone) int {
+	div, mod := mod(int(tone), 7)
+	deg := div*12 + s.name[mod]
+	return deg
 }
 
-func (s *scale) calcFreq(deg int) float64 {
+func (s *scale) calcFreq(deg int) Freq {
 	// @see: http://drumimicopy.com/audio-frequency/
-	return s.base * math.Pow(2, (float64(s.d+deg))/12.0)
+	return Freq(s.base * math.Pow(2, (float64(s.d+deg))/12.0))
 }
 
-func (s *scale) Note(tone int) *Note {
+func (s *scale) Note(tone Tone) *Note {
 	note := &Note{}
 	note.Freq = s.calcFreq(s.calcDeg(tone))
 	return note
 }
 
-func (s *scale) Sharp(tone int) *Note {
+func (s *scale) Sharp(tone Tone) *Note {
 	note := &Note{}
 	note.Freq = s.calcFreq(s.calcDeg(tone) + 1)
 	return note
 }
 
-func (s *scale) Flat(tone int) *Note {
+func (s *scale) Flat(tone Tone) *Note {
 	note := &Note{}
 	note.Freq = s.calcFreq(s.calcDeg(tone) - 1)
 	return note

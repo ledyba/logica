@@ -72,7 +72,7 @@ func main() {
 	mix := logica.NewMixingStream()
 	score.Sort()
 	for _, note := range score.Notes {
-		mix.Mix(makeNoteStream(note.Freq), note.Offset, note.Duration, 1)
+		mix.Mix(makeNoteStream(float64(note.Freq)), float64(note.Offset), float64(score.CalcDuration(note.Beats)), 1)
 	}
 	mix.Sort()
 

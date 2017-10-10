@@ -5,28 +5,44 @@ import (
 	"sort"
 )
 
+// Basic types
+type Bpm float64
+type Beats float64
+type Offset float64   /* in sec */
+type Duration float64 /* in sec */
+type Freq float64     /* in hz */
+type Tone int
+
+func (off *Offset) IncreaseBeats(beats Beats, bpm Bpm) {
+	off.Increase(beats2sec(beats, bpm))
+}
+
+func (off *Offset) Increase(d Duration) {
+	*((*float64)(off)) += float64(d)
+}
+
 type Note struct {
-	Offset     float64 /* in sec */
-	Freq       float64
-	Duration   float64 /* in sec */
-	SeekOffset float64 /* in sec */
+	Offset     Offset
+	Freq       Freq
+	Beats      Beats
+	SeekOffset Offset
 }
 
 type Scale interface {
-	Note(deg int) *Note
-	Flat(deg int) *Note
-	Sharp(deg int) *Note
+	Note(deg Tone) *Note
+	Flat(deg Tone) *Note
+	Sharp(deg Tone) *Note
 }
 
 type Score struct {
-	Bpm   float64
+	Bpm   Bpm
 	Scale Scale
 	Notes []*Note
 }
 
 func NewScore(bpm float64, scale Scale) *Score {
 	return &Score{
-		Bpm:   bpm,
+		Bpm:   Bpm(bpm),
 		Scale: scale,
 		Notes: make([]*Note, 0),
 	}
@@ -43,20 +59,28 @@ func (score *Score) Sort() {
 func (score *Score) NewTrack(offset float64) *ScoreTrack {
 	return &ScoreTrack{
 		score:  score,
-		offset: offset,
+		offset: Offset(offset),
 		notes:  make([]*Note, 0),
 	}
+}
+
+func (score *Score) CalcDuration(beats Beats) Duration {
+	return beats2sec(beats, score.Bpm)
+}
+
+func beats2sec(beats Beats, bpm Bpm) Duration {
+	return Duration(float64(beats) / (float64(bpm) / 60.0))
 }
 
 // ----------------------------------------------------------------------------
 
 type ScoreTrack struct {
 	score  *Score
-	offset float64 /* in sec */
+	offset Offset
 	notes  []*Note
 }
 
-func (track *ScoreTrack) With(note *Note, beats float64) *ChordBuilder {
+func (track *ScoreTrack) With(note *Note, beats Beats) *ChordBuilder {
 	cb := &ChordBuilder{
 		track:  track,
 		offset: track.offset,
@@ -65,21 +89,21 @@ func (track *ScoreTrack) With(note *Note, beats float64) *ChordBuilder {
 	return cb.With(note, beats)
 }
 
-func (track *ScoreTrack) Note(tone int, beats float64) *ChordBuilder {
+func (track *ScoreTrack) Note(tone Tone, beats Beats) *ChordBuilder {
 	return track.With(track.score.Scale.Note(tone), beats)
 }
 
-func (track *ScoreTrack) Flat(tone int, beats float64) *ChordBuilder {
+func (track *ScoreTrack) Flat(tone Tone, beats Beats) *ChordBuilder {
 	return track.With(track.score.Scale.Flat(tone), beats)
 }
 
-func (track *ScoreTrack) Sharp(tone int, beats float64) *ChordBuilder {
+func (track *ScoreTrack) Sharp(tone Tone, beats Beats) *ChordBuilder {
 	return track.With(track.score.Scale.Sharp(tone), beats)
 }
 
-func (track *ScoreTrack) Rest(beats float64) {
+func (track *ScoreTrack) Rest(beats Beats) {
 	bpm := track.score.Bpm
-	track.offset += beats / (bpm / 60.0)
+	track.offset.IncreaseBeats(beats, bpm)
 }
 
 func (track *ScoreTrack) Close() {
@@ -89,56 +113,57 @@ func (track *ScoreTrack) Close() {
 	}
 	// Closed.
 	track.score = nil
-	track.offset = math.NaN()
+	track.offset = Offset(math.NaN())
 	track.score = nil
 }
 
 // ----------------------------------------------------------------------------
 
 type ChordBuilder struct {
-	track    *ScoreTrack
-	offset   float64 /* in sec */
-	duration float64 /* in sec, longest */
-	notes    []*Note
+	track  *ScoreTrack
+	offset Offset
+	beats  Beats
+	notes  []*Note
 }
 
-func (cb *ChordBuilder) With(note *Note, beats float64) *ChordBuilder {
-	bpm := cb.track.score.Bpm
+func (cb *ChordBuilder) With(note *Note, beats Beats) *ChordBuilder {
 	note.Offset = cb.offset
-	note.Duration = beats / (bpm / 60.0)
+	note.Beats = beats
 	note.SeekOffset = 0
 	cb.notes = append(cb.notes, note)
 
-	cb.duration = math.Max(cb.duration, note.Duration)
+	if note.Beats > cb.beats {
+		cb.beats = note.Beats
+	}
 
 	return cb
 }
 
-func (cb *ChordBuilder) Note(tone int, beats float64) *ChordBuilder {
+func (cb *ChordBuilder) Note(tone Tone, beats Beats) *ChordBuilder {
 	scale := cb.track.score.Scale
 	return cb.With(scale.Note(tone), beats)
 }
 
-func (cb *ChordBuilder) Flat(tone int, beats float64) *ChordBuilder {
+func (cb *ChordBuilder) Flat(tone Tone, beats Beats) *ChordBuilder {
 	scale := cb.track.score.Scale
 	return cb.With(scale.Flat(tone), beats)
 }
 
-func (cb *ChordBuilder) Sharp(tone int, beats float64) *ChordBuilder {
+func (cb *ChordBuilder) Sharp(tone Tone, beats Beats) *ChordBuilder {
 	scale := cb.track.score.Scale
 	return cb.With(scale.Sharp(tone), beats)
 }
 
-func (cb *ChordBuilder) Done(entireBeats float64) {
+func (cb *ChordBuilder) Done(entireBeats Beats) {
 	track := cb.track
 	for _, note := range cb.notes {
 		track.notes = append(track.notes, note)
 	}
+	bpm := cb.track.score.Bpm
 	if entireBeats < 0 {
-		cb.track.offset += cb.duration
+		cb.track.offset.IncreaseBeats(cb.beats, bpm)
 	} else {
-		bpm := cb.track.score.Bpm
-		cb.track.offset += entireBeats / (bpm / 60.0)
+		cb.track.offset.IncreaseBeats(entireBeats, bpm)
 	}
 }
 

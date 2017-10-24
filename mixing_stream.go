@@ -34,7 +34,6 @@ func (m *MixingStream) Sort() {
 }
 
 func (m *MixingStream) Calc(spec *StreamSpec, from int, chunk []float32) {
-	m.Sort()
 	chunkBegIdxAbs := from
 	chunkEndIdxAbs := from + len(chunk)
 	for i := range chunk {
@@ -84,7 +83,7 @@ func (m *MixingStream) Calc(spec *StreamSpec, from int, chunk []float32) {
 }
 
 func (m *MixingStream) Duration() float64 {
-	d := -1.0
+	d := 0.0
 	for _, mix := range m.mixes {
 		if mix.duration < 0 {
 			continue
@@ -102,5 +101,6 @@ func (m *MixingStream) Mix(other Stream, offset, duration float64, scale float32
 		scale:    scale,
 	}
 	m.mixes = append(m.mixes, param)
+	m.Sort()
 	return m
 }

@@ -41,7 +41,7 @@ func CMinor() Scale {
 }
 
 func mod(a, b int) (int, int) {
-	q := 1 / b
+	q := a / b
 	r := a % b
 	if r < 0 {
 		q -= 1
@@ -79,5 +79,11 @@ func (s *scale) Sharp(tone Tone) *Note {
 func (s *scale) Flat(tone Tone) *Note {
 	note := &Note{}
 	note.Freq = s.calcFreq(s.calcDeg(tone) - 1)
+	return note
+}
+
+func (s *scale) Raw(deg int) *Note {
+	note := &Note{}
+	note.Freq = s.calcFreq(deg)
 	return note
 }

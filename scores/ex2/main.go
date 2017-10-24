@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"math"
 	"os"
 
@@ -16,13 +17,13 @@ func makeNoteStream(freq float64) logica.Stream {
 		//v := float32(math.Sin(t*pi2*f) * math.Exp(-t))
 		v := float32(0)
 		_, f := math.Modf(t * freq)
-		duty := 0.5 + 0.2*math.Sin(t*freq*3.5*pi2)*math.Exp(-(t+1))
+		duty := 0.5 + 0.2*math.Sin(t*freq*2.5*pi2)*math.Exp(-(t+1))
 		if f < duty {
 			v = -1
 		} else {
 			v = 1
 		}
-		v = float32(float64(v) * math.Exp(-t))
+		v = float32(float64(v)*math.Exp(-t)) * 0.7
 		buff[0] = v
 		buff[1] = v
 	}
@@ -30,39 +31,48 @@ func makeNoteStream(freq float64) logica.Stream {
 }
 
 func main() {
+	log.SetOutput(os.Stderr)
 	scale := traditional.NewMajorScale(440, 0)
 	score := traditional.NewScore(180, scale)
 	t := score.NewTrack(0)
 
-	t.Note(0, 1).Ok()
-	t.Note(-3, 1).Ok()
-	t.Note(0, 2).Ok()
+	t.Note(0, 1)
+	t.Note(-3, 1)
+	t.Note(0, 2)
 
-	t.Note(1, 2).Ok()
-	t.Note(3, 2).Note(-3, 1).Note(-2, 1).Done(2)
+	t.Note(1, 2)
+	t.Note(3, 2)
 
-	t.Note(2, .75).Note(-2, .75).Ok()
-	t.Note(3, .75).Ok()
-	t.Note(2, .75).Ok()
+	t.Note(2, .75)
+	t.Note(3, .75)
+	t.Note(2, .75)
 
-	t.Note(1, 1).Note(-3, 1).Ok()
-	t.Note(0, 1).Ok()
+	t.Note(1, 1)
+	t.Note(0, 1)
 
-	t.Note(1, 2).Ok()
-	t.Note(-1, 2).Note(-4, 2).Ok()
+	t.Note(1, 2)
+	t.Note(-1, 2)
 
-	t.Note(0, 1).Ok()
-	t.Note(1, 1).Ok()
-	t.Note(2, 2).Ok()
+	t.Note(0, 1)
+	t.Note(1, 1)
+	t.Note(2, 2)
 
-	t.Note(3, 2).Ok()
-	t.Note(2, 1).Ok()
-	t.Note(1, 1).Ok()
+	t.Note(3, 2)
+	t.Note(2, 1)
+	t.Note(1, 1)
 
-	t.Note(4, 2).Ok()
-	t.Note(3, 1).Ok()
-	t.Note(2, 1).Ok()
-	t.Note(1, 2).Ok()
+	t.Note(4, 2)
+	t.Note(3, 1)
+	t.Note(2, 1)
+	t.Note(1, 2)
+	t.Close()
+
+	t = score.NewTrack(0)
+	t.Seek(6)
+	t.Note(1, 1)
+	t.Note(2, 1)
+	t.Note(1, 2)
+
 	t.Close()
 
 	spec := &logica.StreamSpec{
@@ -70,11 +80,15 @@ func main() {
 		SampleRate: 44100,
 	}
 	mix := logica.NewMixingStream()
-	score.Sort()
-	for _, note := range score.Notes {
-		mix.Mix(makeNoteStream(float64(note.Freq)), float64(note.Offset), float64(score.CalcDuration(note.Beats)), 1)
-	}
-	mix.Sort()
 
-	logica.Play(spec, mix, os.Stdout, 0.25, 0, -1)
+	for _, track := range score.Tracks {
+		for _, note := range track.Notes {
+			off := score.CalcOffset(note.Offset)
+			duration := score.CalcDuration(note.Beats)
+			mix.Mix(makeNoteStream(note.Freq.AsFloat()), off, duration, 1)
+		}
+		mix.Sort()
+	}
+
+	logica.Play(spec, mix, os.Stdout, 0.1, 0, -1)
 }

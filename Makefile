@@ -2,17 +2,16 @@
 
 PKG="github.com/ledyba/logica"
 
-SCORE := ex4
-SRCS := $(shell find . -type d -name scores -prune -o -type f -name \*.go)
-SRCS += $(shell find scores/$(SCORE) -type f -name \*.go)
+SCORE := ex2
+
+SRCS := $(shell find . -type d -name scores -prune -o -type f -name \*.go) \
+        $(shell find scores/$(SCORE) -type f -name \*.go)
 
 run: .bin/$(SCORE)
 	.bin/$(SCORE)
 
-.bin:
-	mkdir -p .bin
-
 .bin/$(SCORE):
+	mkdir -p .bin
 	go build -o .bin/$(SCORE) "$(PKG)/scores/$(SCORE)"
 
 test:

@@ -6,32 +6,56 @@ import (
 	"math"
 
 	"github.com/ledyba/logica"
+	log "github.com/Sirupsen/logrus"
+	"math/rand"
 )
 
-// セミ
+// random walk
 
-func f(base, b, m, t float64) float64 {
-	pi2 := 2 * math.Pi
-	freq := base + b*math.Sin(m*pi2*t)
+var vec [100]float64
+var pi2 = math.Pi * 2
 
-	return math.Sin(freq * t * pi2)
+func f(t float64, offset int, level int) (float64, int) {
+	if level == 0 {
+		return vec[offset],1
+	}
+	origOffset := offset
+
+	base := vec[offset]
+	offset++
+
+	w1 := vec[offset]
+	offset++
+	m1,used := f(t, offset, level -1)
+	offset += used
+
+	v := base + w1 * math.Sin(m1 * pi2 * t)
+	return v, offset-origOffset
 }
 
 func stream(_ *logica.StreamSpec, t float64, buff []float32) {
-	cfreq := 220.0
-	mfreq := cfreq * 2
 
-	v := f(cfreq, 1, mfreq, t+100000000)
+	//walk
+	for i := range vec {
+		vec[i] += rand.NormFloat64() / 10000
+	}
+
+	freq,used := f(t, 0, 3)
+	v := math.Sin(freq * pi2 * t)
+	log.Info(vec[0:used])
 
 	buff[0] = float32(v / 2)
 	buff[1] = float32(v / 2)
 }
 
 func main() {
-	stream := logica.ProgramStreamPassive(stream)
+	stream := logica.PassiveProgramStream(stream)
 	spec := &logica.StreamSpec{
 		Channels:   2,
 		SampleRate: 44100,
 	}
-	logica.Play(spec, stream, os.Stdout, 0.8, 0, 7)
+	sink := logica.NewWaveSink(spec, os.Stdout)
+	defer sink.Close()
+	vec[0] = 440
+	sink.Play(stream, 0, 100)
 }

@@ -1,31 +1,26 @@
-.PHONY: all play video test claen
+.PHONY: run test get claen
 
-all:
-	go build -o .bin/ex1 "github.com/ledyba/logica/scores/ex1"
-	go build -o .bin/ex2 "github.com/ledyba/logica/scores/ex2"
-	go build -o .bin/ex3 "github.com/ledyba/logica/scores/ex3"
+PKG="github.com/ledyba/logica"
 
 SCORE := ex4
 SRCS := $(shell find . -type d -name scores -prune -o -type f -name \*.go)
 SRCS += $(shell find scores/$(SCORE) -type f -name \*.go)
 
+run: .bin/$(SCORE)
+	.bin/$(SCORE)
+
 .bin:
 	mkdir -p .bin
 
-score.wav: $(SRCS)
-	go build -o .bin/$(SCORE) "github.com/ledyba/logica/scores/$(SCORE)"
-	.bin/$(SCORE) > score.wav
-
-score.mp4: score.wav
-	ffmpeg -y -loop 1 -i image.png -i score.wav -c:v libx264 -tune stillimage -c:a aac -b:a 192k -pix_fmt yuv420p -shortest score.mp4
-
-play: score.wav
-	play -t wav score.wav
-
-video: score.mp4;
+.bin/$(SCORE):
+	go build -o .bin/$(SCORE) "$(PKG)/scores/$(SCORE)"
 
 test:
-	go test "github.com/ledyba/logica/..."
+	go test "$(PKG)/..."
+
+get:
+	go get -u "github.com/hajimehoshi/oto"
+	go get -u "github.com/Sirupsen/logrus"
 
 clean:
-	rm -rfv .bin score.wav score.mp4
+	rm -rfv .bin

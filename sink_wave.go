@@ -1,31 +1,11 @@
 package logica
 
 import (
-	"encoding/binary"
-	"io"
-
 	"math"
-
+	"encoding/binary"
 	log "github.com/Sirupsen/logrus"
+	"io"
 )
-
-type StreamSpec struct {
-	Channels   uint
-	SampleRate uint
-}
-
-func (spec *StreamSpec) TimeOf(idx int) float64 {
-	return float64(idx) / float64(spec.SampleRate*spec.Channels)
-}
-
-func (spec *StreamSpec) ToIdx(offset float64) int {
-	return int(offset*float64(spec.SampleRate)) * int(spec.Channels)
-}
-
-type Stream interface {
-	Calc(spec *StreamSpec, from int, buff []float32)
-	Duration() float64
-}
 
 func writeHeader(spec *StreamSpec, out io.Writer, length float64) {
 	headerLen := uint((4 + 4) + 4 + 4 + (4 + 16) + (4 + 4))
@@ -46,22 +26,35 @@ func writeHeader(spec *StreamSpec, out io.Writer, length float64) {
 	binary.Write(out, binary.LittleEndian, int16(16))
 	out.Write([]byte{'d', 'a', 't', 'a'})
 	binary.Write(out, binary.LittleEndian, int32(bodyLen))
-
 }
 
-// Play ...
-func Play(spec *StreamSpec, stream Stream, out io.Writer, scale float32, offset, duration float64) {
+type waveSink struct {
+	spec *StreamSpec
+	out io.Writer
+}
+
+func NewWaveSink(spec *StreamSpec, out io.Writer) Sink {
+	return &waveSink{
+		spec: spec,
+		out: out,
+	}
+}
+func (sink *waveSink) Close() {
+}
+
+func (sink *waveSink) Play(stream Stream, offset, duration float64) {
 	if duration < 0 {
 		duration = stream.Duration()
 	}
-	writeHeader(spec, out, duration)
+	spec := sink.spec
+	writeHeader(spec, sink.out, duration)
 	endless := duration < 0
 	endIdx := int(math.Ceil(duration*float64(spec.SampleRate))) * int(spec.Channels)
 
 	fbuf := make([]float32, int(5*spec.SampleRate)*int(spec.Channels))
 	buf := make([]byte, len(fbuf)*2)
 
-	idx := spec.ToIdx(offset)
+	idx := spec.IndexOf(offset)
 	for idx < endIdx || endless {
 		fbufMax := len(fbuf)
 		if !endless && endIdx-idx < fbufMax {
@@ -69,7 +62,6 @@ func Play(spec *StreamSpec, stream Stream, out io.Writer, scale float32, offset,
 		}
 		stream.Calc(spec, idx, fbuf[:fbufMax])
 		for i, f := range fbuf[:fbufMax] {
-			f *= scale
 			if f > 1.0 {
 				log.Errorf("Sound cracking: %.4f at %.3f[sec]", f, spec.TimeOf(i+idx))
 				f = 1.0
@@ -80,7 +72,7 @@ func Play(spec *StreamSpec, stream Stream, out io.Writer, scale float32, offset,
 			binary.LittleEndian.PutUint16(buf[i*2:], uint16(int16(f*(65536/2-1))))
 		}
 		idx += fbufMax
-		out.Write(buf[:fbufMax*2])
+		sink.out.Write(buf[:fbufMax*2])
 	}
 	if !endless && idx != endIdx {
 		log.Fatalf("Buffer index does not match: %d vs %d", idx, endIdx)

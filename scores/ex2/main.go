@@ -23,11 +23,11 @@ func makeNoteStream(freq float64) logica.Stream {
 		} else {
 			v = 1
 		}
-		v = float32(float64(v)*math.Exp(-t)) * 0.7
+		v = float32(float64(v)*math.Exp(-t)) * 0.2
 		buff[0] = v
 		buff[1] = v
 	}
-	return logica.ProgramStreamPassive(stream)
+	return logica.PassiveProgramStream(stream)
 }
 
 func main() {
@@ -90,5 +90,10 @@ func main() {
 		mix.Sort()
 	}
 
-	logica.Play(spec, mix, os.Stdout, 0.1, 0, -1)
+	sink,err := logica.NewSpeakerSink(spec)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer sink.Close()
+	sink.Play(mix, 0, -1)
 }

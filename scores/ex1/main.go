@@ -1,41 +1,27 @@
 package main
 
 import (
-	"os"
-
 	"math"
 
-	log "github.com/Sirupsen/logrus"
 	"github.com/ledyba/logica"
+	"os"
 )
 
-func solveFeedback(init float64, f func(float64) float64) float32 {
-	prev := init
-	for i := 0; i < 20; i++ {
-		v := f(prev)
-		if math.Abs(prev-v) < 0.01 {
-			return float32(v)
-		}
-		prev = v
-	}
-	log.Fatalf("Diverged")
-	return float32(math.NaN())
-}
+var pi2 = math.Pi * 2
 
 func stream(_ *logica.StreamSpec, t float64, buff []float32) {
-	pi2 := math.Pi * 2
-
-	freq := 220 + 0.5*math.Sin(t*220*3.5)
-	v := float32(math.Sin(t * pi2 * freq))
+	v := float32(math.Sin(t * pi2 * 220.0 + 10*math.Sin(t*pi2*220.0*3.5)) * 0.2)
 	buff[0] = v
 	buff[1] = v
 }
 
 func main() {
-	stream := logica.ProgramStreamPassive(stream)
+	stream := logica.PassiveProgramStream(stream)
 	spec := &logica.StreamSpec{
 		Channels:   2,
 		SampleRate: 44100,
 	}
-	logica.Play(spec, stream, os.Stdout, 0.8, 0, 100)
+	sink := logica.NewWaveSink(spec, os.Stdout)
+	defer sink.Close()
+	sink.Play(stream, 0, 100)
 }

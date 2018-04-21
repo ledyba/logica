@@ -42,8 +42,8 @@ func (m *MixingStream) Calc(spec *StreamSpec, from int, chunk []float32) {
 	buff := make([]float32, len(chunk))
 
 	for _, mix := range m.mixes {
-		mixBegIdxAbs := spec.ToIdx(mix.offset)
-		mixEndIdxAbs := spec.ToIdx(mix.offset + mix.duration)
+		mixBegIdxAbs := spec.IndexOf(mix.offset)
+		mixEndIdxAbs := spec.IndexOf(mix.offset + mix.duration)
 		mixDurationIdx := mixEndIdxAbs - mixBegIdxAbs
 		if mixBegIdxAbs >= chunkEndIdxAbs {
 			break /* because this mix list is ensured to be sorted by beg idx. */

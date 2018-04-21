@@ -15,7 +15,7 @@ func main() {
 		SampleRate: 44100,
 	}
 
-	sink,err := logica.NewSpeakerSink(spec)
+	sink, err := logica.NewSpeakerSink(spec)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -90,7 +90,7 @@ func main() {
 		mix.Sort()
 	}
 
-	sink,err := logica.NewSpeakerSink(spec)
+	sink, err := logica.NewSpeakerSink(spec)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -1,26 +1,27 @@
 package logica
 
 import (
-	"math"
 	"encoding/binary"
+	"math"
+
 	log "github.com/Sirupsen/logrus"
 	"github.com/hajimehoshi/oto"
 )
 
 type speakerSink struct {
-	spec *StreamSpec
+	spec   *StreamSpec
 	player *oto.Player
 }
 
 func NewSpeakerSink(spec *StreamSpec) (Sink, error) {
-	player,err := oto.NewPlayer(int(spec.SampleRate), int(spec.Channels), 2, 8192)
+	player, err := oto.NewPlayer(int(spec.SampleRate), int(spec.Channels), 2, 8192)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 	return &speakerSink{
-		spec: spec,
+		spec:   spec,
 		player: player,
-	},nil
+	}, nil
 }
 func (sink *speakerSink) Close() {
 	sink.player.Close()
@@ -55,7 +56,7 @@ func (sink *speakerSink) Play(stream Stream, offset, duration float64) {
 			binary.LittleEndian.PutUint16(buf[i*2:], uint16(int16(f*(65536/2-1))))
 		}
 		idx += fbufMax
-		sink.player.Write(buf[:fbufMax * 2])
+		sink.player.Write(buf[:fbufMax*2])
 	}
 	if !endless && idx != endIdx {
 		log.Fatalf("Buffer index does not match: %d vs %d", idx, endIdx)

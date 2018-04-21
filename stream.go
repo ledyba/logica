@@ -17,4 +17,3 @@ type Stream interface {
 	Calc(spec *StreamSpec, from int, buff []float32)
 	Duration() float64
 }
-

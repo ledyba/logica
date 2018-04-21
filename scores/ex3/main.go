@@ -5,9 +5,10 @@ import (
 
 	"math"
 
-	"github.com/ledyba/logica"
-	log "github.com/Sirupsen/logrus"
 	"math/rand"
+
+	log "github.com/Sirupsen/logrus"
+	"github.com/ledyba/logica"
 )
 
 // random walk
@@ -17,7 +18,7 @@ var pi2 = math.Pi * 2
 
 func f(t float64, offset int, level int) (float64, int) {
 	if level == 0 {
-		return vec[offset],1
+		return vec[offset], 1
 	}
 	origOffset := offset
 
@@ -26,11 +27,11 @@ func f(t float64, offset int, level int) (float64, int) {
 
 	w1 := vec[offset]
 	offset++
-	m1,used := f(t, offset, level -1)
+	m1, used := f(t, offset, level-1)
 	offset += used
 
-	v := base + w1 * math.Sin(m1 * pi2 * t)
-	return v, offset-origOffset
+	v := base + w1*math.Sin(m1*pi2*t)
+	return v, offset - origOffset
 }
 
 func stream(_ *logica.StreamSpec, t float64, buff []float32) {
@@ -40,7 +41,7 @@ func stream(_ *logica.StreamSpec, t float64, buff []float32) {
 		vec[i] += rand.NormFloat64() / 10000
 	}
 
-	freq,used := f(t, 0, 3)
+	freq, used := f(t, 0, 3)
 	v := math.Sin(freq * pi2 * t)
 	log.Info(vec[0:used])
 

@@ -1,10 +1,11 @@
 package logica
 
 import (
-	"math"
 	"encoding/binary"
-	log "github.com/Sirupsen/logrus"
 	"io"
+	"math"
+
+	log "github.com/Sirupsen/logrus"
 )
 
 func writeHeader(spec *StreamSpec, out io.Writer, length float64) {
@@ -30,13 +31,13 @@ func writeHeader(spec *StreamSpec, out io.Writer, length float64) {
 
 type waveSink struct {
 	spec *StreamSpec
-	out io.Writer
+	out  io.Writer
 }
 
 func NewWaveSink(spec *StreamSpec, out io.Writer) Sink {
 	return &waveSink{
 		spec: spec,
-		out: out,
+		out:  out,
 	}
 }
 func (sink *waveSink) Close() {
@@ -51,7 +52,7 @@ func (sink *waveSink) Play(stream Stream, offset, duration float64) {
 	endless := duration < 0
 	endIdx := int(math.Ceil(duration*float64(spec.SampleRate))) * int(spec.Channels)
 
-	fbuf := make([]float32, int(5*spec.SampleRate)*int(spec.Channels))
+	fbuf := make([]float32, int(spec.SampleRate)*int(spec.Channels)*5) //5seconds
 	buf := make([]byte, len(fbuf)*2)
 
 	idx := spec.IndexOf(offset)

@@ -13,8 +13,9 @@ type speakerSink struct {
 	player *oto.Player
 }
 
-func NewSpeakerSink(spec *StreamSpec) (Sink, error) {
-	player, err := oto.NewPlayer(int(spec.SampleRate), int(spec.Channels), 2, 8192)
+func NewSpeakerSink(spec *StreamSpec, bufSizeMs float64) (Sink, error) {
+	bufSize := int(bufSizeMs*float64(spec.SampleRate)*float64(spec.Channels)/1000.0) * 2
+	player, err := oto.NewPlayer(int(spec.SampleRate), int(spec.Channels), 2, bufSize)
 	if err != nil {
 		return nil, err
 	}
@@ -28,6 +29,7 @@ func (sink *speakerSink) Close() {
 }
 
 func (sink *speakerSink) Play(stream Stream, offset, duration float64) {
+	var err error
 	if duration <= 0 {
 		duration = stream.Duration()
 	}
@@ -56,7 +58,10 @@ func (sink *speakerSink) Play(stream Stream, offset, duration float64) {
 			binary.LittleEndian.PutUint16(buf[i*2:], uint16(int16(f*(65536/2-1))))
 		}
 		idx += fbufMax
-		sink.player.Write(buf[:fbufMax*2])
+		_, err = sink.player.Write(buf[:fbufMax*2])
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 	if !endless && idx != endIdx {
 		log.Fatalf("Buffer index does not match: %d vs %d", idx, endIdx)

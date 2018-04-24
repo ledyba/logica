@@ -5,6 +5,8 @@ import (
 	"math"
 	"os"
 
+	"time"
+
 	"github.com/ledyba/logica"
 	"github.com/ledyba/logica/traditional"
 )
@@ -90,10 +92,12 @@ func main() {
 		mix.Sort()
 	}
 
-	sink, err := logica.NewSpeakerSink(spec)
+	sink, err := logica.NewSpeakerSink(spec, 1000)
+	defer sink.Close()
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer sink.Close()
-	sink.Play(mix, 0, -1)
+	sink.Play(mix, 0, 0)
+	// TODO:バッファが再生し終わる前にshutdownされてしまう
+	time.Sleep(1000 * time.Millisecond)
 }

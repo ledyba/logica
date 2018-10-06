@@ -2,13 +2,13 @@
 
 PKG=github.com/ledyba/logica
 
-SCORE := ex3
+SCORE := ex1
 
 SRCS := $(shell find . -type d -name scores -prune -o -type f -name \*.go) \
         $(shell find scores/$(SCORE) -type f -name \*.go)
 
 run: .bin/$(SCORE)
-	.bin/$(SCORE)
+	.bin/$(SCORE) > /dev/null
 
 .bin/$(SCORE): $(SRCS)
 	mkdir -p .bin

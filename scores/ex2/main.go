@@ -5,8 +5,6 @@ import (
 	"math"
 	"os"
 
-	"time"
-
 	"github.com/ledyba/logica"
 	"github.com/ledyba/logica/traditional"
 )
@@ -77,10 +75,6 @@ func main() {
 
 	t.Close()
 
-	spec := &logica.StreamSpec{
-		Channels:   2,
-		SampleRate: 44100,
-	}
 	mix := logica.NewMixingStream()
 
 	for _, track := range score.Tracks {
@@ -92,12 +86,12 @@ func main() {
 		mix.Sort()
 	}
 
-	sink, err := logica.NewSpeakerSink(spec, 1000)
-	defer sink.Close()
-	if err != nil {
-		log.Fatal(err)
+	// Play!
+	spec := &logica.StreamSpec{
+		Channels:   2,
+		SampleRate: 44100,
 	}
-	sink.Play(mix, 0, 0)
-	// TODO:バッファが再生し終わる前にshutdownされてしまう
-	time.Sleep(1000 * time.Millisecond)
+	sink := logica.NewWaveSink(spec, os.Stdout)
+	defer sink.Close()
+	sink.Play(mix, 0, 100)
 }

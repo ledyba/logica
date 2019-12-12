@@ -1,7 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.gradle.tasks.KotlinTest
-
 plugins {
     kotlin("jvm") version "1.3.61"
     java

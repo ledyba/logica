@@ -17,7 +17,7 @@ class Player(val fmt: AudioFormat, private val sink: SourceDataLine) {
       while(true) {
         buff.clear()
         for(v in stream.take(44100)) {
-          buff.putShort((v * 0x8000).toShort())
+          buff.putShort((v * (65535.0f)).toShort())
         }
         idx+=44100
         val size = buff.position()

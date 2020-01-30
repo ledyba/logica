@@ -24,5 +24,5 @@ configure<JavaPluginConvention> {
 }
 
 application {
-    mainClassName = "logica.KtMain"
+    mainClassName = "logica.MainKt"
 }

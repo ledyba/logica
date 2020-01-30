@@ -9,7 +9,7 @@ fun generateFMStream(fmt: AudioFormat, baseFreq: Float) : Sequence<Float> {
     while(true) {
       idx++
       val t = idx.toFloat() / fmt.frameRate
-      val v = sin(t * Math.PI * 2.0 * 220.0 + (3.5 * sin (t * Math.PI * 2 * 220.0*3.5))) * 0.2
+      val v = sin(t * Math.PI * 2.0 * baseFreq + (3.5 * sin (t * Math.PI * 2 * baseFreq * 3.5))) * 0.2
       yield(v.toFloat())
     }
   }

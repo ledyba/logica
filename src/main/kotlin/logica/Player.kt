@@ -14,12 +14,12 @@ class Player(val fmt: AudioFormat, private val sink: SourceDataLine) {
     sink.start()
     var idx = 0
     try {
-      while(true) {
+      stream.chunked(44100).forEach {
         buff.clear()
-        for(v in stream.take(44100)) {
+        for(v in it) {
           buff.putShort((v * (65535.0f)).toShort())
         }
-        idx+=44100
+        idx += it.size
         val size = buff.position()
         buff.get(0, stating, 0, size)
         sink.write(stating, 0, size);

@@ -17,7 +17,7 @@ class Player(val fmt: AudioFormat, private val sink: SourceDataLine) {
       stream.chunked(44100).forEach {
         buff.clear()
         for(v in it) {
-          buff.putShort((v * (65535.0f)).toShort())
+          buff.putShort((clamp(v) * (0x7fff)).toShort())
         }
         idx += it.size
         val size = buff.position()
@@ -31,7 +31,7 @@ class Player(val fmt: AudioFormat, private val sink: SourceDataLine) {
   }
 }
 
-fun createPlayer():Player {
+fun createPlayer(): Player {
   val fmt = AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100.0f, 16, 1, 2, 44100.0f, true);
   val sink = AudioSystem.getSourceDataLine(fmt)
   return Player(fmt, sink)

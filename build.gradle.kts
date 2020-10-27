@@ -1,30 +1,32 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val kotlinVersion = "1.3.72"
-val junitJupiterVersion = "5.6.0"
-
 plugins {
-  kotlin("jvm") version "1.3.72"
+  kotlin("jvm") version "1.4.0"
   application
 }
 
+val kotlinVersion = "1.4.0"
+val junitJupiterVersion = "5.6.2"
+
 group = "logica"
 version = "NaN"
-
-application {
-  mainClassName = "logica.MainKt"
-}
 
 repositories {
   mavenCentral()
   jcenter()
 }
 
+val launcherClassName = "logica.MainKt"
+
 dependencies {
   implementation(kotlin("stdlib"))
 
   testImplementation(kotlin("test-junit"))
   testImplementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
+}
+
+application {
+  mainClassName = "logica.Main"
 }
 
 tasks.withType<KotlinCompile> {
@@ -34,3 +36,13 @@ tasks.withType<KotlinCompile> {
 tasks.getByName<Test>("test") {
   useJUnitPlatform()
 }
+
+val compileKotlin: KotlinCompile by tasks
+compileKotlin.kotlinOptions.jvmTarget = "13"
+
+tasks {
+  test {
+    useJUnitPlatform()
+  }
+}
+

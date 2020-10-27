@@ -1,28 +1,36 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+val kotlinVersion = "1.3.72"
+val junitJupiterVersion = "5.6.0"
+
 plugins {
-    kotlin("jvm") version "1.3.61"
-    java
-    application
+  kotlin("jvm") version "1.3.72"
+  application
 }
 
 group = "logica"
 version = "NaN"
 
+application {
+  mainClassName = "logica.MainKt"
+}
+
 repositories {
-    mavenCentral()
-    jcenter()
+  mavenCentral()
+  jcenter()
 }
 
 dependencies {
-    implementation(kotlin("stdlib"))
+  implementation(kotlin("stdlib"))
 
-    testImplementation("junit", "junit", "4.12")
-    testImplementation(kotlin("test-junit"))
+  testImplementation(kotlin("test-junit"))
+  testImplementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
 }
 
-configure<JavaPluginConvention> {
-    sourceCompatibility = JavaVersion.VERSION_13
+tasks.withType<KotlinCompile> {
+  kotlinOptions.jvmTarget = "13"
 }
 
-application {
-    mainClassName = "logica.MainKt"
+tasks.getByName<Test>("test") {
+  useJUnitPlatform()
 }

@@ -8,5 +8,8 @@ edition = "2018"
 
 [dependencies]
 dlopen = "0.1"
-iced = "0.2"
-iced_audio = "0.6"
+cpal = "0"
+egui = "0"
+epi = "0"
+egui_glium = "0"
+rand = "0"

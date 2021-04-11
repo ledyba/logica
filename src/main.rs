@@ -1,16 +1,11 @@
-use iced::{Settings, Sandbox};
 use std::error::Error;
+use std::borrow::Borrow;
 
-mod widgets;
+mod egui_nodes;
 mod app;
 
 fn main() -> Result<(), Box<dyn Error>> {
+  cpal::available_hosts().into_iter().for_each(|it| println!("{}", it.name()));
   println!("Let's dance!");
-  app::App::run(Settings{
-    window: Default::default(),
-    flags: (),
-    default_font: None,
-    default_text_size: 0,
-    antialiasing: false
-  }).map_err(|e| e.into())
+  egui_glium::run(Box::new(app::App::default()))
 }

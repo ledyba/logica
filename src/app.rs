@@ -23,6 +23,7 @@ impl epi::App for App {
         egui::menu::menu(ui, "File", |ui| {
           if ui.button("Save").clicked() {
 
+            // https://github.com/emilk/egui/issues/270
             let repaint_signal = frame.repaint_signal();
             self.file_path_dialog
                 .with_callback(move |_| repaint_signal.request_repaint())

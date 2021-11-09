@@ -13,3 +13,12 @@ anyhow = "1.0.40"
 eframe = "0.12.0"
 im-native-dialog = "0.2.0"
 vst = "0.2"
+
+
+[[bin]]
+name = "logica"
+path = "src/main.rs"
+
+[lib]
+name = "logica"
+path = "src/lib.rs"

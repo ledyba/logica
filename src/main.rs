@@ -1,6 +1,6 @@
 
-mod app;
-use app::App;
+use logica::app;
+use logica::app::App;
 
 fn main() -> anyhow::Result<()> {
   println!("Let's dance!");

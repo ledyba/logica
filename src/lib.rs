@@ -2,19 +2,18 @@ pub mod app;
 
 use vst::plugin::{HostCallback, Info, Plugin};
 
-struct LogicaPlugin {
-
+struct LogicaProxy {
 }
 
-impl Default for LogicaPlugin {
+impl Default for LogicaProxy {
   fn default() -> Self {
     Self {
-      
+
     }
   }
 }
 
-impl Plugin for LogicaPlugin {
+impl Plugin for LogicaProxy {
     fn new(_host: HostCallback) -> Self {
         Self {
 
@@ -30,4 +29,4 @@ impl Plugin for LogicaPlugin {
     }
 }
 
-vst::plugin_main!(LogicaPlugin);
+vst::plugin_main!(LogicaProxy);

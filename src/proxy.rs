@@ -1,7 +1,6 @@
 use vst::plugin::{HostCallback, Info};
-use vst::plugin::Plugin as VstPlugin;
 
-use crate::plugin::Plugin;
+use crate::{editor::Editor, plugin::Plugin};
 
 pub struct ProxyPlugin {
   host_callback: HostCallback,
@@ -17,7 +16,7 @@ impl Default for ProxyPlugin {
   }
 }
 
-impl VstPlugin for ProxyPlugin {
+impl vst::plugin::Plugin for ProxyPlugin {
   fn new(host_callback: HostCallback) -> Self {
     Self {
       host_callback,
@@ -32,4 +31,9 @@ impl VstPlugin for ProxyPlugin {
       ..Default::default()
     }
   }
+
+  fn get_editor(&mut self) -> Option<Box<Editor>> {
+      Some(Box::new(Editor::new()))
+  }
 }
+

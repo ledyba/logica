@@ -32,7 +32,7 @@ impl vst::plugin::Plugin for ProxyPlugin {
     }
   }
 
-  fn get_editor(&mut self) -> Option<Box<Editor>> {
+  fn get_editor(&mut self) -> Option<Box<dyn vst::editor::Editor>> {
       Some(Box::new(Editor::new()))
   }
 }

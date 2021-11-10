@@ -13,7 +13,7 @@ pub struct Editor {
 }
 
 impl Editor {
-  fn new() -> Self {
+  pub fn new() -> Self {
     Self {
 
     }

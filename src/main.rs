@@ -1,5 +1,4 @@
 
-use logica::app;
 use logica::app::App;
 
 fn main() -> anyhow::Result<()> {

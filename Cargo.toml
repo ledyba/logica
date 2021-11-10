@@ -10,7 +10,7 @@ license = "GPL-3.0-or-later"
 [dependencies]
 dlopen = "0.1.8"
 anyhow = "1.0.40"
-eframe = "0.12.0"
+eframe = "0.15.0"
 im-native-dialog = "0.2.0"
 vst = "0.2"
 

@@ -18,7 +18,7 @@ impl Default for App {
 
 impl epi::App for App {
   fn update(&mut self, ctx: &egui::CtxRef, frame: &mut epi::Frame<'_>) {
-    egui::TopPanel::top("wrap_app_top_bar").show(ctx, |ui| {
+    egui::TopBottomPanel::top("wrap_app_top_bar").show(ctx, |ui| {
       egui::menu::bar(ui, |ui| {
         egui::menu::menu(ui, "File", |ui| {
           if ui.button("Save").clicked() {

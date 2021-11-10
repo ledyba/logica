@@ -1,19 +1,27 @@
-use vst::plugin::{HostCallback, Info, Plugin};
+use vst::plugin::{HostCallback, Info};
+use vst::plugin::Plugin as VstPlugin;
+
+use crate::plugin::Plugin;
 
 pub struct ProxyPlugin {
+  host_callback: HostCallback,
+  plugin: Option<Box<dyn Plugin>>,
 }
 
 impl Default for ProxyPlugin {
   fn default() -> Self {
     Self {
-
+      host_callback: HostCallback::default(),
+      plugin: None,
     }
   }
 }
 
-impl Plugin for ProxyPlugin {
-  fn new(_host: HostCallback) -> Self {
+impl VstPlugin for ProxyPlugin {
+  fn new(host_callback: HostCallback) -> Self {
     Self {
+      host_callback,
+      plugin: None,
     }
   }
 

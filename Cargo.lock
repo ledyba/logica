@@ -851,6 +851,7 @@ dependencies = [
  "anyhow",
  "dlopen",
  "egui",
+ "egui-winit",
  "egui_glium",
  "epi",
  "glium",

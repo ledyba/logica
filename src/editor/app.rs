@@ -1,5 +1,4 @@
 use std::{path::PathBuf, process::exit};
-use eframe::{egui, epi};
 use im_native_dialog::ImNativeFileDialog;
 
 pub struct App {

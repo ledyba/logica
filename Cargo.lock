@@ -853,8 +853,11 @@ dependencies = [
  "egui",
  "egui_glium",
  "epi",
+ "glium",
  "im-native-dialog",
  "vst",
+ "winapi",
+ "winit",
 ]
 
 [[package]]

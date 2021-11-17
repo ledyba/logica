@@ -133,30 +133,30 @@ impl vst::editor::Editor for Editor {
         *previous_frame_time = Some(frame_time);
 
         {
-            use glium::Surface as _;
-            let mut target = display.draw();
-            let color = app.clear_color();
-            target.clear_color(color[0], color[1], color[2], color[3]);
-            egui.paint(&display, &mut target, shapes);
-            target.finish().unwrap();
+          use glium::Surface as _;
+          let mut target = display.draw();
+          let color = app.clear_color();
+          target.clear_color(color[0], color[1], color[2], color[3]);
+          egui.paint(&display, &mut target, shapes);
+          target.finish().unwrap();
         }
 
         {
-            egui_winit::epi::handle_app_output(
-                display.gl_window().window(),
-                egui.ctx().pixels_per_point(),
-                app_output.clone(),
-            );
+          egui_winit::epi::handle_app_output(
+            display.gl_window().window(),
+            egui.ctx().pixels_per_point(),
+            app_output.clone(),
+          );
 
-            *control_flow =
-              if app_output.quit {
-                glium::glutin::event_loop::ControlFlow::Exit
-              } else if needs_repaint {
-                display.gl_window().window().request_redraw();
-                glium::glutin::event_loop::ControlFlow::Poll
-              } else {
-                glium::glutin::event_loop::ControlFlow::Wait
-              };
+          *control_flow =
+            if app_output.quit {
+              glium::glutin::event_loop::ControlFlow::Exit
+            } else if needs_repaint {
+              display.gl_window().window().request_redraw();
+              glium::glutin::event_loop::ControlFlow::Poll
+            } else {
+              glium::glutin::event_loop::ControlFlow::Wait
+            };
         }
       };
     use winit::event;

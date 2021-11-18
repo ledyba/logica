@@ -5,7 +5,7 @@ use std::{sync::Mutex, time::Instant};
 use egui_glium::EguiGlium;
 use epi::App;
 use glium::Display;
-use winit::{dpi::LogicalSize, event_loop::{ControlFlow, EventLoop, EventLoopProxy}, platform::{run_return::EventLoopExtRunReturn, windows::WindowBuilderExtWindows}};
+use winit::{dpi::LogicalSize, event_loop::{ControlFlow, EventLoop, EventLoopProxy}, platform::{run_return::EventLoopExtRunReturn, windows::{WindowBuilderExtWindows, EventLoopExtWindows}}};
 pub struct Editor {
   inner: Option<EditorImpl>,
 }
@@ -71,7 +71,8 @@ impl vst::editor::Editor for Editor {
         .with_vsync(true);
 
     // FIXME: ここでDPI awareでないソフトだとDPI awareになって小さくなってしまう
-    let event_loop: winit::event_loop::EventLoop<RequestRepaintEvent> = winit::event_loop::EventLoop::with_user_event();
+    // let event_loop: EventLoop<RequestRepaintEvent> = EventLoop::with_user_event();
+    let event_loop: EventLoop<RequestRepaintEvent> = EventLoop::new_dpi_unaware();
 
     let display =
         glium::Display::new(window_builder, context_builder, &event_loop)

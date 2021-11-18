@@ -70,26 +70,43 @@ impl vst::editor::Editor for Editor {
         .with_stencil_buffer(0)
         .with_vsync(true);
 
-    let event_loop = winit::event_loop::EventLoop::with_user_event();
+    // FIXME: ここでDPI awareでないソフトだとDPI awareになって小さくなってしまう
+    let event_loop: winit::event_loop::EventLoop<RequestRepaintEvent> = winit::event_loop::EventLoop::with_user_event();
 
     let display =
         glium::Display::new(window_builder, context_builder, &event_loop)
         .expect("Failed to create display");
+    
 
     let repaint_signal =
       std::sync::Arc::new(RepaintSignalImpl {
         event_loop_proxy: std::sync::Mutex::new(event_loop.create_proxy())
       });
   
-    let egui = EguiGlium::new(&display);
-    
+    let mut egui = EguiGlium::new(&display);
+
+    let mut app = app::App::default();
+
+    {
+      let (ctx, painter) = egui.ctx_and_painter_mut();
+      let mut app_output = epi::backend::AppOutput::default();
+      let mut frame = epi::backend::FrameBuilder {
+          info: integration_info(&display, None),
+          tex_allocator: painter,
+          output: &mut app_output,
+          repaint_signal: repaint_signal.clone(),
+      }
+      .build();
+      app.setup(ctx, &mut frame, None);
+    }
+
     self.inner = Some(EditorImpl {
-      app: app::App::default(),
+      app,
       event_loop,
       display,
       repaint_signal,
       egui,
-      focused: false,
+      focused: true,
       previous_frame_time: None,
     });
 

@@ -180,7 +180,7 @@ impl vst::editor::Editor for Editor {
     use winit::event;
       match event {
         event::Event::NewEvents(_) => {},
-        event::Event::WindowEvent { window_id, event } => {
+        event::Event::WindowEvent { window_id: _, event } => {
           if egui.is_quit_event(&event) {
             app.on_exit();
             *control_flow = ControlFlow::Exit;
@@ -191,7 +191,7 @@ impl vst::editor::Editor for Editor {
           egui.on_event(&event);
           display.gl_window().window().request_redraw(); // TODO: ask egui if the events warrants a repaint instead
         },
-        event::Event::DeviceEvent { device_id, event } => {},
+        event::Event::DeviceEvent { device_id: _, event: _ } => {},
         event::Event::UserEvent(_) => {},
         event::Event::Suspended => {},
         event::Event::Resumed => {},

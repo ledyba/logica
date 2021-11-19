@@ -1,4 +1,4 @@
-use vst::plugin::{HostCallback, Info};
+use vst::plugin::{Category, HostCallback, Info};
 
 use crate::{editor::Editor};
 use logica_bridge::Plugin;
@@ -28,7 +28,10 @@ impl vst::plugin::Plugin for ProxyPlugin {
   fn get_info(&self) -> Info {
     Info {
       name: "Logica".to_string(),
+      vendor: "Logica Developers".to_string(),
       unique_id: 1145131919, // Used by hosts to differentiate between plugins.
+      version: 1,
+      category: Category::Synth,
       ..Default::default()
     }
   }

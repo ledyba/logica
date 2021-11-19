@@ -7,6 +7,9 @@ license = "GPL-3.0-or-later"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[workspace]
+members = [ "crates/*" ]
+
 [dependencies]
 vst = "0.2"
 dlopen = "0.1.8"
@@ -19,6 +22,7 @@ winit = "0.25.0"
 glium = "0.30.2"
 epi = "0.15.0"
 im-native-dialog = "0.2.0"
+logica_bridge = { path = "crates/logica_bridge" }
 
 [lib]
 name = "logica"

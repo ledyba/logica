@@ -856,10 +856,15 @@ dependencies = [
  "epi",
  "glium",
  "im-native-dialog",
+ "logica_bridge",
  "vst",
  "winapi",
  "winit",
 ]
+
+[[package]]
+name = "logica_bridge"
+version = "0.1.0"
 
 [[package]]
 name = "malloc_buf"

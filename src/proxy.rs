@@ -1,6 +1,7 @@
 use vst::plugin::{HostCallback, Info};
 
-use crate::{editor::Editor, plugin::Plugin};
+use crate::{editor::Editor};
+use logica_bridge::Plugin;
 
 pub struct ProxyPlugin {
   host_callback: HostCallback,

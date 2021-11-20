@@ -55,4 +55,3 @@ impl vst::plugin::Plugin for ProxyPlugin {
       Some(Box::new(Editor::new()))
   }
 }
-

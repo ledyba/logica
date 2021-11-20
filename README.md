@@ -1,4 +1,4 @@
-# Logica: a proxy VSTi plugin to create your sound!
+# Logica: a proxy VSTi plugin to build your own sound!
 
 # References
 

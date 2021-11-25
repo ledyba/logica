@@ -1,12 +1,12 @@
 use std::{path::PathBuf, process::exit};
 use im_native_dialog::ImNativeFileDialog;
 
-pub struct App {
+pub struct Dialog {
   on: bool,
   file_path_dialog: ImNativeFileDialog<Option<PathBuf>>,
 }
 
-impl Default for App {
+impl Default for Dialog {
   fn default() -> Self {
     Self {
       on: false,
@@ -15,7 +15,7 @@ impl Default for App {
   }
 }
 
-impl epi::App for App {
+impl epi::App for Dialog {
   fn update(&mut self, ctx: &egui::CtxRef, frame: &mut epi::Frame<'_>) {
     egui::TopBottomPanel::top("wrap_app_top_bar").show(ctx, |ui| {
       egui::menu::bar(ui, |ui| {

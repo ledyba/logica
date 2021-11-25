@@ -1,4 +1,4 @@
-use std::sync::Mutex;
+use std::sync::{Arc, Mutex};
 use serde::{Deserialize, Serialize};
 use vst::plugin::{Category, HostCallback, Info, PluginParameters};
 use crate::editor::Editor;
@@ -9,7 +9,7 @@ pub struct Plugin {
 }
 
 struct Parameters {
-  current_preset: Mutex<PresetParameter>,
+  current_preset: Arc<Mutex<PresetParameter>>,
 }
 
 #[derive(Serialize, Deserialize)]

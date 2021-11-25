@@ -1,17 +1,20 @@
-mod app;
+mod dialog;
 
-use std::{sync::Mutex, time::Instant};
+use std::{sync::{Arc, Mutex}, time::Instant};
 
 use egui_glium::EguiGlium;
 use epi::App;
 use glium::Display;
 use winit::{dpi::LogicalSize, event_loop::{ControlFlow, EventLoop, EventLoopProxy}, platform::{run_return::EventLoopExtRunReturn, windows::{WindowBuilderExtWindows, EventLoopExtWindows}}};
+
+use crate::proxy::Parameter;
 pub struct Editor {
   inner: Option<EditorImpl>,
+  parameter: Arc<Parameter>,
 }
 
 struct EditorImpl {
-  app: app::App,
+  dialog: dialog::Dialog,
   event_loop: EventLoop<RequestRepaintEvent>,
   display: Display,
   repaint_signal: std::sync::Arc<RepaintSignalImpl>,
@@ -21,9 +24,10 @@ struct EditorImpl {
 }
 
 impl Editor {
-  pub fn new() -> Self {
+  pub fn new(parameter: Arc<Parameter>) -> Self {
     Self {
       inner: None,
+      parameter,
     }
   }
 }
@@ -47,7 +51,7 @@ impl epi::RepaintSignal for RepaintSignalImpl {
 
 impl vst::editor::Editor for Editor {
   fn size(&self) -> (i32, i32) {
-    (800, 600)
+    (400, 200)
   }
 
   fn position(&self) -> (i32, i32) {
@@ -77,16 +81,16 @@ impl vst::editor::Editor for Editor {
     let display =
         glium::Display::new(window_builder, context_builder, &event_loop)
         .expect("Failed to create display");
-    
 
     let repaint_signal =
       std::sync::Arc::new(RepaintSignalImpl {
         event_loop_proxy: std::sync::Mutex::new(event_loop.create_proxy())
       });
+    repaint_signal.event_loop_proxy.lock().unwrap().send_event(event)
   
     let mut egui = EguiGlium::new(&display);
 
-    let mut app = app::App::default();
+    let mut app = dialog::Dialog::new(Arc::clone(&self.parameter));
 
     {
       let (ctx, painter) = egui.ctx_and_painter_mut();
@@ -102,7 +106,7 @@ impl vst::editor::Editor for Editor {
     }
 
     self.inner = Some(EditorImpl {
-      app,
+      dialog: app,
       event_loop,
       display,
       repaint_signal,
@@ -128,7 +132,7 @@ impl vst::editor::Editor for Editor {
     let egui = &mut inner.egui;
     let display = &mut inner.display;
     let repaint_signal = &mut inner.repaint_signal;
-    let app = &mut inner.app;
+    let app = &mut inner.dialog;
     let previous_frame_time = &mut inner.previous_frame_time;
 
     event_loop.run_return(|event, _window_target, control_flow| {

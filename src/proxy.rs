@@ -6,25 +6,25 @@ use crate::editor::Editor;
 pub struct Plugin {
   host_callback: HostCallback,
   plugin: Option<Box<dyn vst::plugin::Plugin>>,
+  parameter: Arc<Parameter>,
 }
 
-struct Parameters {
-  current_preset: Arc<Mutex<PresetParameter>>,
+#[derive(Default)]
+pub struct Parameter(pub Mutex<ParameterData>);
+
+#[derive(Default, Serialize, Deserialize)]
+pub struct ParameterData {
+  pub(crate) name: String,
+  pub(crate) path: String,
 }
 
-#[derive(Serialize, Deserialize)]
-struct PresetParameter {
-  name: String,
-  path: String,
-}
-
-impl PluginParameters for Parameters {
+impl PluginParameters for Parameter {
   fn load_preset_data(&self, data: &[u8]) {
-    let mut preset = self.current_preset.lock().expect("Failed to lock");
+    let mut preset = self.0.lock().expect("Failed to lock");
     *preset = bincode::deserialize(data).expect("Failed to load preset data");
   }
   fn get_preset_data(&self) -> Vec<u8> {
-    let preset = self.current_preset.lock().expect("Failed to lock");
+    let preset = self.0.lock().expect("Failed to lock");
     bincode::serialize(&*preset).expect("Failed to serialize")
   }
 }
@@ -34,6 +34,7 @@ impl Default for Plugin {
     Self {
       host_callback: HostCallback::default(),
       plugin: None,
+      parameter: Default::default(),
     }
   }
 }
@@ -55,10 +56,15 @@ impl vst::plugin::Plugin for Plugin {
     Self {
       host_callback,
       plugin: None,
+      parameter: Default::default(),
     }
   }
 
+  fn get_parameter_object(&mut self) -> Arc<dyn PluginParameters> {
+    Arc::clone(&self.parameter) as Arc<dyn PluginParameters>
+  }
+
   fn get_editor(&mut self) -> Option<Box<dyn vst::editor::Editor>> {
-      Some(Box::new(Editor::new()))
+    Some(Box::new(Editor::new(Arc::clone(&self.parameter))))
   }
 }

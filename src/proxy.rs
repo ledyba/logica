@@ -1,4 +1,5 @@
-use std::{collections::HashMap, sync::{atomic::AtomicI32, Mutex}};
+use std::sync::Mutex;
+use serde::{Deserialize, Serialize};
 use vst::plugin::{Category, HostCallback, Info, PluginParameters};
 use crate::editor::Editor;
 
@@ -8,41 +9,23 @@ pub struct Plugin {
 }
 
 struct Parameters {
-  current_preset_id: AtomicI32,
-  saved_presets: Mutex<HashMap<i32, PresetParameter>>,
   current_preset: Mutex<PresetParameter>,
 }
 
+#[derive(Serialize, Deserialize)]
 struct PresetParameter {
   name: String,
   path: String,
 }
 
 impl PluginParameters for Parameters {
-  fn change_preset(&self, preset: i32) {
-    self.current_preset_id.store(preset, std::sync::atomic::Ordering::Relaxed);
-  }
-
-  fn get_preset_num(&self) -> i32 {
-    self.current_preset_id.load(std::sync::atomic::Ordering::Relaxed)
-  }
-
-  fn set_preset_name(&self, name: String) {
-    let preset = self.current_preset.lock().expect("Failed to lock");
-    preset.name = name;
-  }
-
-  /// Get the name of the preset at the index specified by `preset`.
-  fn get_preset_name(&self, preset: i32) -> String {
-    let preset = self.current_preset.lock().expect("Failed to lock");
-    preset.name.clone()
-  }
-
   fn load_preset_data(&self, data: &[u8]) {
-    let preset = self.current_preset.lock().expect("Failed to lock");
+    let mut preset = self.current_preset.lock().expect("Failed to lock");
+    *preset = bincode::deserialize(data).expect("Failed to load preset data");
   }
   fn get_preset_data(&self) -> Vec<u8> {
     let preset = self.current_preset.lock().expect("Failed to lock");
+    bincode::serialize(&*preset).expect("Failed to serialize")
   }
 }
 

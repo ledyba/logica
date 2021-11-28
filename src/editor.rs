@@ -86,8 +86,6 @@ impl vst::editor::Editor for Editor {
       std::sync::Arc::new(RepaintSignalImpl {
         event_loop_proxy: std::sync::Mutex::new(event_loop.create_proxy())
       });
-    repaint_signal.event_loop_proxy.lock().unwrap().send_event(event)
-  
     let mut egui = EguiGlium::new(&display);
 
     let mut app = dialog::Dialog::new(Arc::clone(&self.parameter));
@@ -196,7 +194,10 @@ impl vst::editor::Editor for Editor {
           display.gl_window().window().request_redraw(); // TODO: ask egui if the events warrants a repaint instead
         },
         event::Event::DeviceEvent { device_id: _, event: _ } => {},
-        event::Event::UserEvent(_) => {},
+        event::Event::UserEvent(RequestRepaintEvent) => {
+          // Repaint Signalを送るとここに飛んでくる
+          display.gl_window().window().request_redraw();
+        },
         event::Event::Suspended => {},
         event::Event::Resumed => {},
         event::Event::MainEventsCleared => {},

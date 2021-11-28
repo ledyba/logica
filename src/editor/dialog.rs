@@ -19,7 +19,18 @@ impl Dialog {
 impl epi::App for Dialog {
   fn update(&mut self, ctx: &egui::CtxRef, frame: &mut epi::Frame<'_>) {
     egui::panel::CentralPanel::default().show(ctx, |ui| {
-      ui.label("Plugin");
+      ui.heading("Logica");
+      ui.separator();
+      ui.label("Your plugin path:");
+      {
+        let param = self.parameter.0.lock().expect("Failed to lock");
+        let path = param.path.as_str();
+        if path.is_empty() {
+          ui.label("<not loaded>");
+        } else {
+          ui.label(path);
+        }
+      }
       if ui.button("Load Plugin").clicked() {
         // https://github.com/emilk/egui/issues/270
         let repaint_signal = frame.repaint_signal();
@@ -35,11 +46,6 @@ impl epi::App for Dialog {
             .open_single_file(Some(std::env::current_dir().unwrap()))
             .expect("Unable to open file_path dialog");
       }
-      ui.horizontal(|ui| {
-        let param = self.parameter.0.lock().expect("Failed to lock");
-        ui.label("path: ");
-        ui.label(param.path.as_str());
-      });
     });
   }
 

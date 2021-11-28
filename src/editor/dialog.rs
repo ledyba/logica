@@ -1,4 +1,4 @@
-use std::{path::PathBuf, process::exit, sync::Arc};
+use std::{path::PathBuf, sync::Arc};
 use im_native_dialog::ImNativeFileDialog;
 use crate::proxy::Parameter;
 

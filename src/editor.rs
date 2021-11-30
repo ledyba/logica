@@ -51,7 +51,7 @@ impl epi::RepaintSignal for RepaintSignalImpl {
 
 impl vst::editor::Editor for Editor {
   fn size(&self) -> (i32, i32) {
-    (400, 200)
+    (400, 300)
   }
 
   fn position(&self) -> (i32, i32) {
@@ -63,7 +63,7 @@ impl vst::editor::Editor for Editor {
     let window_builder =
         winit::window::WindowBuilder::new()
         .with_title("Logica")
-        .with_inner_size(LogicalSize::new(800, 600))
+        .with_inner_size(LogicalSize::new(400, 300))
         .with_resizable(false)
         .with_decorations(false)
         .with_parent_window(unsafe { std::mem::transmute(parent) });

@@ -80,7 +80,7 @@ impl vst::editor::Editor for Editor {
 
     let display =
         glium::Display::new(window_builder, context_builder, &event_loop)
-        .expect("Failed to create display");
+          .expect("Failed to create display");
 
     let repaint_signal =
       std::sync::Arc::new(RepaintSignalImpl {

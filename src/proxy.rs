@@ -23,6 +23,7 @@ impl PluginParameters for Parameter {
     let mut preset = self.0.lock().expect("Failed to lock");
     *preset = bincode::deserialize(data).expect("Failed to load preset data");
   }
+  
   fn get_preset_data(&self) -> Vec<u8> {
     let preset = self.0.lock().expect("Failed to lock");
     bincode::serialize(&*preset).expect("Failed to serialize")

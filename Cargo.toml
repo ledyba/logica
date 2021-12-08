@@ -12,6 +12,8 @@ members = [ "crates/*" ]
 
 [dependencies]
 vst = "0.2"
+log = "0.4.14"
+simple-logging = "2.0.2"
 dlopen = "0.1.8"
 anyhow = "1.0.40"
 egui = "0.15.0"

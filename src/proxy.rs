@@ -20,16 +20,36 @@ pub struct ParameterData {
 }
 
 impl PluginParameters for Parameter {
+  // It just contains one preset.
   fn load_bank_data(&self, data: &[u8]) {
+    self.load(data);
+    info!("Bank data loaded");
+  }
+
+  fn load_preset_data(&self, data: &[u8]) {
+    self.load(data);
     info!("Preset data loaded");
-    let mut preset = self.0.lock().expect("Failed to lock");
-    *preset = bincode::deserialize(data).expect("Failed to load preset data");
   }
 
   fn get_bank_data(&self) -> Vec<u8> {
+    info!("Bank data saved");
+    self.save()
+  }
+
+  fn get_preset_data(&self) -> Vec<u8> {
     info!("Preset data saved");
-    let preset = self.0.lock().expect("Failed to lock");
-    bincode::serialize(&*preset).expect("Failed to serialize")
+    self.save()
+  }
+}
+
+impl Parameter {
+  fn load(&self, data: &[u8]) {
+    let mut params = self.0.lock().expect("Failed to lock");
+    *params = bincode::deserialize(data).expect("Failed to load preset data");
+  }
+  fn save(&self) -> Vec<u8> {
+    let params = self.0.lock().expect("Failed to lock");
+    bincode::serialize(&*params).expect("Failed to serialize")
   }
 }
 

@@ -20,15 +20,9 @@ pub struct ParameterData {
 }
 
 impl PluginParameters for Parameter {
-  // It just contains one preset.
-  fn load_bank_data(&self, data: &[u8]) {
-    self.load(data);
-    info!("Bank data loaded");
-  }
-
-  fn load_preset_data(&self, data: &[u8]) {
-    self.load(data);
-    info!("Preset data loaded");
+  fn get_preset_data(&self) -> Vec<u8> {
+    info!("Preset data saved");
+    self.save()
   }
 
   fn get_bank_data(&self) -> Vec<u8> {
@@ -36,9 +30,15 @@ impl PluginParameters for Parameter {
     self.save()
   }
 
-  fn get_preset_data(&self) -> Vec<u8> {
-    info!("Preset data saved");
-    self.save()
+  fn load_preset_data(&self, data: &[u8]) {
+    self.load(data);
+    info!("Preset data loaded");
+  }
+
+  // It just contains one preset.
+  fn load_bank_data(&self, data: &[u8]) {
+    self.load(data);
+    info!("Bank data loaded");
   }
 }
 

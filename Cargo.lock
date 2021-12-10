@@ -880,10 +880,6 @@ name = "logica_bridge"
 version = "0.1.0"
 
 [[package]]
-name = "logica_helper"
-version = "0.1.0"
-
-[[package]]
 name = "malloc_buf"
 version = "0.0.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"

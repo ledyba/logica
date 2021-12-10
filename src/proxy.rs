@@ -64,10 +64,6 @@ impl Default for Plugin {
 }
 
 impl vst::plugin::Plugin for Plugin {
-  fn init(&mut self) {
-    simple_logging::log_to_file("logica.log", log::LevelFilter::Info).expect("Failed to open log file.");
-    info!("Logica initialized.");
-  }
   fn get_info(&self) -> Info {
     Info {
       name: "Logica".to_string(),
@@ -80,13 +76,19 @@ impl vst::plugin::Plugin for Plugin {
       ..Default::default()
     }
   }
-
   fn new(host_callback: HostCallback) -> Self {
     Self {
       host_callback,
       plugin: None,
       parameter: Default::default(),
     }
+  }
+
+  fn init(&mut self) {
+    let profile_path = std::env::var("USERPROFILE").expect("No env");
+    let log_path = format!("{}/Documents/logica.log", profile_path);
+    simple_logging::log_to_file(log_path, log::LevelFilter::Info).expect("Failed to open log file.");
+    info!("Logica initialized.");
   }
 
   fn get_parameter_object(&mut self) -> Arc<dyn PluginParameters> {

@@ -19,6 +19,7 @@ pub struct ParameterData {
   pub(crate) path: String,
 }
 
+// It just contains one preset, chunked.
 impl PluginParameters for Parameter {
   fn get_preset_data(&self) -> Vec<u8> {
     info!("Preset data saved");
@@ -35,7 +36,6 @@ impl PluginParameters for Parameter {
     info!("Preset data loaded");
   }
 
-  // It just contains one preset.
   fn load_bank_data(&self, data: &[u8]) {
     self.load(data);
     info!("Bank data loaded");

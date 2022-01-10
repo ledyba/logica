@@ -58,68 +58,6 @@ impl vst::editor::Editor for Editor {
     (0,0)
   }
 
-  fn open(&mut self, parent: *mut std::ffi::c_void) -> bool {
-    //egui_glium::run(Box::new(App::default()), &epi::NativeOptions::default());
-    let window_builder =
-        winit::window::WindowBuilder::new()
-        .with_title("Logica")
-        .with_inner_size(LogicalSize::new(400, 300))
-        .with_resizable(false)
-        .with_decorations(false)
-        .with_parent_window(unsafe { std::mem::transmute(parent) });
-
-    let context_builder = glium::glutin::ContextBuilder::new()
-        .with_depth_buffer(0)
-        .with_srgb(true)
-        .with_stencil_buffer(0)
-        .with_vsync(true);
-
-    // FIXME: ここでDPI awareでないソフトだとDPI awareになって小さくなってしまう
-    // let event_loop: EventLoop<RequestRepaintEvent> = EventLoop::with_user_event();
-    let event_loop: EventLoop<RequestRepaintEvent> = EventLoop::new_dpi_unaware();
-
-    let display =
-        glium::Display::new(window_builder, context_builder, &event_loop)
-          .expect("Failed to create display");
-
-    let repaint_signal =
-      std::sync::Arc::new(RepaintSignalImpl {
-        event_loop_proxy: std::sync::Mutex::new(event_loop.create_proxy())
-      });
-    let mut egui = EguiGlium::new(&display);
-
-    let mut app = dialog::Dialog::new(Arc::clone(&self.parameter));
-
-    {
-      let (ctx, painter) = egui.ctx_and_painter_mut();
-      let mut app_output = epi::backend::AppOutput::default();
-      let mut frame = epi::backend::FrameBuilder {
-          info: integration_info(&display, None),
-          tex_allocator: painter,
-          output: &mut app_output,
-          repaint_signal: repaint_signal.clone(),
-      }
-      .build();
-      app.setup(ctx, &mut frame, None);
-    }
-
-    self.inner = Some(EditorImpl {
-      dialog: app,
-      event_loop,
-      display,
-      repaint_signal,
-      egui,
-      focused: true,
-      previous_frame_time: None,
-    });
-
-    true
-  }
-
-  fn is_open(&mut self) -> bool {
-    self.inner.is_some()
-  }
-
   fn idle(&mut self) {
     let inner = if let Some(inner) = self.inner.as_mut() {
       inner
@@ -217,6 +155,68 @@ impl vst::editor::Editor for Editor {
 
   fn close(&mut self) {
     self.inner = None;
+  }
+
+  fn open(&mut self, parent: *mut std::ffi::c_void) -> bool {
+    //egui_glium::run(Box::new(App::default()), &epi::NativeOptions::default());
+    let window_builder =
+        winit::window::WindowBuilder::new()
+        .with_title("Logica")
+        .with_inner_size(LogicalSize::new(400, 300))
+        .with_resizable(false)
+        .with_decorations(false)
+        .with_parent_window(unsafe { std::mem::transmute(parent) });
+
+    let context_builder = glium::glutin::ContextBuilder::new()
+        .with_depth_buffer(0)
+        .with_srgb(true)
+        .with_stencil_buffer(0)
+        .with_vsync(true);
+
+    // FIXME(ledyba): ここでDPI awareでないソフトだとDPI awareになって小さくなってしまう
+    // let event_loop: EventLoop<RequestRepaintEvent> = EventLoop::with_user_event();
+    let event_loop: EventLoop<RequestRepaintEvent> = EventLoop::new_dpi_unaware();
+
+    let display =
+        glium::Display::new(window_builder, context_builder, &event_loop)
+          .expect("Failed to create display");
+
+    let repaint_signal =
+      std::sync::Arc::new(RepaintSignalImpl {
+        event_loop_proxy: std::sync::Mutex::new(event_loop.create_proxy())
+      });
+    let mut egui = EguiGlium::new(&display);
+
+    let mut app = dialog::Dialog::new(Arc::clone(&self.parameter));
+
+    {
+      let (ctx, painter) = egui.ctx_and_painter_mut();
+      let mut app_output = epi::backend::AppOutput::default();
+      let mut frame = epi::backend::FrameBuilder {
+          info: integration_info(&display, None),
+          tex_allocator: painter,
+          output: &mut app_output,
+          repaint_signal: repaint_signal.clone(),
+      }
+      .build();
+      app.setup(ctx, &mut frame, None);
+    }
+
+    self.inner = Some(EditorImpl {
+      dialog: app,
+      event_loop,
+      display,
+      repaint_signal,
+      egui,
+      focused: true,
+      previous_frame_time: None,
+    });
+
+    true
+  }
+
+  fn is_open(&mut self) -> bool {
+    self.inner.is_some()
   }
 }
 

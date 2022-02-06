@@ -1,7 +1,7 @@
 use std::sync::{Arc, Mutex};
 use log::info;
-use serde::{Deserialize, Serialize};
 use vst::plugin::{Category, HostCallback, Info, PluginParameters};
+use serde::{Serialize, Deserialize};
 use crate::editor::Editor;
 
 pub struct Plugin {

@@ -73,8 +73,6 @@ impl vst::editor::Editor for Editor {
     let event_loop = &mut editor.event_loop;
     let mut quit = false;
     event_loop.run_return(|event, _window_target, control_flow| {
-      // Always exit
-      *control_flow = ControlFlow::Exit;
       let mut draw = || {
         let frame_start = std::time::Instant::now();
 
@@ -129,11 +127,13 @@ impl vst::editor::Editor for Editor {
       };
       use winit::event;
       // https://github.com/emilk/egui/blob/0.16.1/egui_glium/src/epi_backend.rs
+      *control_flow = ControlFlow::Poll;
       match event {
         event::Event::WindowEvent { window_id: _, event } => {
           match event {
             winit::event::WindowEvent::CloseRequested | winit::event::WindowEvent::Destroyed => {
               quit |= true;
+              *control_flow = ControlFlow::Exit;
             }
             winit::event::WindowEvent::Focused(new_focused) => {
               editor.focused = new_focused;
@@ -148,9 +148,11 @@ impl vst::editor::Editor for Editor {
           if editor.focused {
             draw();
           }
+          *control_flow = ControlFlow::Exit;
         }
         event::Event::LoopDestroyed => {
           quit |= true;
+          *control_flow = ControlFlow::Exit;
         }
         event::Event::UserEvent(RequestRepaintEvent) => {
           // Repaint Signalを送るとここに飛んでくる
@@ -160,7 +162,7 @@ impl vst::editor::Editor for Editor {
       }
     });
     if quit {
-      self.window_impl = None;
+      //self.window_impl = None;
     }
   }
 

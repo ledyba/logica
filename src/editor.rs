@@ -12,7 +12,7 @@ use winit::event::WindowEvent;
 
 use crate::proxy::Parameter;
 pub struct Editor {
-  inner: Option<EditorImpl>,
+  window_impl: Option<EditorImpl>,
   parameter: Arc<Parameter>,
 }
 
@@ -23,13 +23,12 @@ struct EditorImpl {
   frame: epi::Frame,
   event_loop: EventLoop<RequestRepaintEvent>,
   focused: bool,
-  quit: bool,
 }
 
 impl Editor {
   pub fn new(parameter: Arc<Parameter>) -> Self {
     Self {
-      inner: None,
+      window_impl: None,
       parameter,
     }
   }
@@ -62,19 +61,20 @@ impl vst::editor::Editor for Editor {
   }
 
   fn idle(&mut self) {
-    let inner = if let Some(inner) = self.inner.as_mut() {
-      inner
+    let editor = if let Some(editor) = self.window_impl.as_mut() {
+      editor
     } else {
       return;
     };
-    let app = &mut inner.app;
-    let egui = &mut inner.egui;
-    let display = &mut inner.display;
-    let frame = &mut inner.frame;
-    let event_loop = &mut inner.event_loop;
-    info!("Idle");
+    let app = &mut editor.app;
+    let egui = &mut editor.egui;
+    let display = &mut editor.display;
+    let frame = &mut editor.frame;
+    let event_loop = &mut editor.event_loop;
+    let mut quit = false;
     event_loop.run_return(|event, _window_target, control_flow| {
-      info!("Loop");
+      // Always exit
+      *control_flow = ControlFlow::Exit;
       let mut draw = || {
         let frame_start = std::time::Instant::now();
 
@@ -88,7 +88,7 @@ impl vst::editor::Editor for Editor {
         egui.egui_winit.handle_output(display.gl_window().window(), &egui.egui_ctx, egui_output);
 
         let app_output = frame.take_app_output();
-        inner.quit |= app_output.quit;
+        quit |= app_output.quit;
         let mut tex_allocation_data =
           egui_winit::epi::handle_app_output(
             display.gl_window().window(),
@@ -125,9 +125,6 @@ impl vst::editor::Editor for Editor {
 
         if needs_repaint {
           display.gl_window().window().request_redraw();
-          *control_flow =ControlFlow::Poll;
-        } else {
-          *control_flow =ControlFlow::Exit;
         }
       };
       use winit::event;
@@ -136,45 +133,42 @@ impl vst::editor::Editor for Editor {
         event::Event::WindowEvent { window_id: _, event } => {
           match event {
             winit::event::WindowEvent::CloseRequested | winit::event::WindowEvent::Destroyed => {
-              inner.quit = true;
-              *control_flow = ControlFlow::Exit;
+              quit |= true;
             }
             winit::event::WindowEvent::Focused(new_focused) => {
-              inner.focused = new_focused;
+              editor.focused = new_focused;
             }
-            _ => (),
+            _ => {}
           }
           egui.on_event(&event);
           display.gl_window().window().request_redraw();
-        },
-        event::Event::RedrawRequested(_) => {},
+        }
+        event::Event::RedrawRequested(_) => {}
         event::Event::RedrawEventsCleared => {
-          if inner.focused {
+          if editor.focused {
             draw();
           }
-        },
+        }
         event::Event::LoopDestroyed => {
-          inner.quit = true;
-          *control_flow = ControlFlow::Exit;
-        },
+          quit |= true;
+        }
         event::Event::UserEvent(RequestRepaintEvent) => {
           // Repaint Signalを送るとここに飛んでくる
           display.gl_window().window().request_redraw();
-        },
-        _ => (),
+        }
+        _ => {}
       }
     });
-    if inner.quit {
-      app.on_exit();
-      self.inner = None;
+    if quit {
+      self.window_impl = None;
     }
   }
 
   fn close(&mut self) {
-    info!("Closed");
-    if let Some(inner) = self.inner.as_mut() {
-      inner.quit = true;
+    if let Some(editor) = self.window_impl.as_mut() {
+      editor.app.on_exit();
     }
+    self.window_impl = None;
   }
 
   fn open(&mut self, parent: *mut std::ffi::c_void) -> bool {
@@ -219,7 +213,7 @@ impl vst::editor::Editor for Editor {
       repaint_signal: Arc::clone(&repaint_signal),
     });
 
-    let mut egui = EguiGlium::new(&display);
+    let egui = EguiGlium::new(&display);
 
     let mut app = dialog::Dialog::new(
       repaint_signal,
@@ -237,21 +231,20 @@ impl vst::editor::Editor for Editor {
       frame.lock().output.tex_allocation_data = tex_alloc_data;
     }
 
-    self.inner = Some(EditorImpl {
+    self.window_impl = Some(EditorImpl {
       app,
       egui,
       display,
       frame,
       event_loop,
       focused: true,
-      quit: false,
     });
 
     true
   }
 
   fn is_open(&mut self) -> bool {
-    self.inner.is_some()
+    self.window_impl.is_some()
   }
 }
 

@@ -47,6 +47,7 @@ impl Parameter {
     let mut params = self.0.lock().expect("Failed to lock");
     *params = bincode::deserialize(data).expect("Failed to load preset data");
   }
+
   fn save(&self) -> Vec<u8> {
     let params = self.0.lock().expect("Failed to lock");
     bincode::serialize(&*params).expect("Failed to serialize")
@@ -76,6 +77,7 @@ impl vst::plugin::Plugin for Plugin {
       ..Default::default()
     }
   }
+
   fn new(host_callback: HostCallback) -> Self {
     Self {
       host_callback,

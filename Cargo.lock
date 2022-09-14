@@ -64,9 +64,9 @@ dependencies = [
 
 [[package]]
 name = "anyhow"
-version = "1.0.63"
+version = "1.0.65"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a26fa4d7e3f2eebadf743988fc8aec9fa9a9e82611acafd77c1462ed6262440a"
+checksum = "98161a4e3e2184da77bb14f02184cdd111e83bbbcc9979dfee3c44b9a85f5602"
 
 [[package]]
 name = "arboard"
@@ -512,11 +512,11 @@ dependencies = [
 
 [[package]]
 name = "egui_dock"
-version = "0.1.0"
+version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e22ef7308b2072755793ce85bdc50ee8188dae2f7343b1ea461c4c4bb2b6e497"
+checksum = "99738776bf594f50e59322bbbd7879f956445e0a7ddfe3e1ccbf35876d83f121"
 dependencies = [
- "egui 0.18.1",
+ "egui 0.19.0",
 ]
 
 [[package]]

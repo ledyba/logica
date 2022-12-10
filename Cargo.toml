@@ -12,6 +12,6 @@ log = "0.4.17"
 fern = "0.6.1"
 anyhow = "1.0.66"
 chrono = "0.4.22"
-eframe = "0.19.0"
+eframe = "0.20.0"
 egui_node_graph = { git="https://github.com/setzer22/egui_node_graph.git" }
 egui_dock = "0.2.1"

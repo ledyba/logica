@@ -28,6 +28,6 @@ impl egui_dock::TabViewer for SynthTab {
   }
 
   fn title(&mut self, tab: &mut Self::Tab) -> egui::WidgetText {
-    "Synth".into()
+    egui::WidgetText::from("Synth")
   }
 }

@@ -1,14 +1,5 @@
 use eframe::egui;
-
-pub struct Synth {
-}
-
-impl Synth {
-  pub fn new() -> Self {
-    Self {
-    }
-  }
-}
+use crate::synth::Synth;
 
 pub struct SynthTab {
 }

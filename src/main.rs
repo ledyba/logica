@@ -1,7 +1,8 @@
 use eframe::egui::Visuals;
 use crate::editor::Editor;
 
-pub mod editor;
+mod editor;
+mod synth;
 
 fn setup_logger() -> Result<(), fern::InitError> {
   fern::Dispatch::new()

@@ -4,7 +4,6 @@ use std::{path::PathBuf, sync::Arc};
 use eframe::egui;
 use eframe::egui::Widget;
 use egui_node_graph::*;
-use log::info;
 
 pub struct Editor {
   synth_tree: egui_dock::Tree<synth::Synth>

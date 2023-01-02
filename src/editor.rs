@@ -34,6 +34,7 @@ impl eframe::App for Editor {
           ui.menu_button("Logic", |ui| {
             if ui.button("New Logic").clicked() {
               self.tree.push_to_focused_leaf(Tab::new_synth_tab());
+              ui.close_menu();
             }
           });
         });

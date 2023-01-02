@@ -1,18 +1,23 @@
 mod synth;
 
-use std::{path::PathBuf, sync::Arc};
 use eframe::egui;
 use eframe::egui::Widget;
-use egui_node_graph::*;
+use egui_dock::{
+  Tree,
+  NodeIndex
+};
+
+use crate::synth::Synth;
 
 pub struct Editor {
-  synth_tree: egui_dock::Tree<synth::Synth>
+  synth_tree: Tree<Synth>
 }
 
 impl Editor {
   pub fn new() -> Self {
+    let synth_tree = Tree::new(Vec::new());
     Self {
-      synth_tree: egui_dock::Tree::new(Vec::new()),
+      synth_tree,
     }
   }
 }
@@ -30,11 +35,12 @@ impl eframe::App for Editor {
           });
           ui.menu_button("Logic", |ui| {
             if ui.button("New Logic").clicked() {
-              self.synth_tree.push_to_focused_leaf(synth::Synth::new());
+              self.synth_tree.push_to_focused_leaf(Synth::new());
             }
           });
         });
       });
+
       egui::CentralPanel::default().show(ctx, |_ui| {
         let layer_id = egui::LayerId::background();
         let max_rect = ctx.available_rect();

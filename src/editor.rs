@@ -40,6 +40,18 @@ impl eframe::App for Editor {
         });
       });
 
+      use eframe::egui::{Align, Direction, Layout};
+      use eframe::egui::panel::TopBottomSide;
+      egui::TopBottomPanel::new(TopBottomSide::Top, "TopBar")
+        .show(ctx, |ui| {
+          ui.horizontal_centered(|ui| {
+            if ui.button("▶ Play").clicked() {
+            }
+            if ui.button("■ Stop").clicked() {
+            }
+          });
+        });
+
       egui::CentralPanel::default().show(ctx, |_ui| {
         let layer_id = egui::LayerId::background();
         let max_rect = ctx.available_rect();

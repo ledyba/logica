@@ -1,6 +1,7 @@
 mod tab;
 
 use eframe::egui;
+use eframe::egui::Vec2;
 use egui_dock::{
   Tree
 };

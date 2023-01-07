@@ -14,8 +14,7 @@ impl Tab {
   }
 }
 
-pub struct TabViewer{
-
+pub struct TabViewer {
 }
 
 impl TabViewer {

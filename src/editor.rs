@@ -8,7 +8,7 @@ use egui_dock::{
 use tab::Tab;
 
 pub struct Editor {
-  tree: Tree<Tab>
+  tree: Tree<Tab>,
 }
 
 impl Editor {

@@ -1,6 +1,7 @@
 mod tab;
 mod tab_viewer;
 
+use cpal::traits::{DeviceTrait, HostTrait};
 use eframe::egui;
 use eframe::egui::Vec2;
 use egui_dock::{

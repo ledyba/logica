@@ -2,6 +2,7 @@ use eframe::egui::Visuals;
 use crate::editor::Editor;
 
 mod editor;
+mod player;
 mod synth;
 
 fn setup_logger() -> Result<(), fern::InitError> {

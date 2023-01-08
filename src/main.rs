@@ -33,7 +33,7 @@ fn main() -> anyhow::Result<()> {
     options,
     Box::new(|cc| {
       cc.egui_ctx.set_visuals(Visuals::dark());
-      Box::new(Editor::new())
+      Box::new(Editor::new()),
     }),
   );
   Ok(())

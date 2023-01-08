@@ -1,13 +1,17 @@
 mod converter;
+mod track;
 
 use cpal::{SampleFormat, Stream};
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 use std::sync::{Arc, Mutex};
 use log::error;
 
+use track::Track;
+
 pub struct Player {
   config: cpal::StreamConfig,
   total_samples: usize,
+  tracks: Vec<(usize, Box<dyn Track + Send + Sync + 'static>)>,
 }
 
 pub fn setup() -> anyhow::Result<(Stream, Arc<Mutex<Player>>)> {
@@ -34,7 +38,7 @@ pub fn setup() -> anyhow::Result<(Stream, Arc<Mutex<Player>>)> {
       device.build_output_stream(
         &config.config(),
         move |buf, info| {
-          let player = player_data.lock().expect("Poisoned");
+          let mut player = player_data.lock().expect("Poisoned");
           player.on_play(buf, info);
         },
         move |err| error_callback(&player_err, err)
@@ -67,12 +71,27 @@ impl Player {
     Self {
       config,
       total_samples: 0,
+      tracks: Vec::new(),
     }
   }
+
   fn on_play(&mut self, buf: &mut [f32], _info: &cpal::OutputCallbackInfo) {
+    for (from, track) in &mut self.tracks {
+      if *from < self.total_samples {
+        continue;
+      }
+      let ts = (*from - self.total_samples) as f64 / self.config.sample_rate.0 as f64;
+      track.play(ts, buf);
+    }
+    self.tracks.retain(|(_, it)| !it.is_done());
     self.total_samples += buf.len();
   }
+
   fn on_error(self: &Self, err: cpal::StreamError) {
     error!("{}", err);
+  }
+
+  pub fn register(&mut self, offset: f64, track: Box<dyn Track + Send + Sync + 'static>) {
+    self.tracks.push((self.total_samples + (offset * self.config.sample_rate.0 as f64) as usize, track));
   }
 }

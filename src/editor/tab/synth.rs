@@ -15,7 +15,6 @@ impl SynthTab {
   }
 
   pub fn ui(&mut self, ui: &mut egui::Ui) {
-    use eframe::egui::panel::TopBottomSide;
     ui.horizontal(|ui| {
       if ui.button("▶ Play").clicked() {
       }
@@ -42,7 +41,6 @@ impl SynthTab {
 
 impl Default for SynthTab {
   fn default() -> Self {
-    use crate::synth::Synth;
     Self::new(Synth::default())
   }
 }

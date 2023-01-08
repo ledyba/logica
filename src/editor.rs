@@ -1,9 +1,7 @@
 mod tab;
 mod tab_viewer;
 
-use cpal::traits::{DeviceTrait, HostTrait};
 use eframe::egui;
-use eframe::egui::Vec2;
 use egui_dock::{
   Tree
 };
@@ -27,7 +25,7 @@ impl Editor {
 impl eframe::App for Editor {
   fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
     egui::panel::CentralPanel::default().show(ctx, |ui| {
-      egui::TopBottomPanel::top("Logica::MenuBar").show(ctx, |ui| {
+      egui::TopBottomPanel::top("Logica::MenuBar").show(ui.ctx(), |ui| {
         egui::menu::bar(ui, |ui| {
           egui::widgets::global_dark_light_mode_switch(ui);
           ui.menu_button("File", |ui| {
@@ -44,7 +42,7 @@ impl eframe::App for Editor {
         });
       });
 
-      egui::CentralPanel::default().show(ctx, |_ui| {
+      egui::CentralPanel::default().show(ui.ctx(), |_ui| {
         let layer_id = egui::LayerId::background();
         let max_rect = ctx.available_rect();
         let clip_rect = ctx.available_rect();

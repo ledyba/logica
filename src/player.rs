@@ -48,7 +48,7 @@ fn data_callback<T>(player: &Arc<Mutex<Player>>, buf: &mut [T], info: &cpal::Out
     T: cpal::Sample + Sync + Send + 'static,
     converter::ConverterImpl<T> : converter::Converter<T>,
 {
-  let player = player.lock().expect("Poisoned");
+  let mut player = player.lock().expect("Poisoned");
   let mut buf_f32 = vec![0.0_f32; buf.len()];
   player.on_play(&mut buf_f32, info);
   <converter::ConverterImpl<T> as converter::Converter<T>>::convert(&buf_f32, buf);

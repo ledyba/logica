@@ -6,7 +6,8 @@ use std::sync::{Arc, Mutex};
 use log::error;
 
 pub struct Player {
-  config: cpal::StreamConfig
+  config: cpal::StreamConfig,
+  total_samples: usize,
 }
 
 pub fn setup() -> anyhow::Result<(Stream, Arc<Mutex<Player>>)> {
@@ -65,9 +66,11 @@ impl Player {
   ) -> Self {
     Self {
       config,
+      total_samples: 0,
     }
   }
-  fn on_play(self: &Self, buf: &mut [f32], info: &cpal::OutputCallbackInfo) {
+  fn on_play(&mut self, buf: &mut [f32], _info: &cpal::OutputCallbackInfo) {
+    self.total_samples += buf.len();
   }
   fn on_error(self: &Self, err: cpal::StreamError) {
     error!("{}", err);

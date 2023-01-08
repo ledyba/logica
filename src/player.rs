@@ -1,48 +1,75 @@
-use std::marker::PhantomData;
-use cpal::SampleFormat;
-use cpal::traits::{DeviceTrait, HostTrait};
+mod converter;
 
-struct PlayerImpl<T> {
-  _phantom: PhantomData<T>,
-  host: cpal::Host,
-  device: cpal::Device,
-  config: cpal::SupportedStreamConfig,
+use cpal::{SampleFormat, Stream};
+use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
+use std::sync::{Arc, Mutex};
+use log::error;
+
+pub struct Player {
+  config: cpal::StreamConfig
 }
 
-pub trait Player {
-  fn run(&mut self) -> anyhow::Result<()>;
-}
-
-pub fn initialize() -> anyhow::Result<Box<dyn Player>> {
+pub fn setup() -> anyhow::Result<(Stream, Arc<Mutex<Player>>)> {
   let host = cpal::default_host();
-  let device = host.default_output_device()?;
+  let device = host.default_output_device().ok_or(anyhow::Error::msg("Failed to get default output device"))?;
   let config = device.default_output_config()?;
-  let player: Box<dyn Player> = match config.sample_format() {
-    SampleFormat::I16 => Box::new(PlayerImpl::<i16>::new(host, device, config)),
-    SampleFormat::U16 => Box::new(PlayerImpl::<u16>::new(host, device, config)),
-    SampleFormat::F32 => Box::new(PlayerImpl::<f32>::new(host, device, config)),
+  let player = Arc::new(Mutex::new(Player::new(config.config())));
+  let player_data = player.clone();
+  let player_err = player.clone();
+  let stream = match config.sample_format() {
+    SampleFormat::I16 =>
+      device.build_output_stream(
+        &config.config(),
+        move |buf, info| data_callback::<i16>(&player_data, buf, info),
+        move |err| error_callback(&player_err, err)
+      )?,
+    SampleFormat::U16 =>
+      device.build_output_stream(
+        &config.config(),
+        move |buf, info| data_callback::<u16>(&player_data, buf, info),
+        move |err| error_callback(&player_err, err)
+      )?,
+    SampleFormat::F32 =>
+      device.build_output_stream(
+        &config.config(),
+        move |buf, info| {
+          let player = player_data.lock().expect("Poisoned");
+          player.on_play(buf, info);
+        },
+        move |err| error_callback(&player_err, err)
+      )?,
   };
-  Ok(player)
+  Ok((stream, player))
 }
 
-impl <T> PlayerImpl<T> {
+fn data_callback<T>(player: &Arc<Mutex<Player>>, buf: &mut [T], info: &cpal::OutputCallbackInfo)
+  where
+    T: cpal::Sample + Sync + Send + 'static,
+    converter::ConverterImpl<T> : converter::Converter<T>,
+{
+  let player = player.lock().expect("Poisoned");
+  let mut buf_f32 = vec![0.0_f32; buf.len()];
+  player.on_play(&mut buf_f32, info);
+  <converter::ConverterImpl<T> as converter::Converter<T>>::convert(&buf_f32, buf);
+}
+
+fn error_callback(player: &Arc<Mutex<Player>>, err: cpal::StreamError)
+{
+  let player = player.lock().expect("Poisoned");
+  player.on_error(err);
+}
+
+impl Player {
   fn new(
-    host: cpal::Host,
-    device: cpal::Device,
-    config: cpal::SupportedStreamConfig,
+    config: cpal::StreamConfig,
   ) -> Self {
     Self {
-      _phantom: PhantomData::default(),
-      host,
-      device,
       config,
     }
   }
-}
-
-impl <T> Player for PlayerImpl<T> {
-  fn run(&mut self) -> anyhow::Result<()> {
-    Ok(())
+  fn on_play(self: &Self, buf: &mut [f32], info: &cpal::OutputCallbackInfo) {
+  }
+  fn on_error(self: &Self, err: cpal::StreamError) {
+    error!("{}", err);
   }
 }
-

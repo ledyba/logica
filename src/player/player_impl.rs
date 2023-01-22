@@ -1,7 +1,7 @@
 use cpal::{SampleFormat, Stream};
 use cpal::traits::{DeviceTrait, HostTrait};
 use std::sync::{Arc, Mutex};
-use log::error;
+use log::{debug, error};
 
 use super::track::Track;
 use super::converter::{
@@ -17,6 +17,7 @@ pub struct PlayerImpl {
 
 pub fn setup() -> anyhow::Result<(Stream, Arc<Mutex<PlayerImpl>>)> {
   let host = cpal::default_host();
+  debug!("Host name = {}", host.id().name());
   let device = host.default_output_device().ok_or(anyhow::Error::msg("Failed to get default output device"))?;
   let config = device.default_output_config()?;
   let player = Arc::new(Mutex::new(PlayerImpl::new(config.config())));
@@ -76,13 +77,12 @@ impl PlayerImpl {
   }
 
   fn on_play(&mut self, buff: &mut [f32], _info: &cpal::OutputCallbackInfo) {
-    let sample_rate = self.config.sample_rate.0 as f64;
     for (from, track) in &mut self.tracks {
       if *from < self.total_samples {
         continue;
       }
       let start_idx = self.total_samples - *from;
-      track.play(sample_rate, buff, start_idx);
+      track.play(&self.config, buff, start_idx);
     }
     self.tracks.retain(|(_, it)| !it.is_done());
     self.total_samples += buff.len();

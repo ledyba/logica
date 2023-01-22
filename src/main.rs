@@ -1,3 +1,4 @@
+use std::rc::Rc;
 use eframe::egui::Visuals;
 use crate::editor::Editor;
 
@@ -28,12 +29,13 @@ fn main() -> anyhow::Result<()> {
   let options = eframe::NativeOptions {
     ..Default::default()
   };
+  let player = player::setup()?;
   eframe::run_native(
     "Logica",
     options,
     Box::new(|cc| {
       cc.egui_ctx.set_visuals(Visuals::dark());
-      Box::new(Editor::new())
+      Box::new(Editor::new(Rc::new(player)))
     }),
   );
   Ok(())

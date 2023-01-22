@@ -1,5 +1,5 @@
 use cpal::{SampleFormat, Stream};
-use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
+use cpal::traits::{DeviceTrait, HostTrait};
 use std::sync::{Arc, Mutex};
 use log::error;
 
@@ -77,12 +77,13 @@ impl PlayerImpl {
   }
 
   fn on_play(&mut self, buf: &mut [f32], _info: &cpal::OutputCallbackInfo) {
+    let sample_rate = self.config.sample_rate.0 as f64;
     for (from, track) in &mut self.tracks {
       if *from < self.total_samples {
         continue;
       }
       let ts = (*from - self.total_samples) as f64 / self.config.sample_rate.0 as f64;
-      track.play(ts, buf);
+      track.play(ts, buf, sample_rate);
     }
     self.tracks.retain(|(_, it)| !it.is_done());
     self.total_samples += buf.len();

@@ -1,14 +1,13 @@
 mod synth;
 
-use eframe::egui;
-use synth::SynthTab;
+pub use synth::SynthTab;
 
 pub enum Tab {
   Synth(SynthTab)
 }
 
 impl Tab {
-  pub fn new_synth_tab() -> Self {
-    Self::Synth(SynthTab::default())
+  pub fn new_synth_tab(player: std::rc::Rc<crate::player::Player>) -> Self {
+    Self::Synth(SynthTab::new(player))
   }
 }

@@ -6,6 +6,7 @@ mod track;
 mod player_impl;
 
 pub use track::Track;
+pub use track::SynthTrack;
 
 pub struct Player {
   stream: cpal::Stream,

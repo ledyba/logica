@@ -1,24 +1,33 @@
+use std::rc::Rc;
 use eframe::egui;
+use crate::player::Player;
 use crate::synth::Synth;
 
 pub struct SynthTab {
-  freq: String,
+  player: Rc<Player>,
   synth: Synth,
+  freq: String,
 }
 
 impl SynthTab {
-  pub fn new(synth: Synth) -> Self {
+  pub fn new(player: Rc<Player>) -> Self {
+    let synth = Synth::default();
+    let freq = synth.freq.to_string();
     Self {
-      freq: synth.freq.to_string(),
+      player,
       synth,
+      freq,
     }
   }
 
   pub fn ui(&mut self, ui: &mut egui::Ui) {
     ui.horizontal(|ui| {
       if ui.button("▶ Play").clicked() {
+        self.player.start().expect("[BUG] Failed to play");
+        self.player.register(0.0, Box::new(crate::player::SynthTrack::new(&self.synth)))
       }
       if ui.button("■ Stop").clicked() {
+        self.player.pause().expect("[BUG] Failed to pause");
       }
     });
     ui.separator();
@@ -36,11 +45,5 @@ impl SynthTab {
 
   pub fn title(&mut self) -> egui::WidgetText {
     egui::WidgetText::from("Synth")
-  }
-}
-
-impl Default for SynthTab {
-  fn default() -> Self {
-    Self::new(Synth::default())
   }
 }

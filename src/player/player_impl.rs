@@ -78,7 +78,7 @@ impl PlayerImpl {
 
   fn on_play(&mut self, buff: &mut [f32], _info: &cpal::OutputCallbackInfo) {
     for (from, track) in &mut self.tracks {
-      if *from < self.total_samples {
+      if self.total_samples < *from {
         continue;
       }
       let start_idx = self.total_samples - *from;

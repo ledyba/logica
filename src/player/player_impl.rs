@@ -26,21 +26,21 @@ pub fn setup() -> anyhow::Result<(Stream, Arc<Mutex<PlayerImpl>>)> {
     SampleFormat::I16 =>
       device.build_output_stream(
         &config.config(),
-        move |buf, info| data_callback::<i16>(&player_data, buf, info),
+        move |buff, info| data_callback::<i16>(&player_data, buff, info),
         move |err| error_callback(&player_err, err)
       )?,
     SampleFormat::U16 =>
       device.build_output_stream(
         &config.config(),
-        move |buf, info| data_callback::<u16>(&player_data, buf, info),
+        move |buff, info| data_callback::<u16>(&player_data, buff, info),
         move |err| error_callback(&player_err, err)
       )?,
     SampleFormat::F32 =>
       device.build_output_stream(
         &config.config(),
-        move |buf, info| {
+        move |buff, info| {
           let mut player = player_data.lock().expect("Poisoned");
-          player.on_play(buf, info);
+          player.on_play(buff, info);
         },
         move |err| error_callback(&player_err, err)
       )?,
@@ -59,8 +59,7 @@ fn data_callback<T>(player: &Arc<Mutex<PlayerImpl>>, buf: &mut [T], info: &cpal:
   <ConverterImpl<T> as Converter<T>>::convert(&buf_f32, buf);
 }
 
-fn error_callback(player: &Arc<Mutex<PlayerImpl>>, err: cpal::StreamError)
-{
+fn error_callback(player: &Arc<Mutex<PlayerImpl>>, err: cpal::StreamError) {
   let player = player.lock().expect("Poisoned");
   player.on_error(err);
 }
@@ -76,17 +75,17 @@ impl PlayerImpl {
     }
   }
 
-  fn on_play(&mut self, buf: &mut [f32], _info: &cpal::OutputCallbackInfo) {
+  fn on_play(&mut self, buff: &mut [f32], _info: &cpal::OutputCallbackInfo) {
     let sample_rate = self.config.sample_rate.0 as f64;
     for (from, track) in &mut self.tracks {
       if *from < self.total_samples {
         continue;
       }
-      let ts = (*from - self.total_samples) as f64 / self.config.sample_rate.0 as f64;
-      track.play(ts, buf, sample_rate);
+      let start_idx = self.total_samples - *from;
+      track.play(sample_rate, buff, start_idx);
     }
     self.tracks.retain(|(_, it)| !it.is_done());
-    self.total_samples += buf.len();
+    self.total_samples += buff.len();
   }
 
   fn on_error(self: &Self, err: cpal::StreamError) {

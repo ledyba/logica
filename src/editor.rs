@@ -2,9 +2,6 @@ mod synth;
 
 use std::rc::Rc;
 use eframe::egui;
-use egui_dock::{
-  Tree
-};
 
 use crate::editor::synth::SynthEditor;
 use crate::player::Player;
@@ -35,6 +32,7 @@ impl eframe::App for Editor {
           }
         });
       });
+      ui.separator();
       egui::menu::bar(ui, |ui| {
         if ui.button("▶ Play").clicked() {
           self.player.start().expect("[BUG] Failed to play");

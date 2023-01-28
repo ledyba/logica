@@ -1,3 +1,5 @@
+mod nodes;
+
 use std::rc::Rc;
 use eframe::egui;
 use crate::player::Player;
@@ -6,17 +8,18 @@ use crate::synth::Synth;
 pub struct SynthTab {
   player: Rc<Player>,
   synth: Synth,
-  freq: String,
+  graph_state: nodes::GraphState,
+  editor_state: nodes::EditorState,
 }
 
 impl SynthTab {
   pub fn new(player: Rc<Player>) -> Self {
     let synth = Synth::default();
-    let freq = synth.freq.to_string();
     Self {
       player,
       synth,
-      freq,
+      graph_state: nodes::GraphState::default(),
+      editor_state: nodes::EditorState::default(),
     }
   }
 
@@ -31,16 +34,8 @@ impl SynthTab {
       }
     });
     ui.separator();
-    ui.horizontal(|ui| {
-      ui.label("Freq");
-      if ui.text_edit_singleline(&mut self.freq).changed() {
-        if let Ok(freq) = self.freq.parse::<f64>() {
-          self.synth.freq = freq;
-        } else {
-          self.freq = self.synth.freq.to_string();
-        }
-      }
-    });
+    let graph_response = self.editor_state
+      .draw_graph_editor(ui, nodes::AllNodeTemplates, &mut self.graph_state);
   }
 
   pub fn title(&mut self) -> egui::WidgetText {

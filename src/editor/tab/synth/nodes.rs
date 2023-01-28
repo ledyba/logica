@@ -1,5 +1,3 @@
-// FIXME: wait library support
-/*
 use std::borrow::Cow;
 use eframe::egui::{self, DragValue};
 use egui_node_graph::{
@@ -221,4 +219,3 @@ impl NodeDataTrait for NodeData {
 
 pub type Graph = egui_node_graph::Graph<NodeData, DataType, ValueType>;
 pub type EditorState = GraphEditorState<NodeData, DataType, ValueType, NodeTemplate, GraphState>;
-*/

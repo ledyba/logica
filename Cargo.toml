@@ -13,6 +13,6 @@ log = "0.4.17"
 fern = "0.6.1"
 chrono = "0.4.23"
 eframe = "0.20.1"
-egui_node_graph = "0.4.0"
+egui_node_graph = { git = "https://github.com/setzer22/egui_node_graph.git", rev = "a63b32314854aafc4b3bbde05baa060553e73e6f" }
 egui_dock = "0.3.1"
 cpal = "0.14.2"

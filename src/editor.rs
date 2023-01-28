@@ -1,5 +1,4 @@
-mod tab;
-mod tab_viewer;
+mod synth;
 
 use std::rc::Rc;
 use eframe::egui;
@@ -7,21 +6,19 @@ use egui_dock::{
   Tree
 };
 
-use tab::Tab;
-use tab_viewer::TabViewer;
+use crate::editor::synth::SynthEditor;
 use crate::player::Player;
 
 pub struct Editor {
   player: Rc<Player>,
-  tree: Tree<Tab>,
+  synth_editor: SynthEditor,
 }
 
 impl Editor {
   pub fn new(player: Rc<Player>) -> Self {
-    let tree = Tree::new(Vec::new());
     Self {
-      player,
-      tree,
+      player: player.clone(),
+      synth_editor: SynthEditor::new(player.clone()),
     }
   }
 }
@@ -37,22 +34,19 @@ impl eframe::App for Editor {
             frame.close();
           }
         });
-        ui.menu_button("Logic", |ui| {
-          if ui.button("New Synth Logic").clicked() {
-            self.tree.push_to_focused_leaf(Tab::new_synth_tab(self.player.clone()));
-            ui.close_menu();
-          }
-        });
+      });
+      egui::menu::bar(ui, |ui| {
+        if ui.button("▶ Play").clicked() {
+          self.player.start().expect("[BUG] Failed to play");
+          self.synth_editor.play();
+        }
+        if ui.button("■ Stop").clicked() {
+          self.player.pause().expect("[BUG] Failed to pause");
+        }
       });
     });
     egui::panel::CentralPanel::default().show(ctx, |ui| {
-      let layer_id = egui::LayerId::background();
-      let max_rect = ctx.available_rect();
-      let clip_rect = ctx.available_rect();
-      let id = egui::Id::new("egui_dock::DockArea");
-      let mut ui = egui::Ui::new(ctx.clone(), layer_id, id, max_rect, clip_rect);
-      egui_dock::DockArea::new(&mut self.tree)
-        .show_inside(&mut ui, &mut TabViewer::new());
+      self.synth_editor.show(ui);
     });
   }
 }

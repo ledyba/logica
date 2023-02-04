@@ -24,7 +24,8 @@ impl SynthEditor {
   }
 
   pub fn show(&mut self, ui: &mut egui::Ui) {
-    let graph_response = self.editor_state.draw_graph_editor(ui, nodes::AllNodeTemplates, &mut self.graph_state);
+    let resp = self.editor_state.draw_graph_editor(ui, nodes::AllNodeTemplates, &mut self.graph_state);
+
   }
 
   pub fn play(&mut self) {

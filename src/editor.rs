@@ -2,20 +2,21 @@ mod synth;
 
 use std::rc::Rc;
 use eframe::egui;
+use eframe::egui::{Ui, WidgetText};
 
 use crate::editor::synth::SynthEditor;
 use crate::player::Player;
 
 pub struct Editor {
   player: Rc<Player>,
-  synth_editor: SynthEditor,
+  tree: egui_dock::Tree<Tab>,
 }
 
 impl Editor {
   pub fn new(player: Rc<Player>) -> Self {
     Self {
       player: player.clone(),
-      synth_editor: SynthEditor::new(player.clone()),
+      tree: egui_dock::Tree::new(Vec::new()),
     }
   }
 }
@@ -31,12 +32,17 @@ impl eframe::App for Editor {
             frame.close();
           }
         });
+        ui.menu_button("Logic", |ui| {
+          if ui.button("New Synth Logic").clicked() {
+            self.tree.push_to_focused_leaf(Tab::new_synth_tab(self.player.clone()));
+            ui.close_menu();
+          }
+        });
       });
       ui.separator();
       egui::menu::bar(ui, |ui| {
         if ui.button("▶ Play").clicked() {
           self.player.start().expect("[BUG] Failed to play");
-          self.synth_editor.play();
         }
         if ui.button("■ Stop").clicked() {
           self.player.pause().expect("[BUG] Failed to pause");
@@ -44,7 +50,49 @@ impl eframe::App for Editor {
       });
     });
     egui::panel::CentralPanel::default().show(ctx, |ui| {
-      self.synth_editor.show(ui);
+      let ctx = ui.ctx();
+      let layer_id = egui::LayerId::background();
+      let max_rect = ctx.available_rect();
+      let clip_rect = ctx.available_rect();
+      let id = egui::Id::new("egui_dock::DockArea");
+      let mut ui = egui::Ui::new(ctx.clone(), layer_id, id, max_rect, clip_rect);
+      egui_dock::DockArea::new(&mut self.tree)
+        .show_inside(&mut ui, &mut TabViewer::new());
     });
+  }
+}
+
+pub struct TabViewer {}
+
+impl TabViewer {
+  pub fn new() -> Self {
+    Self {
+    }
+  }
+}
+
+pub enum Tab {
+  Synth(SynthEditor)
+}
+
+impl Tab {
+  pub fn new_synth_tab(player: Rc<Player>) -> Self {
+    Self::Synth(SynthEditor::new(player))
+  }
+}
+
+impl egui_dock::TabViewer for TabViewer {
+  type Tab = Tab;
+
+  fn ui(&mut self, ui: &mut Ui, tab: &mut Self::Tab) {
+    match tab {
+      Tab::Synth(tab) => tab.ui(ui),
+    }
+  }
+
+  fn title(&mut self, tab: &mut Self::Tab) -> WidgetText {
+    match tab {
+      Tab::Synth(tab) => tab.title(),
+    }
   }
 }

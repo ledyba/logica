@@ -9,9 +9,10 @@ license = "AGPL-3.0-or-later"
 
 [dependencies]
 anyhow = "1.0.68"
+cpal = "0.15.0"
 log = "0.4.17"
 fern = "0.6.1"
 chrono = "0.4.23"
 eframe = "0.20.1"
 egui_node_graph = { git = "https://github.com/setzer22/egui_node_graph.git", rev = "a63b32314854aafc4b3bbde05baa060553e73e6f" }
-cpal = "0.15.0"
+egui_dock = "0.3.1"

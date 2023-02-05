@@ -2,6 +2,7 @@ mod nodes;
 
 use std::rc::Rc;
 use eframe::egui;
+use eframe::egui::{Ui, WidgetText};
 use crate::player::Player;
 use crate::synth::Synth;
 
@@ -23,9 +24,19 @@ impl SynthEditor {
     }
   }
 
-  pub fn show(&mut self, ui: &mut egui::Ui) {
-    let resp = self.editor_state.draw_graph_editor(ui, nodes::AllNodeTemplates, &mut self.graph_state);
+  pub fn ui(&mut self, ui: &mut Ui) {
+    egui::CentralPanel::default().show_inside(ui, |ui| {
+      let resp =
+        self.editor_state.draw_graph_editor(
+          ui,
+          nodes::AllNodeTemplates,
+          &mut self.graph_state,
+        );
+    });
+  }
 
+  pub fn title(&mut self) -> WidgetText {
+    WidgetText::from("Synth")
   }
 
   pub fn play(&mut self) {

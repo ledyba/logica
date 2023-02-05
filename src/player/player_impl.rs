@@ -28,13 +28,15 @@ pub fn setup() -> anyhow::Result<(Stream, Arc<Mutex<PlayerImpl>>)> {
       device.build_output_stream(
         &config.config(),
         move |buff, info| data_callback::<i16>(&player_data, buff, info),
-        move |err| error_callback(&player_err, err)
+        move |err| error_callback(&player_err, err),
+        None,
       )?,
     SampleFormat::U16 =>
       device.build_output_stream(
         &config.config(),
         move |buff, info| data_callback::<u16>(&player_data, buff, info),
-        move |err| error_callback(&player_err, err)
+        move |err| error_callback(&player_err, err),
+        None,
       )?,
     SampleFormat::F32 =>
       device.build_output_stream(
@@ -43,8 +45,10 @@ pub fn setup() -> anyhow::Result<(Stream, Arc<Mutex<PlayerImpl>>)> {
           let mut player = player_data.lock().expect("Poisoned");
           player.on_play(buff, info);
         },
-        move |err| error_callback(&player_err, err)
+        move |err| error_callback(&player_err, err),
+        None,
       )?,
+    _ => todo!(),
   };
   Ok((stream, player))
 }

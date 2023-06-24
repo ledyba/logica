@@ -2,12 +2,11 @@ mod synth;
 
 use std::rc::Rc;
 use eframe::egui;
-use eframe::egui::{Ui, WidgetText};
-
 use crate::editor::synth::SynthEditor;
 use crate::player::Player;
 
 pub struct Editor {
+  unused_id: u64,
   player: Rc<Player>,
   tree: egui_dock::Tree<Tab>,
 }
@@ -15,6 +14,7 @@ pub struct Editor {
 impl Editor {
   pub fn new(player: Rc<Player>) -> Self {
     Self {
+      unused_id: 0,
       player: player.clone(),
       tree: egui_dock::Tree::new(Vec::new()),
     }
@@ -34,7 +34,8 @@ impl eframe::App for Editor {
         });
         ui.menu_button("Logic", |ui| {
           if ui.button("New Synth Logic").clicked() {
-            self.tree.push_to_focused_leaf(Tab::new_synth_tab(self.player.clone()));
+            self.tree.push_to_focused_leaf(Tab::new_synth_tab(self.unused_id, self.player.clone()));
+            self.unused_id += 1;
             ui.close_menu();
           }
         });
@@ -51,10 +52,10 @@ impl eframe::App for Editor {
     });
     egui::panel::CentralPanel::default().show(ctx, |ui| {
       let ctx = ui.ctx();
+      let id = egui::Id::new("egui_dock::DockArea");
       let layer_id = egui::LayerId::background();
       let max_rect = ctx.available_rect();
       let clip_rect = ctx.available_rect();
-      let id = egui::Id::new("egui_dock::DockArea");
       let mut ui = egui::Ui::new(ctx.clone(), layer_id, id, max_rect, clip_rect);
       egui_dock::DockArea::new(&mut self.tree)
         .show_inside(&mut ui, &mut TabViewer::new());
@@ -76,21 +77,21 @@ pub enum Tab {
 }
 
 impl Tab {
-  pub fn new_synth_tab(player: Rc<Player>) -> Self {
-    Self::Synth(SynthEditor::new(player))
+  pub fn new_synth_tab(id: u64, player: Rc<Player>) -> Self {
+    Self::Synth(SynthEditor::new(id, player))
   }
 }
 
 impl egui_dock::TabViewer for TabViewer {
   type Tab = Tab;
 
-  fn ui(&mut self, ui: &mut Ui, tab: &mut Self::Tab) {
+  fn ui(&mut self, ui: &mut egui::Ui, tab: &mut Self::Tab) {
     match tab {
       Tab::Synth(tab) => tab.ui(ui),
     }
   }
 
-  fn title(&mut self, tab: &mut Self::Tab) -> WidgetText {
+  fn title(&mut self, tab: &mut Self::Tab) -> egui::WidgetText {
     match tab {
       Tab::Synth(tab) => tab.title(),
     }

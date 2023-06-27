@@ -12,7 +12,7 @@ pub struct SynthEditor {
   id: u64,
   player: Rc<Player>,
   synth: Synth,
-
+  editor: nodes::Editor,
 }
 
 impl SynthEditor {
@@ -22,6 +22,7 @@ impl SynthEditor {
       id,
       player,
       synth,
+      editor: nodes::Editor::new()
     }
   }
 
@@ -32,21 +33,20 @@ impl SynthEditor {
     let clip_rect = ui.available_rect_before_wrap();
     let id = egui::Id::new("egui_dock::DockArea::Synth").with(self.id);
     let mut ui = Ui::new(ctx.clone(), layer_id, id, max_rect, clip_rect);
+    self.render_editor(&mut ui);
     let resp = ui.interact(
       clip_rect,
       ui.id(),
       Sense::hover(),
     );
-    // let scroll = ui.ctx().input(|state| state.scroll_delta)
-    ui.allocate_ui_at_rect(Rect::from_min_size(max_rect.min, Vec2::new(200.0, 200.0)), |ui| {
-      let rect = ui.available_rect_before_wrap();
-      ui.painter().rect_stroke(rect.shrink(10.0), Rounding::same(10.0), Stroke::new(2.0, Color32::from_rgb(255, 0, 0)));
-    });
+  }
 
+  fn render_editor(&mut self, ui: &mut Ui) {
+    self.editor.render(ui);
   }
 
   pub fn title(&mut self) -> WidgetText {
-    WidgetText::from(format!("Synth: {}", self.id))
+    WidgetText::from(format!("Synth[{}]", self.id))
   }
 
   pub fn play(&mut self) {

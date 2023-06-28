@@ -5,6 +5,7 @@ use std::rc::Rc;
 use eframe::egui;
 use eframe::egui::{Color32, Pos2, Rect, Rounding, Sense, Ui, Vec2, WidgetText};
 use eframe::epaint::Stroke;
+use crate::editor::synth::nodes::Node;
 use crate::player::Player;
 use crate::synth::Synth;
 
@@ -18,11 +19,13 @@ pub struct SynthEditor {
 impl SynthEditor {
   pub fn new(id: u64, player: Rc<Player>) -> Self {
     let synth = Synth::default();
+    let mut editor = nodes::Editor::new();
+    editor.add_node(Node::new(Vec2::new(0.0, 0.0)));
     Self {
       id,
       player,
       synth,
-      editor: nodes::Editor::new()
+      editor,
     }
   }
 

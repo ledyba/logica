@@ -1,4 +1,4 @@
-use eframe::egui::{Color32, Pos2, Rect, Rounding, Stroke, Ui, Vec2};
+use eframe::egui::{Color32, Pos2, Rect, Rounding, Sense, Stroke, Ui, Vec2};
 
 pub enum ValueType {
   Scalar,
@@ -28,6 +28,23 @@ impl Node {
       position,
     }
   }
+
+  pub fn render(&mut self, ui: &mut Ui) {
+    let rect = Rect::from_min_size(ui.max_rect().min, Vec2::new(200.0, 200.0)).translate(self.position);
+    let resp = ui.allocate_ui_at_rect(rect, |ui| {
+      let rect = ui.available_rect_before_wrap();
+      ui.painter().rect_stroke(rect, Rounding::same(10.0), Stroke::new(2.0, Color32::from_rgb(255, 0, 0)));
+      ui.interact(ui.clip_rect(), ui.id(), Sense::click_and_drag())
+    }).inner;
+
+    if resp.dragged() {
+      self.position += resp.drag_delta();
+    }
+    if resp.clicked() {
+      println!("Clicked");
+    }
+
+  }
 }
 
 pub struct Editor {
@@ -44,10 +61,8 @@ impl Editor {
     self.nodes.push(node);
   }
   pub fn render(&mut self, ui: &mut Ui) {
-    let rect = Rect::from_min_size(ui.max_rect().min, Vec2::new(200.0, 200.0));
-    ui.allocate_ui_at_rect(rect, |ui| {
-      let rect = ui.available_rect_before_wrap();
-      ui.painter().rect_stroke(rect.shrink(10.0), Rounding::same(10.0), Stroke::new(2.0, Color32::from_rgb(255, 0, 0)));
-    });
+    for node in &mut self.nodes {
+      node.render(ui);
+    }
   }
 }

@@ -30,7 +30,7 @@ impl Node {
   }
 
   pub fn render(&mut self, ui: &mut Ui) {
-    ui.set_clip_rect(ui.cursor());
+    ui.set_clip_rect(ui.max_rect());
     let rect = Rect::from_min_size(ui.max_rect().min, Vec2::new(200.0, 200.0)).translate(self.position);
     let mut resp = ui.allocate_rect(rect, Sense::click_and_drag());
     ui.allocate_ui_at_rect(rect, |ui| {

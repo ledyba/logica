@@ -31,12 +31,16 @@ impl Node {
 
   pub fn render(&mut self, ui: &mut Ui) {
     ui.set_clip_rect(ui.available_rect_before_wrap()); // Clip tab bar.
-    let rect = Rect::from_min_size(ui.max_rect().min, Vec2::new(200.0, 200.0)).translate(self.position);
-    let mut resp = ui.allocate_rect(rect, Sense::click_and_drag());
-    ui.allocate_ui_at_rect(rect, |ui| {
-      let painter = ui.painter();
-      painter.rect_stroke(rect, Rounding::same(0.0), Stroke::new(2.0, Color32::from_rgb(255, 0, 0)));
-    });
+    let rect = Rect::from_min_size(ui.max_rect().min, Vec2::INFINITY).translate(self.position);
+    let rect = ui.allocate_ui_at_rect(rect, |ui| {
+      ui.label("hey");
+      if ui.button("button").clicked() {
+        println!("Click");
+      }
+    }).response.rect;
+    let painter = ui.painter();
+    painter.rect_stroke(rect.expand(10.0), Rounding::same(5.0), Stroke::new(2.0, Color32::from_rgb(255, 0, 0)));
+    let mut resp = ui.allocate_rect(rect.expand(10.0), Sense::click_and_drag());
     if resp.dragged() {
       self.position += resp.drag_delta();
     }

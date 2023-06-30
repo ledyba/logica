@@ -2,6 +2,7 @@ mod synth;
 
 use std::rc::Rc;
 use eframe::egui;
+use eframe::egui::Layout;
 use crate::editor::synth::SynthEditor;
 use crate::player::Player;
 
@@ -52,13 +53,10 @@ impl eframe::App for Editor {
     });
     egui::panel::CentralPanel::default().show(ctx, |ui| {
       let ctx = ui.ctx();
-      let id = egui::Id::new("egui_dock::DockArea");
-      let layer_id = egui::LayerId::background();
       let max_rect = ctx.available_rect();
-      let clip_rect = ctx.available_rect();
-      let mut ui = egui::Ui::new(ctx.clone(), layer_id, id, max_rect, clip_rect);
-      egui_dock::DockArea::new(&mut self.tree)
-        .show_inside(&mut ui, &mut TabViewer::new());
+      let mut ui = ui.child_ui(max_rect, Layout::default());
+      let mut dock = egui_dock::DockArea::new(&mut self.tree);
+      dock.show_inside(&mut ui, &mut TabViewer::new());
     });
   }
 }

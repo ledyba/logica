@@ -1,4 +1,4 @@
-use eframe::egui::{Color32, Pos2, Rect, Rounding, Sense, Stroke, Ui, Vec2};
+use eframe::egui::{Color32, Id, LayerId, Order, Pos2, Rect, Rounding, Sense, Stroke, Ui, Vec2};
 
 pub enum ValueType {
   Scalar,
@@ -30,20 +30,16 @@ impl Node {
   }
 
   pub fn render(&mut self, ui: &mut Ui) {
+    ui.set_clip_rect(ui.cursor());
     let rect = Rect::from_min_size(ui.max_rect().min, Vec2::new(200.0, 200.0)).translate(self.position);
     let mut resp = ui.allocate_rect(rect, Sense::click_and_drag());
     ui.allocate_ui_at_rect(rect, |ui| {
-      ui.painter().rect_stroke(rect, Rounding::same(0.0), Stroke::new(2.0, Color32::from_rgb(255, 0, 0)));
+      let painter = ui.painter();
+      painter.rect_stroke(rect, Rounding::same(0.0), Stroke::new(2.0, Color32::from_rgb(255, 0, 0)));
     });
-
     if resp.dragged() {
       self.position += resp.drag_delta();
     }
-    if resp.clicked() {
-      println!("Clicked");
-      resp.mark_changed();
-    }
-
   }
 }
 

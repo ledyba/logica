@@ -31,17 +31,17 @@ impl Node {
 
   pub fn render(&mut self, ui: &mut Ui) {
     let rect = Rect::from_min_size(ui.max_rect().min, Vec2::new(200.0, 200.0)).translate(self.position);
-    let resp = ui.allocate_ui_at_rect(rect, |ui| {
-      let rect = ui.available_rect_before_wrap();
-      ui.painter().rect_stroke(rect, Rounding::same(10.0), Stroke::new(2.0, Color32::from_rgb(255, 0, 0)));
-      ui.interact(ui.clip_rect(), ui.id(), Sense::click_and_drag())
-    }).inner;
+    let mut resp = ui.allocate_rect(rect, Sense::click_and_drag());
+    ui.allocate_ui_at_rect(rect, |ui| {
+      ui.painter().rect_stroke(rect, Rounding::same(0.0), Stroke::new(2.0, Color32::from_rgb(255, 0, 0)));
+    });
 
     if resp.dragged() {
       self.position += resp.drag_delta();
     }
     if resp.clicked() {
       println!("Clicked");
+      resp.mark_changed();
     }
 
   }

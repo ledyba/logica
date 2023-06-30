@@ -1,4 +1,5 @@
-use eframe::egui::{Color32, Id, LayerId, Order, Pos2, Rect, Rounding, Sense, Stroke, Ui, Vec2};
+use eframe::egui::{Align, Color32, Id, LayerId, Layout, Order, Pos2, Rect, Response, RichText, Rounding, Sense, Stroke, Ui, Vec2, Widget, WidgetText};
+use egui_dock::egui::{Label, TextStyle};
 
 pub enum ValueType {
   Scalar,
@@ -31,16 +32,28 @@ impl Node {
 
   pub fn render(&mut self, ui: &mut Ui) {
     ui.set_clip_rect(ui.available_rect_before_wrap()); // Clip tab bar.
-    let rect = Rect::from_min_size(ui.max_rect().min, Vec2::INFINITY).translate(self.position);
-    let rect = ui.allocate_ui_at_rect(rect, |ui| {
-      ui.label("hey");
+    let mut max_size = Vec2::INFINITY;
+    max_size.x = 200.0;
+    let rect = Rect::from_min_size(ui.max_rect().min, max_size).translate(self.position);
+    let resp = ui.allocate_ui_at_rect(rect, |ui| {
+      let r = ui.vertical_centered_justified(|ui| {
+        let rect = Rect::from_min_size(ui.cursor().min, Vec2::new(max_size.x, 20.0));
+        ui.painter().rect_filled(rect, Rounding::none(), Color32::DARK_GRAY);
+        ui.add_space(2.0);
+        let text = RichText::from("Title").strong().size(16.0);
+        ui.label(text)
+      }).inner;
+      ui.add_space(2.0);
       if ui.button("button").clicked() {
         println!("Click");
       }
-    }).response.rect;
-    let painter = ui.painter();
-    painter.rect_stroke(rect.expand(10.0), Rounding::same(5.0), Stroke::new(2.0, Color32::from_rgb(255, 0, 0)));
-    let mut resp = ui.allocate_rect(rect.expand(10.0), Sense::click_and_drag());
+      ui.add_space(2.0);
+      r
+    });
+    ui.painter().rect_stroke(resp.response.rect.expand(2.0), Rounding::none(), Stroke::new(2.0, Color32::WHITE));
+    let title_rect = resp.inner.rect;
+    //let title_rect = Rect::from_min_size(title_rect.min, Vec2::new(max_size.x, title_rect.height()));
+    let mut resp = ui.allocate_rect(title_rect, Sense::click_and_drag());
     if resp.dragged() {
       self.position += resp.drag_delta();
     }

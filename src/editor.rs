@@ -55,8 +55,8 @@ impl eframe::App for Editor {
       let ctx = ui.ctx();
       let max_rect = ctx.available_rect();
       let mut ui = ui.child_ui(max_rect, Layout::default());
-      let mut dock = egui_dock::DockArea::new(&mut self.tree);
-      dock.show_inside(&mut ui, &mut TabViewer::new());
+      egui_dock::DockArea::new(&mut self.tree)
+        .show_inside(&mut ui, &mut TabViewer::new());
     });
   }
 }

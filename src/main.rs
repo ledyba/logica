@@ -14,7 +14,7 @@ fn setup_logger() -> Result<(), fern::InitError> {
         chrono::Local::now().format("[%Y-%m-%d][%H:%M:%S]"),
         record.target(),
         record.level(),
-        message
+        message,
       ))
     })
     .level(log::LevelFilter::Debug)

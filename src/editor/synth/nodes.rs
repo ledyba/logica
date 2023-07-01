@@ -1,3 +1,4 @@
+use eframe::egui;
 use eframe::egui::{Align, Color32, Id, LayerId, Layout, Order, Pos2, Rect, Response, RichText, Rounding, Sense, Stroke, Ui, Vec2, Widget, WidgetText};
 use egui_dock::egui::{Label, TextStyle};
 

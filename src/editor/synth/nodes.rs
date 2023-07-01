@@ -32,12 +32,12 @@ impl Node {
 
   pub fn render(&mut self, ui: &mut Ui) {
     ui.set_clip_rect(ui.available_rect_before_wrap()); // Clip tab bar.
-    let mut max_size = Vec2::INFINITY;
-    max_size.x = 200.0;
-    let rect = Rect::from_min_size(ui.max_rect().min, max_size).translate(self.position);
-    let resp = ui.allocate_ui_at_rect(rect, |ui| {
-      let r = ui.vertical_centered_justified(|ui| {
-        let rect = Rect::from_min_size(ui.cursor().min, Vec2::new(max_size.x, 20.0));
+    let size = Vec2::new(150.0, 100.0);
+    let rect = Rect::from_min_size(ui.max_rect().min, size).translate(self.position);
+    let resp = ui.allocate_rect(rect, Sense::click_and_drag());
+    ui.allocate_ui_at_rect(rect, |ui| {
+      ui.vertical_centered_justified(|ui| {
+        let rect = Rect::from_min_size(ui.cursor().min, Vec2::new(size.x, 20.0));
         ui.painter().rect_filled(rect, Rounding::none(), Color32::DARK_GRAY);
         ui.add_space(2.0);
         let text = RichText::from("Title").strong().size(16.0);
@@ -47,13 +47,9 @@ impl Node {
       if ui.button("button").clicked() {
         println!("Click");
       }
-      ui.add_space(2.0);
-      r
     });
-    ui.painter().rect_stroke(resp.response.rect.expand(2.0), Rounding::none(), Stroke::new(2.0, Color32::WHITE));
-    let title_rect = resp.inner.rect;
+    ui.painter().rect_stroke(rect.expand(2.0), Rounding::none(), Stroke::new(2.0, Color32::WHITE));
     //let title_rect = Rect::from_min_size(title_rect.min, Vec2::new(max_size.x, title_rect.height()));
-    let mut resp = ui.allocate_rect(title_rect, Sense::click_and_drag());
     if resp.dragged() {
       self.position += resp.drag_delta();
     }

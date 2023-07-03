@@ -73,7 +73,7 @@ impl Editor {
     self.nodes.push(node);
   }
   pub fn render(&mut self, ui: &mut Ui) {
-    let resp = ui.interact(ui.available_rect_before_wrap(), ui.id().with("MainPanel"), Sense::click_and_drag());
+    let resp = ui.interact(ui.available_rect_before_wrap(), ui.id().with("MainPanel"), Sense::drag());
     if resp.dragged_by(PointerButton::Middle) {
       self.pan += resp.drag_delta();
     }

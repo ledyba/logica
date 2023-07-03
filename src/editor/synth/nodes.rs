@@ -1,6 +1,6 @@
 use eframe::egui;
 use eframe::egui::{Align, Color32, Id, LayerId, Layout, Order, Pos2, Rect, Response, RichText, Rounding, Sense, Stroke, Ui, Vec2, Widget, WidgetText};
-use egui_dock::egui::{Label, TextStyle};
+use egui_dock::egui::{Label, PointerButton, TextStyle};
 
 pub enum ValueType {
   Scalar,
@@ -31,10 +31,10 @@ impl Node {
     }
   }
 
-  pub fn render(&mut self, ui: &mut Ui) {
+  pub fn render(&mut self, ui: &mut Ui, pan: Vec2) {
     ui.set_clip_rect(ui.available_rect_before_wrap()); // Clip tab bar.
     let size = Vec2::new(150.0, 100.0);
-    let rect = Rect::from_min_size(ui.max_rect().min, size).translate(self.position);
+    let rect = Rect::from_min_size(ui.max_rect().min, size).translate(self.position + pan);
     let resp = ui.allocate_rect(rect, Sense::click_and_drag());
     ui.allocate_ui_at_rect(rect, |ui| {
       ui.vertical_centered_justified(|ui| {
@@ -59,20 +59,26 @@ impl Node {
 
 pub struct Editor {
   nodes: Vec<Node>,
+  pan: Vec2,
 }
 
 impl Editor {
   pub fn new() -> Self {
     Self {
       nodes: Vec::new(),
+      pan: Vec2::splat(0.0),
     }
   }
   pub fn add_node(&mut self, node: Node) {
     self.nodes.push(node);
   }
   pub fn render(&mut self, ui: &mut Ui) {
+    let resp = ui.interact(ui.available_rect_before_wrap(), ui.id().with("MainPanel"), Sense::click_and_drag());
+    if resp.dragged_by(PointerButton::Middle) {
+      self.pan += resp.drag_delta();
+    }
     for node in &mut self.nodes {
-      node.render(ui);
+      node.render(ui, self.pan);
     }
   }
 }

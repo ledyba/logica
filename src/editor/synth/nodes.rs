@@ -60,6 +60,7 @@ impl Node {
 pub struct Editor {
   nodes: Vec<Node>,
   pan: Vec2,
+  show_new_node_window: bool,
 }
 
 impl Editor {
@@ -67,6 +68,7 @@ impl Editor {
     Self {
       nodes: Vec::new(),
       pan: Vec2::splat(0.0),
+      show_new_node_window: false,
     }
   }
   pub fn add_node(&mut self, node: Node) {
@@ -76,6 +78,15 @@ impl Editor {
     let resp = ui.interact(ui.available_rect_before_wrap(), ui.id().with("MainPanel"), Sense::drag());
     if resp.dragged_by(PointerButton::Middle) {
       self.pan += resp.drag_delta();
+    }
+    if resp.clicked_by(PointerButton::Secondary) {
+      self.show_new_node_window = !self.show_new_node_window;
+    }
+    if self.show_new_node_window {
+      egui::Window::new("New node")
+        .show(ui.ctx(), |ui| {
+
+        });
     }
     for node in &mut self.nodes {
       node.render(ui, self.pan);

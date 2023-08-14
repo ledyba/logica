@@ -1,11 +1,7 @@
 mod nodes;
 
-use std::fmt::format;
 use std::rc::Rc;
-use eframe::egui;
-use eframe::egui::{Color32, Pos2, Rect, Rounding, Sense, Ui, Vec2, WidgetText};
-use eframe::epaint::Stroke;
-use egui_dock::egui::Layout;
+use eframe::egui::{Layout, Ui, Vec2, WidgetText};
 use crate::editor::synth::nodes::Node;
 use crate::player::Player;
 use crate::synth::Synth;

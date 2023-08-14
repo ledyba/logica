@@ -9,7 +9,7 @@ use crate::player::Player;
 pub struct Editor {
   unused_id: u64,
   player: Rc<Player>,
-  tree: egui_dock::Tree<Tab>,
+  editor: SynthEditor,
 }
 
 impl Editor {
@@ -17,7 +17,7 @@ impl Editor {
     Self {
       unused_id: 0,
       player: player.clone(),
-      tree: egui_dock::Tree::new(Vec::new()),
+      editor: SynthEditor::new(128u64, player.clone()),
     }
   }
 }
@@ -31,13 +31,6 @@ impl eframe::App for Editor {
           if ui.add(egui::widgets::Button::new("Exit")).clicked() {
             self.player.pause().expect("Failed to stop");
             frame.close();
-          }
-        });
-        ui.menu_button("Logic", |ui| {
-          if ui.button("New Synth Logic").clicked() {
-            self.tree.push_to_focused_leaf(Tab::new_synth_tab(self.unused_id, self.player.clone()));
-            self.unused_id += 1;
-            ui.close_menu();
           }
         });
       });
@@ -55,43 +48,7 @@ impl eframe::App for Editor {
       let ctx = ui.ctx();
       let max_rect = ctx.available_rect();
       let mut ui = ui.child_ui(max_rect, Layout::default());
-      egui_dock::DockArea::new(&mut self.tree)
-        .show_inside(&mut ui, &mut TabViewer::new());
+      self.editor.ui(&mut ui);
     });
-  }
-}
-
-pub struct TabViewer {}
-
-impl TabViewer {
-  pub fn new() -> Self {
-    Self {
-    }
-  }
-}
-
-pub enum Tab {
-  Synth(SynthEditor)
-}
-
-impl Tab {
-  pub fn new_synth_tab(id: u64, player: Rc<Player>) -> Self {
-    Self::Synth(SynthEditor::new(id, player))
-  }
-}
-
-impl egui_dock::TabViewer for TabViewer {
-  type Tab = Tab;
-
-  fn ui(&mut self, ui: &mut egui::Ui, tab: &mut Self::Tab) {
-    match tab {
-      Tab::Synth(tab) => tab.ui(ui),
-    }
-  }
-
-  fn title(&mut self, tab: &mut Self::Tab) -> egui::WidgetText {
-    match tab {
-      Tab::Synth(tab) => tab.title(),
-    }
   }
 }

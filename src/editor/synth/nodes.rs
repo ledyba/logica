@@ -1,5 +1,5 @@
 use eframe::egui;
-use eframe::egui::{Color32, PointerButton, Rect, RichText, Rounding, Sense, Stroke, Ui, Vec2};
+use eframe::egui::{Color32, Layout, PointerButton, Rect, RichText, Rounding, Sense, Stroke, Ui, Vec2};
 
 pub enum ValueType {
   Scalar,
@@ -26,7 +26,7 @@ impl Node {
   pub fn new(position: Vec2) -> Self {
     Self {
       slots: Vec::new(),
-      position,
+      position: position + Vec2::splat(4.0) + Vec2::splat(10.0),
     }
   }
 
@@ -43,7 +43,8 @@ impl Node {
         let text = RichText::from("Title").strong().size(16.0);
         ui.label(text)
       }).inner;
-      ui.add_space(2.0);
+      // Content
+      let mut ui = ui.child_ui(ui.available_rect_before_wrap().shrink(5.0), Layout::default());
       if ui.button("button").clicked() {
         println!("Click");
       }

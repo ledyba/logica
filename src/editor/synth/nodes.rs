@@ -78,14 +78,20 @@ impl Editor {
     if resp.dragged_by(PointerButton::Middle) {
       self.pan += resp.drag_delta();
     }
-    if resp.clicked_by(PointerButton::Secondary) {
+    let changed = if resp.clicked_by(PointerButton::Secondary) {
       self.show_new_node_window = !self.show_new_node_window;
-    }
-    if self.show_new_node_window {
-      egui::Window::new("New node")
-        .show(ui.ctx(), |ui| {
+      true
+    } else {
+      false
+    };
 
-        });
+    if self.show_new_node_window {
+      let mut window = egui::Window::new("New node");
+      if changed {
+        window = window.current_pos(resp.interact_pointer_pos().expect("[BUG] No pointer position"));
+      }
+      window.show(ui.ctx(), |ui| {
+      });
     }
     for node in &mut self.nodes {
       node.render(ui, self.pan);

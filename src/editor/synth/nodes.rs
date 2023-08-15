@@ -32,7 +32,7 @@ impl Node {
     }
   }
 
-  pub fn show(&mut self, ui: &mut Ui, pan: Vec2) {
+  pub fn render(&mut self, ui: &mut Ui, pan: Vec2) {
     ui.set_clip_rect(ui.available_rect_before_wrap()); // Clip tab bar.
     let size = Vec2::new(150.0, 100.0);
     let rect = Rect::from_min_size(ui.max_rect().min, size).translate(self.position + pan);
@@ -97,7 +97,7 @@ impl Editor {
       });
     }
     for node in &mut self.nodes {
-      node.show(ui, self.pan);
+      node.render(ui, self.pan);
     }
   }
 }

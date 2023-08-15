@@ -18,19 +18,21 @@ pub struct Slot {
 }
 
 pub struct Node {
+  title: String,
   slots: Vec<Slot>,
   position: Vec2,
 }
 
 impl Node {
-  pub fn new(position: Vec2) -> Self {
+  pub fn new(title: &str, position: Vec2) -> Self {
     Self {
+      title: title.to_string(),
       slots: Vec::new(),
       position: position + Vec2::splat(4.0) + Vec2::splat(10.0),
     }
   }
 
-  pub fn render(&mut self, ui: &mut Ui, pan: Vec2) {
+  pub fn show(&mut self, ui: &mut Ui, pan: Vec2) {
     ui.set_clip_rect(ui.available_rect_before_wrap()); // Clip tab bar.
     let size = Vec2::new(150.0, 100.0);
     let rect = Rect::from_min_size(ui.max_rect().min, size).translate(self.position + pan);
@@ -40,7 +42,7 @@ impl Node {
         let rect = Rect::from_min_size(ui.cursor().min, Vec2::new(size.x, 20.0));
         ui.painter().rect_filled(rect, Rounding::none(), Color32::DARK_GRAY);
         ui.add_space(2.0);
-        let text = RichText::from("Title").strong().size(16.0);
+        let text = RichText::from(&self.title).strong().size(16.0);
         ui.label(text)
       }).inner;
       // Content
@@ -95,7 +97,7 @@ impl Editor {
       });
     }
     for node in &mut self.nodes {
-      node.render(ui, self.pan);
+      node.show(ui, self.pan);
     }
   }
 }

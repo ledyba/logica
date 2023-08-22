@@ -18,6 +18,7 @@ impl NodeImpl for SinNode {
   }
 
   fn ui(&mut self, node: &mut NodeContext) {
-    node.constant("freq", &mut self.freq)
+    node.constant("freq", &mut self.freq);
+    node.output("output");
   }
 }

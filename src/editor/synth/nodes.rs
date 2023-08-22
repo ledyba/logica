@@ -36,9 +36,9 @@ impl Node {
     let rect = Rect::from_min_size(ui.max_rect().min, size).translate(self.position + pan);
     let resp = ui.allocate_ui_at_rect(rect, |ui| {
       let title_rect = ui.vertical_centered_justified(|ui| {
-        let rect = Rect::from_min_size(ui.cursor().min, Vec2::new(size.x, 20.0));
+        let rect = Rect::from_min_size(ui.cursor().min, Vec2::new(size.x, 22.0));
         ui.painter().rect_filled(rect, Rounding::none(), Color32::DARK_GRAY);
-        let text = RichText::from(self.node_impl.title()).strong().size(16.0);
+        let text = RichText::from(self.node_impl.title()).strong().size(18.0);
         ui.label(text);
         // Content
         let cursor = if self.hidden {
@@ -75,11 +75,16 @@ impl NodeContext {
 
   pub fn constant(&mut self, title: &str, value: &mut f64) {
     self.ui.horizontal(|ui| {
-      ui.label(title);
+      ui.label(RichText::from(title).size(16.0));
       ui.add(egui::DragValue::new(value)
         .clamp_range(0.0..=22.0*1000.0)
         .prefix("  ").suffix("   [Hz]  ")
         .speed(0.1));
     });
+  }
+
+  pub fn output(&mut self, title: &str) {
+    self.ui.label(RichText::from(title).size(16.0));
+    self.ui.painter().circle_stroke(self.ui.cursor().right_top() + Vec2::new(-5.0, -8.0), 8.0, Stroke::new(2.0,Color32::DARK_GRAY));
   }
 }

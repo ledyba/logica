@@ -1,4 +1,7 @@
+use std::fmt::format;
+use eframe::egui;
 use eframe::egui::{Color32, Layout, PointerButton, Rect, Response, RichText, Rounding, Sense, Stroke, Ui, Vec2};
+use eframe::egui::style::Widgets;
 
 mod sin_node;
 pub use sin_node::SinNode;
@@ -71,13 +74,12 @@ impl NodeContext {
   }
 
   pub fn constant(&mut self, title: &str, value: &mut f64) {
-    let mut str = value.to_string();
     self.ui.horizontal(|ui| {
       ui.label(title);
-      ui.text_edit_singleline(&mut str);
-      if let Ok(v) = str.parse::<f64>() {
-        *value = v;
-      }
+      ui.add(egui::DragValue::new(value)
+        .clamp_range(0.0..=22.0*1000.0)
+        .prefix("  ").suffix("   [Hz]  ")
+        .speed(0.1));
     });
   }
 }

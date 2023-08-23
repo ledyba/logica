@@ -14,7 +14,7 @@ impl SinNode {
 
 impl NodeImpl for SinNode {
   fn title(&self) -> &'static str {
-    "SinNode"
+    "Sin"
   }
 
   fn ui(&mut self, node: &mut NodeContext) {

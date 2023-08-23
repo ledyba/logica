@@ -1,9 +1,11 @@
+use std::collections::{HashMap, HashSet};
 use eframe::egui;
 use eframe::egui::{PointerButton, Sense, Ui, Vec2};
 use super::nodes::*;
 
 pub struct Editor {
-  nodes: Vec<Node>,
+  nodes: HashMap<usize, Node>,
+  node_idx: usize,
   pan: Vec2,
   show_new_node_window: bool,
 }
@@ -11,7 +13,8 @@ pub struct Editor {
 impl Editor {
   pub fn new() -> Self {
     Self {
-      nodes: Vec::new(),
+      nodes: HashMap::new(),
+      node_idx: 0,
       pan: Vec2::splat(0.0),
       show_new_node_window: false,
     }
@@ -36,12 +39,14 @@ impl Editor {
       window.show(ui.ctx(), |ui| {
       });
     }
-    for node in &mut self.nodes {
-      node.render(ui, self.pan);
-    }
+    self.nodes.retain(|id, node| {
+      node.render(ui, self.pan).is_some()
+    });
   }
 
   pub fn add_node(&mut self, node: Node) {
-    self.nodes.push(node);
+    let id = self.node_idx;
+    self.node_idx += 1;
+    self.nodes.insert(id, node);
   }
 }

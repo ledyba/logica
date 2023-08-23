@@ -1,7 +1,6 @@
 use std::fmt::format;
 use eframe::egui;
 use eframe::egui::{Color32, Layout, PointerButton, Rect, Response, RichText, Rounding, Sense, Stroke, Ui, Vec2, Widget};
-use eframe::egui::style::Widgets;
 
 mod sin_node;
 pub use sin_node::SinNode;
@@ -30,7 +29,7 @@ impl Node {
     }
   }
 
-  pub fn render(&mut self, ui: &mut Ui, pan: Vec2) -> Response {
+  pub fn render(&mut self, ui: &mut Ui, pan: Vec2) -> Option<Response> {
     ui.set_clip_rect(ui.available_rect_before_wrap()); // Clip tab bar.
     let size = Vec2::new(150.0, 100.0);
     let rect = Rect::from_min_size(ui.max_rect().min, size).translate(self.position + pan);
@@ -38,6 +37,18 @@ impl Node {
       let title_rect = ui.vertical_centered_justified(|ui| {
         let rect = Rect::from_min_size(ui.cursor().min, Vec2::new(size.x, 22.0));
         ui.painter().rect_filled(rect, Rounding::none(), Color32::DARK_GRAY);
+        {
+          let box_seg = Rect::from_two_pos(rect.right_top(), rect.right_top()+Vec2::new(-22.0, 22.0)).shrink(1.0);
+          let line_seg = box_seg.shrink(2.0);
+          let line_stroke = Stroke::new(2.0, Color32::BLACK);
+          ui.painter().rect_filled(box_seg, 2.0, Color32::WHITE);
+          ui.painter().line_segment([line_seg.left_top(), line_seg.right_bottom()], line_stroke);
+          ui.painter().line_segment([line_seg.left_bottom(), line_seg.right_top()], line_stroke);
+          let resp = ui.interact(box_seg, ui.id().with("click_x"), Sense::click());
+          if resp.clicked_by(PointerButton::Primary) {
+            return None;
+          }
+        }
         let text = RichText::from(self.node_impl.title()).strong().size(18.0);
         ui.label(text);
         // Content
@@ -49,17 +60,24 @@ impl Node {
           ctx.ui.cursor().right_top() + Vec2::splat(5.0)
         };
         ui.painter().rect_stroke(Rect::from_two_pos(rect.min, cursor).expand(2.0), Rounding::none(), Stroke::new(2.0, Color32::WHITE));
-        rect
+        Some(Rect::from_two_pos(rect.min, rect.max - Vec2::new(22.0, 0.0)))
       }).inner;
-      ui.interact(title_rect, ui.id().with("drag"), Sense::click_and_drag())
+      if let Some(title_rect) = title_rect {
+        Some(ui.interact(title_rect, ui.id().with("drag_or_click_title"), Sense::click_and_drag()))
+      } else {
+        None
+      }
     }).inner;
+    let Some(resp) = resp else {
+      return None;
+    };
     if resp.dragged() {
       self.position += resp.drag_delta();
     }
     if resp.clicked_by(PointerButton::Primary) {
       self.hidden = !self.hidden;
     }
-    resp
+    Some(resp)
   }
 }
 

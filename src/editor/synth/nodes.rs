@@ -37,7 +37,7 @@ impl Node {
       let title_rect = ui.vertical_centered_justified(|ui| {
         let rect = Rect::from_min_size(ui.cursor().min, Vec2::new(size.x, 22.0));
         ui.painter().rect_filled(rect, Rounding::none(), Color32::DARK_GRAY);
-        {
+        { // [X} Button
           let box_seg = Rect::from_two_pos(rect.right_top(), rect.right_top()+Vec2::new(-22.0, 22.0)).shrink(1.0);
           let line_seg = box_seg.shrink(2.0);
           let line_stroke = Stroke::new(2.0, Color32::BLACK);

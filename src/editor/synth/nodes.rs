@@ -37,7 +37,7 @@ impl Node {
       let title_rect = ui.vertical_centered_justified(|ui| {
         let rect = Rect::from_min_size(ui.cursor().min, Vec2::new(size.x, 22.0));
         ui.painter().rect_filled(rect, Rounding::none(), Color32::DARK_GRAY);
-        { // [X} Button
+        if !self.hidden { // [X} Button
           let box_seg = Rect::from_two_pos(rect.right_top(), rect.right_top()+Vec2::new(-22.0, 22.0)).shrink(1.0);
           let line_seg = box_seg.shrink(2.0);
           let line_stroke = Stroke::new(2.0, Color32::BLACK);
@@ -60,7 +60,11 @@ impl Node {
           ctx.ui.cursor().right_top() + Vec2::splat(5.0)
         };
         ui.painter().rect_stroke(Rect::from_two_pos(rect.min, cursor).expand(2.0), Rounding::none(), Stroke::new(2.0, Color32::WHITE));
-        Some(Rect::from_two_pos(rect.min, rect.max - Vec2::new(22.0, 0.0)))
+        if !self.hidden {
+          Some(Rect::from_two_pos(rect.min, rect.max - Vec2::new(22.0, 0.0)))
+        } else {
+          Some(rect)
+        }
       }).inner;
       if let Some(title_rect) = title_rect {
         Some(ui.interact(title_rect, ui.id().with("drag_or_click_title"), Sense::click_and_drag()))

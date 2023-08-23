@@ -44,10 +44,7 @@ impl Node {
         let cursor = if self.hidden {
           rect.right_bottom()
         } else {
-          let mut ui = ui.child_ui(ui.available_rect_before_wrap().shrink(5.0), Layout::default());
-          let mut ctx = NodeContext {
-            ui,
-          };
+          let mut ctx = NodeContext::new(ui.child_ui(ui.available_rect_before_wrap().shrink(5.0), Layout::default()));
           self.node_impl.ui(&mut ctx);
           ctx.ui.cursor().right_top() + Vec2::splat(5.0)
         };
@@ -67,6 +64,11 @@ impl Node {
 }
 
 impl NodeContext {
+  pub fn new(ui: Ui) -> Self {
+    Self {
+      ui,
+    }
+  }
   pub fn ui(&mut self) -> &mut Ui {
     &mut self.ui
   }

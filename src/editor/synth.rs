@@ -11,19 +11,17 @@ use crate::synth::Synth;
 use editor::Editor;
 
 pub struct SynthEditor {
-  id: u64,
   player: Rc<Player>,
   synth: Synth,
   editor: Editor,
 }
 
 impl SynthEditor {
-  pub fn new(id: u64, player: Rc<Player>) -> Self {
+  pub fn new(player: Rc<Player>) -> Self {
     let synth = Synth::default();
     let mut editor = Editor::new();
     editor.add_node(Node::new(Vec2::new(0.0, 0.0), SinNode::new(440.0)));
     Self {
-      id,
       player,
       synth,
       editor,

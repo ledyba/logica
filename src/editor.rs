@@ -7,7 +7,6 @@ use crate::editor::synth::SynthEditor;
 use crate::player::Player;
 
 pub struct Editor {
-  unused_id: u64,
   player: Rc<Player>,
   editor: SynthEditor,
 }
@@ -15,9 +14,8 @@ pub struct Editor {
 impl Editor {
   pub fn new(player: Rc<Player>) -> Self {
     Self {
-      unused_id: 0,
       player: player.clone(),
-      editor: SynthEditor::new(128u64, player.clone()),
+      editor: SynthEditor::new(player.clone()),
     }
   }
 }

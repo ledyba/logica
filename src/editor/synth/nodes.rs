@@ -1,6 +1,6 @@
 use std::fmt::format;
 use eframe::egui;
-use eframe::egui::{Color32, Layout, PointerButton, Rect, Response, RichText, Rounding, Sense, Stroke, Ui, Vec2};
+use eframe::egui::{Color32, Layout, PointerButton, Rect, Response, RichText, Rounding, Sense, Stroke, Ui, Vec2, Widget};
 use eframe::egui::style::Widgets;
 
 mod sin_node;
@@ -64,8 +64,6 @@ impl Node {
     }
     resp
   }
-
-
 }
 
 impl NodeContext {
@@ -84,7 +82,8 @@ impl NodeContext {
   }
 
   pub fn output(&mut self, title: &str) {
-    self.ui.label(RichText::from(title).size(16.0));
-    self.ui.painter().circle_stroke(self.ui.cursor().right_top() + Vec2::new(-5.0, -8.0), 8.0, Stroke::new(2.0,Color32::DARK_GRAY));
+    let ui = &mut self.ui;
+    ui.label(RichText::from(title).size(16.0));
+    ui.painter().circle_stroke(ui.cursor().right_top() + Vec2::new(-5.0, -8.0), 8.0, Stroke::new(2.0,Color32::DARK_GRAY));
   }
 }

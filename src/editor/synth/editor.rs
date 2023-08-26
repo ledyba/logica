@@ -1,11 +1,15 @@
-use std::collections::{HashMap, HashSet};
+use std::cell::RefCell;
+use std::collections::HashMap;
+use std::rc::Rc;
 use eframe::egui;
 use eframe::egui::{PointerButton, Sense, Ui, Vec2};
+use super::stage::*;
 use super::nodes::*;
 
 pub struct Editor {
   nodes: HashMap<usize, Node>,
   node_idx: usize,
+  stage: Rc<RefCell<Stage>>,
   pan: Vec2,
   show_new_node_window: bool,
 }
@@ -15,11 +19,13 @@ impl Editor {
     Self {
       nodes: HashMap::new(),
       node_idx: 0,
+      stage: Rc::new(RefCell::new(Stage::new())),
       pan: Vec2::splat(0.0),
       show_new_node_window: false,
     }
   }
   pub fn ui(&mut self, ui: &mut Ui) {
+    self.stage.borrow_mut().start_frame();
     let resp = ui.interact(ui.available_rect_before_wrap(), ui.id().with("MainPanel"), Sense::drag());
     if resp.dragged_by(PointerButton::Middle) {
       self.pan += resp.drag_delta();
@@ -40,8 +46,9 @@ impl Editor {
       });
     }
     self.nodes.retain(|id, node| {
-      node.render(ui, self.pan).is_some()
+      node.render(*id, self.stage.clone(), ui, self.pan).is_some()
     });
+    self.stage.borrow_mut().render(ui);
   }
 
   pub fn add_node(&mut self, node: Node) {

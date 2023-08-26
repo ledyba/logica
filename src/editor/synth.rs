@@ -1,9 +1,9 @@
 mod editor;
 mod nodes;
-mod slot;
+mod stage;
 
 use std::rc::Rc;
-use eframe::egui::{Layout, Ui, Vec2, WidgetText};
+use eframe::egui::{Layout, Ui, Vec2};
 use crate::editor::synth::nodes::{Node, SinNode};
 use crate::player::Player;
 use crate::synth::Synth;

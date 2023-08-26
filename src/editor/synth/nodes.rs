@@ -1,9 +1,12 @@
-use std::fmt::format;
+use std::cell::RefCell;
+use std::ops::Deref;
+use std::rc::Rc;
 use eframe::egui;
 use eframe::egui::{Color32, Layout, PointerButton, Rect, Response, RichText, Rounding, Sense, Stroke, Ui, Vec2, Widget};
 
 mod sin_node;
 pub use sin_node::SinNode;
+use super::stage::*;
 
 pub struct Node {
   position: Vec2,
@@ -17,6 +20,8 @@ pub trait NodeImpl {
 }
 
 pub struct NodeContext {
+  id: usize,
+  stage: Rc<RefCell<Stage>>,
   ui: Ui,
 }
 
@@ -29,7 +34,7 @@ impl Node {
     }
   }
 
-  pub fn render(&mut self, ui: &mut Ui, pan: Vec2) -> Option<Response> {
+  pub fn render(&mut self, id: usize, stage: Rc<RefCell<Stage>>, ui: &mut Ui, pan: Vec2) -> Option<Response> {
     ui.set_clip_rect(ui.available_rect_before_wrap()); // Clip tab bar.
     let size = Vec2::new(150.0, 100.0);
     let rect = Rect::from_min_size(ui.max_rect().min, size).translate(self.position + pan);
@@ -55,7 +60,8 @@ impl Node {
         let cursor = if self.hidden {
           rect.right_bottom()
         } else {
-          let mut ctx = NodeContext::new(ui.child_ui(ui.available_rect_before_wrap().shrink(5.0), Layout::default()));
+          let ui = ui.child_ui(ui.available_rect_before_wrap().shrink(5.0), Layout::default());
+          let mut ctx = NodeContext::new(id, stage, ui);
           self.node_impl.ui(&mut ctx);
           ctx.ui.cursor().right_top() + Vec2::splat(5.0)
         };
@@ -86,8 +92,10 @@ impl Node {
 }
 
 impl NodeContext {
-  pub fn new(ui: Ui) -> Self {
+  pub fn new(id: usize, stage: Rc<RefCell<Stage>>, ui: Ui) -> Self {
     Self {
+      id,
+      stage,
       ui,
     }
   }
@@ -95,18 +103,19 @@ impl NodeContext {
     &mut self.ui
   }
 
-  pub fn constant(&mut self, title: &str, value: &mut f64) {
+  pub fn constant(&mut self, title: &str, value: &mut f64, unit: &str) {
     self.ui.horizontal(|ui| {
       ui.label(RichText::from(title).size(16.0));
       ui.add(egui::DragValue::new(value)
         .clamp_range(0.0..=22.0*1000.0)
-        .prefix("  ").suffix("   [Hz]  ")
+        .prefix("  ").suffix(format!("   [{}]  ", unit))
         .speed(0.1));
     });
   }
 
   pub fn output(&mut self, title: &str) {
     let ui = &mut self.ui;
+    let stage = self.stage.borrow_mut();
     ui.label(RichText::from(title).size(16.0));
     ui.painter().circle_stroke(ui.cursor().right_top() + Vec2::new(-5.0, -8.0), 8.0, Stroke::new(2.0,Color32::DARK_GRAY));
   }

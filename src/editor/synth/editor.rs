@@ -2,7 +2,7 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 use eframe::egui;
-use eframe::egui::{PointerButton, Sense, Ui, Vec2};
+use eframe::egui::{PointerButton, Pos2, Sense, Ui, Vec2};
 use super::stage::*;
 use super::nodes::*;
 
@@ -43,6 +43,11 @@ impl Editor {
         window = window.current_pos(resp.interact_pointer_pos().expect("[BUG] No pointer position"));
       }
       window.show(ui.ctx(), |ui| {
+        let pos = -self.pan + Vec2::splat(5.0);
+        if ui.button("Sin").clicked() {
+          self.add_node(Node::new(pos, SinNode::new(440.0)));
+          self.show_new_node_window = false;
+        }
       });
     }
     self.nodes.retain(|id, node| {

@@ -43,7 +43,7 @@ impl Editor {
         window = window.current_pos(resp.interact_pointer_pos().expect("[BUG] No pointer position"));
       }
       window.show(ui.ctx(), |ui| {
-        let pos = -self.pan + Vec2::splat(5.0);
+        let pos = -self.pan + Vec2::splat(15.0);
         if ui.button("Sin").clicked() {
           self.add_node(Node::new(pos, SinNode::new(440.0)));
           self.show_new_node_window = false;

@@ -2,7 +2,7 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 use eframe::egui;
-use eframe::egui::{PointerButton, Pos2, Sense, Ui, Vec2};
+use eframe::egui::{PointerButton, Sense, Ui, Vec2};
 use super::stage::*;
 use super::nodes::*;
 

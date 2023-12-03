@@ -28,7 +28,8 @@ impl eframe::App for Editor {
         ui.menu_button("File", |ui| {
           if ui.add(egui::widgets::Button::new("Exit")).clicked() {
             self.player.pause().expect("Failed to stop");
-            frame.close();
+            // https://github.com/emilk/egui/pull/3564/files#diff-1d11751241c22642de9437e860ff42990d20d9ff1e6015ecf168ec7616e67417
+            ui.ctx().send_viewport_cmd(egui::ViewportCommand::Close);
           }
         });
       });

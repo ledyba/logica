@@ -30,6 +30,7 @@ impl Editor {
     if resp.dragged_by(PointerButton::Middle) {
       self.pan += resp.drag_delta();
     }
+
     let changed = if resp.clicked_by(PointerButton::Secondary) {
       self.show_new_node_window = !self.show_new_node_window;
       true

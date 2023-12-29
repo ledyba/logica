@@ -34,13 +34,13 @@ impl Node {
   }
 
   pub fn render(&mut self, id: usize, stage: Rc<RefCell<Stage>>, ui: &mut Ui, pan: Vec2) -> Option<Response> {
-    ui.set_clip_rect(ui.available_rect_before_wrap()); // Clip tab bar.
+    let mut ui = ui.child_ui(ui.available_rect_before_wrap(), Layout::default());
     let size = Vec2::new(150.0, 100.0);
     let rect = Rect::from_min_size(ui.max_rect().min, size).translate(self.position + pan);
     let resp = ui.allocate_ui_at_rect(rect, |ui| {
       let title_rect = ui.vertical_centered_justified(|ui| {
         let rect = Rect::from_min_size(ui.cursor().min, Vec2::new(size.x, 22.0));
-        ui.painter().rect_filled(rect, Rounding::none(), Color32::DARK_GRAY);
+        ui.painter().rect_filled(rect, Rounding::ZERO, Color32::DARK_GRAY);
         if !self.hidden { // [X] Button
           let box_seg = Rect::from_two_pos(rect.right_top(), rect.right_top()+Vec2::new(-22.0, 22.0)).shrink(1.0);
           let line_seg = box_seg.shrink(2.0);
@@ -48,7 +48,7 @@ impl Node {
           ui.painter().rect_filled(box_seg, 2.0, Color32::WHITE);
           ui.painter().line_segment([line_seg.left_top(), line_seg.right_bottom()], line_stroke);
           ui.painter().line_segment([line_seg.left_bottom(), line_seg.right_top()], line_stroke);
-          let resp = ui.interact(box_seg, ui.id().with("click_x"), Sense::click());
+          let resp = ui.interact(box_seg, ui.id().with(id).with("click_x"), Sense::click());
           if resp.clicked_by(PointerButton::Primary) {
             return None;
           }
@@ -72,7 +72,7 @@ impl Node {
         }
       }).inner;
       if let Some(title_rect) = title_rect {
-        Some(ui.interact(title_rect, ui.id().with("drag_or_click_title"), Sense::click_and_drag()))
+        Some(ui.interact(title_rect, ui.id().with(id).with("drag_or_click_title"), Sense::click_and_drag()))
       } else {
         None
       }

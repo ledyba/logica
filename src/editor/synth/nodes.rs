@@ -64,7 +64,7 @@ impl Node {
           self.node_impl.ui(&mut ctx);
           ctx.ui.cursor().right_top() + Vec2::splat(5.0)
         };
-        ui.painter().rect_stroke(Rect::from_two_pos(rect.min, cursor).expand(2.0), Rounding::none(), Stroke::new(2.0, Color32::WHITE));
+        ui.painter().rect_stroke(Rect::from_two_pos(rect.min, cursor).expand(2.0), Rounding::default(), Stroke::new(2.0, Color32::WHITE));
         if !self.hidden {
           Some(Rect::from_two_pos(rect.min, rect.max - Vec2::new(22.0, 0.0)))
         } else {

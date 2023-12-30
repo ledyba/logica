@@ -37,7 +37,7 @@ impl Node {
   pub fn render(&mut self, id: usize, stage: Rc<RefCell<Stage>>, ui: &mut Ui, pan: Vec2) -> Option<Response> {
     let mut ui = ui.child_ui(ui.available_rect_before_wrap(), Layout::default());
     let size = Vec2::new(150.0, 100.0);
-    let bg_idx = ui.painter().add(RectShape::filled(Rect::ZERO, Rounding::default(), Color32::BLACK));
+    let bg_idx = ui.painter().add(RectShape::filled(Rect::ZERO, Rounding::default(), Color32::TRANSPARENT));
     let rect = Rect::from_min_size(ui.max_rect().min, size).translate(self.position + pan);
     let resp = ui.allocate_ui_at_rect(rect, |ui| {
       let title_rect = ui.vertical_centered_justified(|ui| {
@@ -67,6 +67,7 @@ impl Node {
           ctx.ui.cursor().right_top() + Vec2::splat(5.0)
         };
         ui.painter().rect_stroke(Rect::from_two_pos(rect.min, cursor).expand(2.0), Rounding::default(), Stroke::new(2.0, Color32::WHITE));
+        // Refill background
         ui.painter().set(bg_idx, RectShape::filled(Rect::from_two_pos(rect.min, cursor).expand(2.0), Rounding::default(), Color32::BLACK));
         if !self.hidden {
           Some(Rect::from_two_pos(rect.min, rect.max - Vec2::new(22.0, 0.0)))

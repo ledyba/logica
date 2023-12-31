@@ -54,7 +54,7 @@ impl Editor {
     self.nodes.retain(|id, node| {
       node.render(*id, self.stage.clone(), ui, self.pan).is_some()
     });
-    self.stage.borrow_mut().render(ui);
+    self.stage.borrow_mut().ui(ui);
   }
 
   pub fn add_node(&mut self, node: Node) {

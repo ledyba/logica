@@ -118,8 +118,7 @@ impl NodeContext {
 
   pub fn output(&mut self, title: &str) {
     let ui = &mut self.ui;
-    let stage = self.stage.borrow_mut();
-    ui.label(RichText::from(title).size(16.0));
-    ui.painter().circle_stroke(ui.cursor().right_top() + Vec2::new(-5.0, -8.0), 8.0, Stroke::new(2.0,Color32::DARK_GRAY));
+    let mut stage = self.stage.borrow_mut();
+    stage.output(ui, title);
   }
 }

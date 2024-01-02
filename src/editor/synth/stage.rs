@@ -32,7 +32,7 @@ impl Stage {
 
   /// Make output slot with name.
   pub fn output(&mut self, ui: &mut Ui, title: &str) -> Slot {
-    let id = self.next_id();
+    let id = self.alloc_next_id();
     ui.label(RichText::from(title).size(16.0));
     let pos = ui.cursor().right_top() + Vec2::new(-5.0, -8.0);
     ui.painter().circle_stroke(pos, 8.0, Stroke::new(2.0,Color32::DARK_GRAY));
@@ -44,7 +44,7 @@ impl Stage {
 
   /// Make input slot with name.
   pub fn input(&mut self, ui: &mut Ui, title: &str) -> Slot {
-    let id = self.next_id();
+    let id = self.alloc_next_id();
     ui.label(RichText::from(title).size(16.0));
     let pos = ui.cursor().right_top() + Vec2::new(-5.0, -8.0);
     ui.painter().circle_stroke(pos, 8.0, Stroke::new(2.0,Color32::DARK_GRAY));
@@ -65,7 +65,7 @@ impl Stage {
     }
   }
 
-  fn next_id(&mut self) -> usize {
+  fn alloc_next_id(&mut self) -> usize {
     let id = self.next_id;
     self.next_id += 1;
     id

@@ -30,6 +30,7 @@ impl Stage {
     self.holes.clear();
   }
 
+  /// Make output slot with name.
   pub fn output(&mut self, ui: &mut Ui, title: &str) -> Slot {
     let id = self.next_id();
     ui.label(RichText::from(title).size(16.0));
@@ -41,6 +42,7 @@ impl Stage {
     slot
   }
 
+  /// Make input slot with name.
   pub fn input(&mut self, ui: &mut Ui, title: &str) -> Slot {
     let id = self.next_id();
     ui.label(RichText::from(title).size(16.0));

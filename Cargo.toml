@@ -8,9 +8,9 @@ license = "AGPL-3.0-or-later"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-anyhow = "1.0.75"
+anyhow = "1.0.79"
 cpal = "0.15.2"
 log = "0.4.20"
 fern = "0.6.2"
 chrono = "0.4.31"
-eframe = "0.24.1"
+eframe = "0.25.0"

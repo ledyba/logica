@@ -2,7 +2,7 @@ mod synth;
 
 use std::rc::Rc;
 use eframe::egui;
-use eframe::egui::{Id, LayerId, Layout, Order};
+use eframe::egui::Layout;
 use crate::editor::synth::SynthEditor;
 use crate::player::Player;
 

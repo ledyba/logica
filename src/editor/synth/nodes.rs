@@ -34,11 +34,11 @@ impl Node {
     }
   }
 
-  pub fn render(&mut self, id: usize, stage: Rc<RefCell<Stage>>, ui: &mut Ui, pan: Vec2) -> Option<Response> {
+  pub fn render(&mut self, id: usize, stage: Rc<RefCell<Stage>>, ui: &mut Ui) -> Option<Response> {
     let mut ui = ui.child_ui(ui.available_rect_before_wrap(), Layout::default());
     let size = Vec2::new(150.0, 100.0);
     let bg_idx = ui.painter().add(RectShape::filled(Rect::ZERO, Rounding::default(), Color32::TRANSPARENT));
-    let rect = Rect::from_min_size(ui.max_rect().min, size).translate(self.position + pan);
+    let rect = Rect::from_min_size(ui.max_rect().min, size).translate(self.position);
     let resp = ui.allocate_ui_at_rect(rect, |ui| {
       let title_rect = ui.vertical_centered_justified(|ui| {
         let rect = Rect::from_min_size(ui.cursor().min, Vec2::new(size.x, 22.0));

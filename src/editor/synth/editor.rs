@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use std::rc::Rc;
 use eframe::egui;
 use eframe::egui::{Id, LayerId, Order, PointerButton, Sense, Ui, Vec2};
+use eframe::emath::TSTransform;
 use super::stage::*;
 use super::nodes::*;
 
@@ -51,10 +52,13 @@ impl Editor {
         }
       });
     }
-    self.nodes.retain(|id, node| {
-      node.render(*id, self.stage.clone(), ui, self.pan).is_some()
+    ui.with_layer_id(LayerId::new(Order::Background, ui.id().with("node_layer")), |ui| {
+      ui.ctx().set_transform_layer(ui.layer_id(), TSTransform::new(self.pan, 1.0));
+      self.nodes.retain(|id, node| {
+        node.render(*id, self.stage.clone(), ui).is_some()
+      });
+      self.stage.borrow_mut().ui(ui);
     });
-    self.stage.borrow_mut().ui(ui);
   }
 
   pub fn add_node(&mut self, node: Node) {

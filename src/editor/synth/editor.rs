@@ -4,6 +4,7 @@ use std::rc::Rc;
 use eframe::egui;
 use eframe::egui::{Id, LayerId, Order, PointerButton, Sense, Ui, Vec2};
 use eframe::emath::TSTransform;
+use log::info;
 use super::stage::*;
 use super::nodes::*;
 
@@ -27,7 +28,11 @@ impl Editor {
   }
   pub fn ui(&mut self, ui: &mut Ui) {
     self.stage.borrow_mut().start_frame();
-    let resp = ui.interact(ui.available_rect_before_wrap(), ui.id().with("MainPanel"), Sense::drag());
+    let resp = ui.interact(
+      ui.available_rect_before_wrap(),
+      ui.id().with("MainPanel"),
+      Sense::click_and_drag(),
+    );
     if resp.dragged_by(PointerButton::Middle) {
       self.pan += resp.drag_delta();
     }
@@ -52,7 +57,7 @@ impl Editor {
         }
       });
     }
-    ui.with_layer_id(LayerId::new(Order::Background, ui.id().with("node_layer")), |ui| {
+    ui.with_layer_id(LayerId::new(Order::Middle, ui.id().with("node_layer")), |ui| {
       ui.ctx().set_transform_layer(ui.layer_id(), TSTransform::new(self.pan, 1.0));
       self.nodes.retain(|id, node| {
         node.render(*id, self.stage.clone(), ui).is_some()

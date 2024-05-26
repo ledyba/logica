@@ -26,10 +26,12 @@ impl Player {
     self.stream.play()?;
     Ok(())
   }
+
   pub fn pause(&self) -> anyhow::Result<()> {
     self.stream.pause()?;
     Ok(())
   }
+
   pub fn register(&self, offset: f64, track: Box<dyn Track + Send + Sync + 'static>) {
     let mut inner = self.inner.lock().expect("[BUG] Lock poisoned");
     inner.register(offset, track);

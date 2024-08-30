@@ -3,8 +3,8 @@ mod synth;
 use std::rc::Rc;
 use eframe::egui;
 use eframe::egui::Layout;
-use crate::editor::synth::SynthEditor;
 use crate::player::Player;
+use synth::SynthEditor;
 
 pub struct Editor {
   player: Rc<Player>,
@@ -15,13 +15,13 @@ impl Editor {
   pub fn new(player: Rc<Player>) -> Self {
     Self {
       player: player.clone(),
-      editor: SynthEditor::new(player.clone()),
+      editor: SynthEditor::new(),
     }
   }
 }
 
 impl eframe::App for Editor {
-  fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
+  fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
     egui::TopBottomPanel::top("Logica::MenuBar").show(ctx, |ui| {
       egui::menu::bar(ui, |ui| {
         egui::widgets::global_dark_light_mode_switch(ui);
@@ -46,7 +46,9 @@ impl eframe::App for Editor {
     egui::panel::CentralPanel::default().show(ctx, |ui| {
       let ctx = ui.ctx();
       let max_rect = ctx.available_rect();
-      let mut ui = ui.child_ui(max_rect, Layout::default());
+      let frame = egui::Frame::central_panel(ui.style());
+      let ui_stack_info = egui::UiStackInfo::new(egui::UiKind::CentralPanel).with_frame(frame);
+      let mut ui = ui.child_ui(max_rect, Layout::default(), Some(ui_stack_info));
       self.editor.ui(&mut ui);
     });
   }

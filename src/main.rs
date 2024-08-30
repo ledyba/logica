@@ -35,7 +35,7 @@ fn main() -> anyhow::Result<()> {
     options,
     Box::new(|cc| {
       cc.egui_ctx.set_visuals(Visuals::dark());
-      Box::new(Editor::new(Rc::new(player)))
+      Ok(Box::new(Editor::new(Rc::new(player))))
     }),
   ).map_err(|err| anyhow::Error::msg(err.to_string()))?;
   Ok(())

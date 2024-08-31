@@ -14,3 +14,4 @@ log = "0.4.22"
 fern = "0.6.2"
 chrono = "0.4.37"
 eframe = "0.28.1"
+egui-snarl = { git = "https://github.com/zakarumych/egui-snarl", features = ["serde"], rev = "003705c6cfa3cbba768bfc261960e9e7415d7def" }

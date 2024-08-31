@@ -16,6 +16,8 @@ impl NodeViewer {
 impl SnarlViewer<Node> for NodeViewer {
   fn title(&mut self, node: &Node) -> String {
     match node {
+      Node::MidiInput => "MIDI In".to_string(),
+      Node::Output => "Output".to_string(),
       Node::Oscillator(osc) => match osc {
         super::node::Oscillator::Sin => "Sin Oscillator".to_string(),
       },
@@ -37,6 +39,8 @@ impl SnarlViewer<Node> for NodeViewer {
 
   fn outputs(&mut self, node: &Node) -> usize {
     match node {
+      Node::MidiInput => 1,
+      Node::Output => 0,
       Node::Oscillator(osc) => match osc {
         super::node::Oscillator::Sin => 1,
       },
@@ -45,6 +49,8 @@ impl SnarlViewer<Node> for NodeViewer {
 
   fn inputs(&mut self, node: &Node) -> usize {
     match node {
+      Node::MidiInput => 0,
+      Node::Output => 1,
       Node::Oscillator(osc) => match osc {
         super::node::Oscillator::Sin => 1,
       },
@@ -59,6 +65,11 @@ impl SnarlViewer<Node> for NodeViewer {
     snarl: &mut Snarl<Node>
   ) -> PinInfo {
     match &mut snarl[pin.id.node] {
+      Node::MidiInput => unreachable!("No input"),
+      Node::Output => {
+        ui.add(Label::new("Signal").selectable(false));
+        PinInfo::circle().with_stroke(Stroke::new(1.0, Color32::BLUE))
+      },
       Node::Oscillator(ref mut osc) => match osc {
         Oscillator::Sin => {
           ui.add(Label::new("Freq").selectable(false));
@@ -76,6 +87,11 @@ impl SnarlViewer<Node> for NodeViewer {
     snarl: &mut Snarl<Node>,
   ) -> PinInfo {
     match &mut snarl[pin.id.node] {
+      Node::MidiInput => {
+        ui.add(Label::new("Freq").selectable(false));
+        PinInfo::circle().with_stroke(Stroke::new(1.0, Color32::BLUE))
+      },
+      Node::Output => unreachable!("No output"),
       Node::Oscillator(ref mut osc) => match osc {
         Oscillator::Sin => {
           ui.add(Label::new("Output").selectable(false));
@@ -87,6 +103,8 @@ impl SnarlViewer<Node> for NodeViewer {
 
   fn has_body(&mut self, node: &Node) -> bool {
     match node {
+      Node::MidiInput => false,
+      Node::Output => false,
       Node::Oscillator(osc) => match osc {
         super::node::Oscillator::Sin => false,
       },
@@ -103,6 +121,8 @@ impl SnarlViewer<Node> for NodeViewer {
     snarl: &mut Snarl<Node>,
   ) {
     match &mut snarl[node] {
+      Node::MidiInput => unreachable!("No body"),
+      Node::Output => unreachable!("No body"),
       Node::Oscillator(ref mut osc) => match osc {
           Oscillator::Sin => unreachable!("No body"),
       },
@@ -126,6 +146,21 @@ impl SnarlViewer<Node> for NodeViewer {
     snarl: &mut Snarl<Node>,
   ) {
     ui.add(Label::new("Add New Node").selectable(false));
+
+    let input_added = snarl.nodes_info().any(|holder| holder.value.is_midi_input());
+    if !input_added && ui.button("MIDI In").clicked() {
+      snarl.insert_node(pos, Node::MidiInput);
+      ui.close_menu();
+    }
+
+    let output_added = snarl.nodes_info().any(|holder| holder.value.is_output());
+    if !output_added && ui.button("Output").clicked() {
+      if snarl.nodes_info().all(|node| !node.value.is_output()) {
+        snarl.insert_node(pos, Node::Output);
+      }
+      ui.close_menu();
+    }
+
     ui.menu_button("Oscillator", |ui| {
       if ui.button("Sin Wave").clicked() {
         snarl.insert_node(pos, Node::Oscillator(Oscillator::Sin));

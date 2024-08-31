@@ -1,5 +1,5 @@
-use eframe::egui;
-use egui_snarl::{ui::{SnarlStyle, SnarlViewer}, Snarl};
+use eframe::egui::{self, Vec2};
+use egui_snarl::{ui::{BackgroundPattern, SnarlStyle, SnarlViewer}, Snarl};
 
 pub struct NodeEnum {
 
@@ -57,10 +57,12 @@ impl SynthViewer {
 
 impl SynthEditor {
     pub fn new() -> Self {
+      let mut snarl_style = SnarlStyle::new();
+      snarl_style.bg_pattern = Some(BackgroundPattern::grid(Vec2::splat(50.0), 0.0));
       Self {
         viewer: SynthViewer::new(),
         snarl: Default::default(),
-        snarl_style: SnarlStyle::new(),
+        snarl_style,
       }
     }
 

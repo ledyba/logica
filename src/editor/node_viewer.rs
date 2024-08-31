@@ -125,7 +125,7 @@ impl SnarlViewer<Node> for NodeViewer {
     _scale: f32,
     snarl: &mut Snarl<Node>,
   ) {
-    ui.label("Add New Node");
+    ui.add(Label::new("Add New Node").selectable(false));
     ui.menu_button("Oscillator", |ui| {
       if ui.button("Sin Wave").clicked() {
         snarl.insert_node(pos, Node::Oscillator(Oscillator::Sin));

@@ -1,20 +1,18 @@
-pub struct SynthTrack {
-  freq: f64,
+pub struct SynthPlayer {
 }
 
-impl SynthTrack {
+impl SynthPlayer {
   pub fn new(synth: &crate::synth::Synth) -> Self {
     Self {
-      freq: synth.freq,
     }
   }
 }
 
-impl super::Track for SynthTrack {
-  fn play(&mut self, config: &cpal::StreamConfig, buff: &mut [f32], start_idx: usize) {
+impl SynthPlayer {
+  pub fn play(&mut self, config: &cpal::StreamConfig, buff: &mut [f32], start_idx: usize) {
     use std::f64::consts::PI;
     let num_channel = config.channels as usize;
-    let k = PI * 2.0 * self.freq;
+    let k = PI * 2.0 * 444.0; //FIXME: Fill.
     let samples_per_second = config.sample_rate.0 as f64 * num_channel as f64;
     let mut idx = start_idx;
     for chunk in buff.chunks_exact_mut(num_channel) {
@@ -26,7 +24,7 @@ impl super::Track for SynthTrack {
     }
   }
 
-  fn is_done(&self) -> bool {
+  pub fn is_done(&self) -> bool {
     false
   }
 }

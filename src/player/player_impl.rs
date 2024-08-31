@@ -3,7 +3,7 @@ use cpal::traits::{DeviceTrait, HostTrait};
 use std::sync::{Arc, Mutex};
 use log::{debug, error};
 
-use super::track::Track;
+use super::player::SynthPlayer;
 use super::converter::{
   Converter,
   ConverterImpl,
@@ -12,7 +12,7 @@ use super::converter::{
 pub struct PlayerImpl {
   config: cpal::StreamConfig,
   total_samples: usize,
-  tracks: Vec<(usize, Box<dyn Track + Send + Sync + 'static>)>,
+  tracks: Vec<(usize, Box<SynthPlayer>)>,
 }
 
 pub fn setup() -> anyhow::Result<(Stream, Arc<Mutex<PlayerImpl>>)> {
@@ -96,7 +96,7 @@ impl PlayerImpl {
     error!("{}", err);
   }
 
-  pub fn register(&mut self, offset: f64, track: Box<dyn Track + Send + Sync + 'static>) {
+  pub fn register(&mut self, offset: f64, track: Box<SynthPlayer>) {
     self.tracks.push((self.total_samples + (offset * self.config.sample_rate.0 as f64) as usize, track));
   }
 }

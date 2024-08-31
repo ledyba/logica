@@ -1,12 +1,11 @@
+mod converter;
+mod player;
+mod player_impl;
+
 use std::sync::{Arc, Mutex};
 use cpal::traits::StreamTrait;
 
-mod converter;
-mod track;
-mod player_impl;
-
-pub use track::Track;
-pub use track::SynthTrack;
+pub use player::SynthPlayer;
 
 pub struct Player {
   stream: cpal::Stream,
@@ -32,7 +31,7 @@ impl Player {
     Ok(())
   }
 
-  pub fn register(&self, offset: f64, track: Box<dyn Track + Send + Sync + 'static>) {
+  pub fn register(&self, offset: f64, track: Box<SynthPlayer>) {
     let mut inner = self.inner.lock().expect("[BUG] Lock poisoned");
     inner.register(offset, track);
   }

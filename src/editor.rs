@@ -1,21 +1,34 @@
 mod synth;
+mod node;
+mod node_viewer;
 
 use std::rc::Rc;
-use eframe::egui;
+use eframe::egui::{self, Vec2};
 use eframe::egui::Layout;
+use egui_snarl::ui::{BackgroundPattern, SnarlStyle};
+use egui_snarl::Snarl;
 use crate::player::Player;
-use synth::SynthEditor;
+use synth::Synth;
 
 pub struct Editor {
   player: Rc<Player>,
-  editor: SynthEditor,
+  synth: Synth,
+  // Snarl
+  node_viewer: node_viewer::NodeViewer,
+  snarl: Snarl<node::Node>,
+  snarl_style: SnarlStyle,
 }
 
 impl Editor {
   pub fn new(player: Rc<Player>) -> Self {
+    let mut snarl_style = SnarlStyle::new();
+    snarl_style.bg_pattern = Some(BackgroundPattern::grid(Vec2::splat(50.0), 0.0));
     Self {
       player: player.clone(),
-      editor: SynthEditor::new(),
+      synth: Synth::new(),
+      node_viewer: node_viewer::NodeViewer::new(),
+      snarl: Snarl::new(),
+      snarl_style,
     }
   }
 }
@@ -49,7 +62,13 @@ impl eframe::App for Editor {
       let frame = egui::Frame::central_panel(ui.style());
       let ui_stack_info = egui::UiStackInfo::new(egui::UiKind::CentralPanel).with_frame(frame);
       let mut ui = ui.child_ui(max_rect, Layout::default(), Some(ui_stack_info));
-      self.editor.ui(&mut ui);
+      
+      self.snarl.show(
+        &mut self.node_viewer,
+        &self.snarl_style,
+        egui::Id::new("snarl"),
+        &mut ui,
+      )
     });
   }
 }

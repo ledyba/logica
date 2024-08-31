@@ -22,7 +22,7 @@ impl SnarlViewer<Node> for NodeViewer {
     }
   }
 
-  #[inline]
+  #[inline(always)]
   fn show_header(
       &mut self,
       node: NodeId,
@@ -109,6 +109,7 @@ impl SnarlViewer<Node> for NodeViewer {
     }
   }
 
+  #[inline(always)]
   fn has_graph_menu(
     &mut self,
     _pos: Pos2,

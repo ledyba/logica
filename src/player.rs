@@ -1,11 +1,10 @@
 mod converter;
-mod player;
 mod player_impl;
 
 use std::sync::{Arc, Mutex};
 use cpal::traits::StreamTrait;
 
-pub use player::SynthPlayer;
+use crate::synth::Synth;
 
 pub struct Player {
   stream: cpal::Stream,
@@ -21,18 +20,21 @@ pub fn setup() -> anyhow::Result<Player> {
 }
 
 impl Player {
-  pub fn start(&self) -> anyhow::Result<()> {
+  pub fn start(&self, synth: Synth) -> anyhow::Result<()> {
+    {
+      let mut inner = self.inner.lock().expect("[BUG] Lock poisoned");
+      inner.register(synth);
+    }
     self.stream.play()?;
     Ok(())
   }
 
   pub fn pause(&self) -> anyhow::Result<()> {
+    {
+      let mut inner = self.inner.lock().expect("[BUG] Lock poisoned");
+      inner.unregister();
+    }
     self.stream.pause()?;
     Ok(())
-  }
-
-  pub fn register(&self, offset: f64, track: Box<SynthPlayer>) {
-    let mut inner = self.inner.lock().expect("[BUG] Lock poisoned");
-    inner.register(offset, track);
   }
 }

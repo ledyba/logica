@@ -3,7 +3,7 @@ use cpal::traits::{DeviceTrait, HostTrait};
 use std::sync::{Arc, Mutex};
 use log::{debug, error};
 
-use super::player::SynthPlayer;
+use crate::synth::Synth;
 use super::converter::{
   Converter,
   ConverterImpl,
@@ -12,7 +12,7 @@ use super::converter::{
 pub struct PlayerImpl {
   config: cpal::StreamConfig,
   total_samples: usize,
-  tracks: Vec<(usize, Box<SynthPlayer>)>,
+  synth: Option<Synth>,
 }
 
 pub fn setup() -> anyhow::Result<(Stream, Arc<Mutex<PlayerImpl>>)> {
@@ -76,27 +76,28 @@ impl PlayerImpl {
     Self {
       config,
       total_samples: 0,
-      tracks: Vec::new(),
+      synth: None,
     }
   }
 
   fn on_play(&mut self, buff: &mut [f32], _info: &cpal::OutputCallbackInfo) {
-    for (from, track) in &mut self.tracks {
-      if self.total_samples < *from {
-        continue;
-      }
-      let start_idx = self.total_samples - *from;
-      track.play(&self.config, buff, start_idx);
+    if let Some(synth) = &mut self.synth {
+      synth.play(&self.config, buff, self.total_samples);
+      self.total_samples += buff.len();
     }
-    self.tracks.retain(|(_, it)| !it.is_done());
-    self.total_samples += buff.len();
   }
 
   fn on_error(self: &Self, err: cpal::StreamError) {
     error!("{}", err);
   }
 
-  pub fn register(&mut self, offset: f64, track: Box<SynthPlayer>) {
-    self.tracks.push((self.total_samples + (offset * self.config.sample_rate.0 as f64) as usize, track));
+  pub fn register(&mut self, synth: Synth) {
+    self.total_samples = 0;
+    self.synth = Some(synth);
+  }
+
+  pub fn unregister(&mut self) {
+    self.total_samples = 0;
+    self.synth = None;
   }
 }

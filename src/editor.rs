@@ -1,4 +1,3 @@
-mod synth;
 mod node;
 mod node_viewer;
 
@@ -8,11 +7,12 @@ use eframe::egui::Layout;
 use egui_snarl::ui::{BackgroundPattern, SnarlStyle};
 use egui_snarl::Snarl;
 use crate::player::Player;
-use synth::Synth;
+use crate::synth::Synth;
+
+pub use node::Node;
 
 pub struct Editor {
   player: Rc<Player>,
-  synth: Synth,
   // Snarl
   node_viewer: node_viewer::NodeViewer,
   snarl: Snarl<node::Node>,
@@ -25,7 +25,6 @@ impl Editor {
     snarl_style.bg_pattern = Some(BackgroundPattern::grid(Vec2::splat(50.0), 0.0));
     Self {
       player: player.clone(),
-      synth: Synth::new(),
       node_viewer: node_viewer::NodeViewer::new(),
       snarl: Snarl::new(),
       snarl_style,
@@ -49,7 +48,7 @@ impl eframe::App for Editor {
       ui.separator();
       egui::menu::bar(ui, |ui| {
         if ui.button("▶ Play").clicked() {
-          self.player.start().expect("[BUG] Failed to play");
+          self.player.start(Synth::new(&self.snarl)).expect("[BUG] Failed to play");
         }
         if ui.button("■ Stop").clicked() {
           self.player.pause().expect("[BUG] Failed to pause");

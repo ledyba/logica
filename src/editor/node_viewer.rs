@@ -7,6 +7,9 @@ use super::node::Oscillator;
 
 pub struct NodeViewer;
 
+const COLOR_TYPE_FREQ: Color32 = Color32::GREEN;
+const COLOR_TYPE_SIGNAL: Color32 = Color32::BLUE;
+
 impl NodeViewer {
   pub fn new() -> Self {
     Self
@@ -68,12 +71,12 @@ impl SnarlViewer<Node> for NodeViewer {
       Node::MidiInput => unreachable!("No input"),
       Node::Output => {
         ui.add(Label::new("Signal").selectable(false));
-        PinInfo::circle().with_stroke(Stroke::new(1.0, Color32::BLUE))
+        PinInfo::circle().with_stroke(Stroke::new(1.0, COLOR_TYPE_SIGNAL))
       },
       Node::Oscillator(ref mut osc) => match osc {
         Oscillator::Sin => {
           ui.add(Label::new("Freq").selectable(false));
-          PinInfo::circle().with_stroke(Stroke::new(1.0, Color32::GREEN))
+          PinInfo::circle().with_stroke(Stroke::new(1.0, COLOR_TYPE_FREQ))
         },
       }
     }
@@ -89,13 +92,13 @@ impl SnarlViewer<Node> for NodeViewer {
     match &mut snarl[pin.id.node] {
       Node::MidiInput => {
         ui.add(Label::new("Freq").selectable(false));
-        PinInfo::circle().with_stroke(Stroke::new(1.0, Color32::BLUE))
+        PinInfo::circle().with_stroke(Stroke::new(1.0, COLOR_TYPE_FREQ))
       },
       Node::Output => unreachable!("No output"),
       Node::Oscillator(ref mut osc) => match osc {
         Oscillator::Sin => {
           ui.add(Label::new("Output").selectable(false));
-          PinInfo::circle().with_stroke(Stroke::new(1.0, Color32::BLUE))
+          PinInfo::circle().with_stroke(Stroke::new(1.0, COLOR_TYPE_SIGNAL))
         },
       }
     }

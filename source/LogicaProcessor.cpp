@@ -14,18 +14,18 @@ namespace Logica {
 //------------------------------------------------------------------------
 // LogicaProcessor
 //------------------------------------------------------------------------
-LogicaProcessor::LogicaProcessor ()
-{
+LogicaProcessor::LogicaProcessor() {
   //--- set the wanted controller for our processor
   setControllerClass (kLogicaControllerUID);
 }
 
 //------------------------------------------------------------------------
-LogicaProcessor::~LogicaProcessor ()
-{}
+LogicaProcessor::~LogicaProcessor() {
+
+}
 
 //------------------------------------------------------------------------
-tresult PLUGIN_API LogicaProcessor::initialize (FUnknown* context)
+tresult PLUGIN_API LogicaProcessor::initialize(FUnknown* context)
 {
   // Here the Plug-in will be instantiated
   
@@ -48,7 +48,7 @@ tresult PLUGIN_API LogicaProcessor::initialize (FUnknown* context)
 }
 
 //------------------------------------------------------------------------
-tresult PLUGIN_API LogicaProcessor::terminate ()
+tresult PLUGIN_API LogicaProcessor::terminate()
 {
   // Here the Plug-in will be de-instantiated, last possibility to remove some memory!
   
@@ -57,14 +57,14 @@ tresult PLUGIN_API LogicaProcessor::terminate ()
 }
 
 //------------------------------------------------------------------------
-tresult PLUGIN_API LogicaProcessor::setActive (TBool state)
+tresult PLUGIN_API LogicaProcessor::setActive(TBool state)
 {
   //--- called when the Plug-in is enable/disable (On/Off) -----
   return AudioEffect::setActive (state);
 }
 
 //------------------------------------------------------------------------
-tresult PLUGIN_API LogicaProcessor::process (Vst::ProcessData& data)
+tresult PLUGIN_API LogicaProcessor::process(Vst::ProcessData& data)
 {
   //--- First : Read inputs parameter changes-----------
 
@@ -138,14 +138,14 @@ tresult PLUGIN_API LogicaProcessor::process (Vst::ProcessData& data)
 }
 
 //------------------------------------------------------------------------
-tresult PLUGIN_API LogicaProcessor::setupProcessing (Vst::ProcessSetup& newSetup)
+tresult PLUGIN_API LogicaProcessor::setupProcessing(Vst::ProcessSetup& newSetup)
 {
   //--- called before any processing ----
   return AudioEffect::setupProcessing (newSetup);
 }
 
 //------------------------------------------------------------------------
-tresult PLUGIN_API LogicaProcessor::canProcessSampleSize (int32 symbolicSampleSize)
+tresult PLUGIN_API LogicaProcessor::canProcessSampleSize(int32 symbolicSampleSize)
 {
   // by default kSample32 is supported
   if (symbolicSampleSize == Vst::kSample32)
@@ -159,19 +159,19 @@ tresult PLUGIN_API LogicaProcessor::canProcessSampleSize (int32 symbolicSampleSi
 }
 
 //------------------------------------------------------------------------
-tresult PLUGIN_API LogicaProcessor::setState (IBStream* state)
+tresult PLUGIN_API LogicaProcessor::setState(IBStream* state)
 {
   // called when we load a preset, the model has to be reloaded
-  IBStreamer streamer (state, kLittleEndian);
+  IBStreamer streamer(state, kLittleEndian);
   
   return kResultOk;
 }
 
 //------------------------------------------------------------------------
-tresult PLUGIN_API LogicaProcessor::getState (IBStream* state)
+tresult PLUGIN_API LogicaProcessor::getState(IBStream* state)
 {
   // here we need to save the model
-  IBStreamer streamer (state, kLittleEndian);
+  IBStreamer streamer(state, kLittleEndian);
 
   return kResultOk;
 }

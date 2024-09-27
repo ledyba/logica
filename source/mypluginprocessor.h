@@ -6,7 +6,7 @@
 
 #include "public.sdk/source/vst/vstaudioeffect.h"
 
-namespace MyCompanyName {
+namespace Logica {
 
 //------------------------------------------------------------------------
 //  LogicaProcessor
@@ -54,4 +54,4 @@ protected:
 };
 
 //------------------------------------------------------------------------
-} // namespace MyCompanyName
+} // namespace Logica

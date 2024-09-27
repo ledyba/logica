@@ -2,13 +2,13 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
-    <mapping directory="$USER_HOME$/opt/vst3sdk" vcs="Git" />
-    <mapping directory="$USER_HOME$/opt/vst3sdk/base" vcs="Git" />
-    <mapping directory="$USER_HOME$/opt/vst3sdk/cmake" vcs="Git" />
-    <mapping directory="$USER_HOME$/opt/vst3sdk/doc" vcs="Git" />
-    <mapping directory="$USER_HOME$/opt/vst3sdk/pluginterfaces" vcs="Git" />
-    <mapping directory="$USER_HOME$/opt/vst3sdk/public.sdk" vcs="Git" />
-    <mapping directory="$USER_HOME$/opt/vst3sdk/tutorials" vcs="Git" />
-    <mapping directory="$USER_HOME$/opt/vst3sdk/vstgui4" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/external/vst3sdk" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/external/vst3sdk/base" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/external/vst3sdk/cmake" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/external/vst3sdk/doc" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/external/vst3sdk/pluginterfaces" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/external/vst3sdk/public.sdk" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/external/vst3sdk/tutorials" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/external/vst3sdk/vstgui4" vcs="Git" />
   </component>
 </project>

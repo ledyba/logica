@@ -10,7 +10,7 @@
 
 using namespace Steinberg;
 
-namespace MyCompanyName {
+namespace Logica {
 //------------------------------------------------------------------------
 // LogicaProcessor
 //------------------------------------------------------------------------
@@ -177,4 +177,4 @@ tresult PLUGIN_API LogicaProcessor::getState (IBStream* state)
 }
 
 //------------------------------------------------------------------------
-} // namespace MyCompanyName
+} // namespace Logica

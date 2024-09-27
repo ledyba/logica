@@ -8,7 +8,7 @@
 
 using namespace Steinberg;
 
-namespace MyCompanyName {
+namespace Logica {
 
 //------------------------------------------------------------------------
 // LogicaController Implementation
@@ -79,4 +79,4 @@ IPlugView* PLUGIN_API LogicaController::createView (FIDString name)
 }
 
 //------------------------------------------------------------------------
-} // namespace MyCompanyName
+} // namespace Logica

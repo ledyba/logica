@@ -6,7 +6,7 @@
 
 #include "public.sdk/source/vst/vsteditcontroller.h"
 
-namespace MyCompanyName {
+namespace Logica {
 
 //------------------------------------------------------------------------
 //  LogicaController
@@ -46,4 +46,4 @@ protected:
 };
 
 //------------------------------------------------------------------------
-} // namespace MyCompanyName
+} // namespace Logica

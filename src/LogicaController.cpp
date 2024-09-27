@@ -63,7 +63,7 @@ tresult PLUGIN_API LogicaController::getState (IBStream* state) {
 //------------------------------------------------------------------------
 IPlugView* PLUGIN_API LogicaController::createView (FIDString name) {
   // Here the Host wants to open your editor (if you have one)
-  if (!FIDStringsEqual (name, Vst::ViewType::kEditor)) {
+  if (!FIDStringsEqual(name, Vst::ViewType::kEditor)) {
     return nullptr;
   }
   // create your editor here and return a IPlugView ptr of it

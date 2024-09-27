@@ -19,8 +19,7 @@ tresult PLUGIN_API LogicaController::initialize (FUnknown* context)
 
   //---do not forget to call parent ------
   tresult result = EditControllerEx1::initialize (context);
-  if (result != kResultOk)
-  {
+  if (result != kResultOk) {
     return result;
   }
 
@@ -42,8 +41,9 @@ tresult PLUGIN_API LogicaController::terminate ()
 tresult PLUGIN_API LogicaController::setComponentState (IBStream* state)
 {
   // Here you get the state of the component (Processor part)
-  if (!state)
+  if (!state) {
     return kResultFalse;
+  }
 
   return kResultOk;
 }
@@ -69,13 +69,12 @@ tresult PLUGIN_API LogicaController::getState (IBStream* state)
 IPlugView* PLUGIN_API LogicaController::createView (FIDString name)
 {
   // Here the Host wants to open your editor (if you have one)
-  if (FIDStringsEqual (name, Vst::ViewType::kEditor))
-  {
-    // create your editor here and return a IPlugView ptr of it
-    auto* view = new VSTGUI::VST3Editor (this, "view", "myplugineditor.uidesc");
-    return view;
+  if (!FIDStringsEqual (name, Vst::ViewType::kEditor)) {
+    return nullptr;
   }
-  return nullptr;
+  // create your editor here and return a IPlugView ptr of it
+  auto* view = new VSTGUI::VST3Editor(this, "view", "myplugineditor.uidesc");
+  return view;
 }
 
 //------------------------------------------------------------------------

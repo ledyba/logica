@@ -27,12 +27,12 @@ smtg_enable_vst3_sdk()
 
 smtg_add_vst3plugin(Logica
     source/version.h
-    source/myplugincids.h
-    source/mypluginprocessor.h
-    source/mypluginprocessor.cpp
-    source/myplugincontroller.h
-    source/myplugincontroller.cpp
-    source/mypluginentry.cpp
+    source/LogicaCIDs.h
+    source/LogicaProcessor.h
+    source/LogicaProcessor.cpp
+    source/LogicaController.h
+    source/LogicaController.cpp
+    source/LogicaEntry.cpp
 )
 
 #- VSTGUI Wanted ----

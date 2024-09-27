@@ -2,8 +2,8 @@
 // Copyright(c) 2024 My Plug-in Company.
 //------------------------------------------------------------------------
 
-#include "myplugincontroller.h"
-#include "myplugincids.h"
+#include "LogicaController.h"
+#include "LogicaCIDs.h"
 #include "vstgui/plugin-bindings/vst3editor.h"
 
 using namespace Steinberg;

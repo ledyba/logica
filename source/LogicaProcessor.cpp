@@ -2,8 +2,8 @@
 // Copyright(c) 2024 My Plug-in Company.
 //------------------------------------------------------------------------
 
-#include "mypluginprocessor.h"
-#include "myplugincids.h"
+#include "LogicaProcessor.h"
+#include "LogicaCIDs.h"
 
 #include "base/source/fstreamer.h"
 #include "pluginterfaces/vst/ivstparameterchanges.h"

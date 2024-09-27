@@ -2,9 +2,9 @@
 // Copyright(c) 2024 My Plug-in Company.
 //------------------------------------------------------------------------
 
-#include "mypluginprocessor.h"
-#include "myplugincontroller.h"
-#include "myplugincids.h"
+#include "LogicaProcessor.h"
+#include "LogicaController.h"
+#include "LogicaCIDs.h"
 #include "version.h"
 
 #include "public.sdk/source/main/pluginfactory.h"

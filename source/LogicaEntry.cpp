@@ -18,9 +18,11 @@ using namespace Logica;
 //  VST Plug-in Entry
 //------------------------------------------------------------------------
 
-BEGIN_FACTORY_DEF ("My Plug-in Company", 
-             "https://www.mycompanyname.com", 
-             "mailto:info@mycompanyname.com")
+BEGIN_FACTORY_DEF (
+    "My Plug-in Company",
+    "https://7io.org",
+    "mailto:psi@7io.org"
+    )
 
   //---First Plug-in included in this factory-------
   // its kVstAudioEffectClass component

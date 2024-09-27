@@ -15,7 +15,7 @@ endif()
 project(Logica
     # This is your plug-in version number. Change it here only.
     # Version number symbols usable in C++ can be found in
-    # source/version.h and ${PROJECT_BINARY_DIR}/projectversion.h.
+    #   src/version.h and ${PROJECT_BINARY_DIR}/projectversion.h.
     VERSION 1.0.0.0
     DESCRIPTION "Logica VST 3 Plug-in"
 )
@@ -26,20 +26,20 @@ add_subdirectory(${vst3sdk_SOURCE_DIR} ${PROJECT_BINARY_DIR}/vst3sdk)
 smtg_enable_vst3_sdk()
 
 smtg_add_vst3plugin(Logica
-    source/version.h
-    source/LogicaCIDs.h
-    source/LogicaProcessor.h
-    source/LogicaProcessor.cpp
-    source/LogicaController.h
-    source/LogicaController.cpp
-    source/LogicaEntry.cpp
+      src/version.h
+      src/LogicaCIDs.h
+      src/LogicaProcessor.h
+      src/LogicaProcessor.cpp
+      src/LogicaController.h
+      src/LogicaController.cpp
+      src/LogicaEntry.cpp
 )
 
 #- VSTGUI Wanted ----
 if(SMTG_ENABLE_VSTGUI_SUPPORT)
   target_sources(Logica
       PRIVATE
-      resource/myplugineditor.uidesc
+      res/myplugineditor.uidesc
   )
   target_link_libraries(Logica
       PRIVATE
@@ -47,15 +47,15 @@ if(SMTG_ENABLE_VSTGUI_SUPPORT)
   )
   smtg_target_add_plugin_resources(Logica
       RESOURCES
-      "resource/myplugineditor.uidesc"
+      "res/myplugineditor.uidesc"
   )
 endif(SMTG_ENABLE_VSTGUI_SUPPORT)
 # -------------------
 
 smtg_target_add_plugin_snapshots (Logica
     RESOURCES
-    resource/BFF7043CE3DA507DB73DDEDD2F77C358_snapshot.png
-    resource/BFF7043CE3DA507DB73DDEDD2F77C358_snapshot_2.0x.png
+    res/BFF7043CE3DA507DB73DDEDD2F77C358_snapshot.png
+    res/BFF7043CE3DA507DB73DDEDD2F77C358_snapshot_2.0x.png
 )
 
 target_link_libraries(Logica
@@ -76,7 +76,7 @@ if(SMTG_MAC)
   )
 elseif(SMTG_WIN)
   target_sources(Logica PRIVATE
-      resource/win32resource.rc
+      res/win32resource.rc
   )
   if(MSVC)
     set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT Logica)

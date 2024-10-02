@@ -19,23 +19,20 @@ LogicaEditor::tresult LogicaEditor::isPlatformTypeSupported(LogicaEditor::FIDStr
   using Steinberg::kPlatformTypeHWND;
   if (strcmp (type, kPlatformTypeHWND) == 0)
     return kResultTrue;
-
 #elif SMTG_OS_MACOS
-
+#if TARGET_OS_IPHONE
   using Steinberg::kPlatformTypeUIView;
-  #if TARGET_OS_IPHONE
-	if (strcmp (type, kPlatformTypeUIView) == 0)
-		return kResultTrue;
+  if (strcmp (type, kPlatformTypeUIView) == 0)
+    return kResultTrue;
 #else
   using Steinberg::kPlatformTypeNSView;
-	if (strcmp (type, kPlatformTypeNSView) == 0)
-		return kResultTrue;
+  if (strcmp (type, kPlatformTypeNSView) == 0)
+    return kResultTrue;
 #endif // TARGET_OS_IPHONE
-
 #elif SMTG_OS_LINUX
   using Steinberg::kPlatformTypeX11EmbedWindowID;
-	if (strcmp (type, kPlatformTypeX11EmbedWindowID) == 0)
-		return kResultTrue;
+  if (strcmp (type, kPlatformTypeX11EmbedWindowID) == 0)
+    return kResultTrue;
 #endif
   return kInvalidArgument;
 }

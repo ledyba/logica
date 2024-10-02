@@ -32,6 +32,8 @@ smtg_add_vst3plugin(Logica
       src/LogicaProcessor.cpp
       src/LogicaController.h
       src/LogicaController.cpp
+      src/LogicaEditor.h
+      src/LogicaEditor.cpp
       src/LogicaEntry.cpp
 )
 

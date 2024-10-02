@@ -12,7 +12,7 @@
 #define stringPluginName "Logica"
 
 using namespace Steinberg::Vst;
-using namespace Logica;
+using namespace logica;
 
 //------------------------------------------------------------------------
 //  VST Plug-in Entry

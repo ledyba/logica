@@ -6,7 +6,7 @@
 
 #include "public.sdk/source/vst/vstaudioeffect.h"
 
-namespace Logica {
+namespace logica {
 
 //------------------------------------------------------------------------
 //  LogicaProcessor

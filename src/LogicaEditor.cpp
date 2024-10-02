@@ -1,6 +1,9 @@
 #include "LogicaEditor.h"
 #if SMTG_OS_WINDOWS
-#include <windef.h>
+#include <windows.h>
+#include <imgui.h>
+#include <backends/imgui_impl_win32.h>
+#include <backends/imgui_impl_dx12.h>
 #endif
 namespace logica {
 
@@ -46,6 +49,7 @@ LogicaEditor::tresult LogicaEditor::attached(void* parent, LogicaEditor::FIDStri
   }
 #if SMTG_OS_WINDOWS
   HWND hwnd = reinterpret_cast<HWND>(parent);
+
 #endif
   return 0;
 }

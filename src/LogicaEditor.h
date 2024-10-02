@@ -3,11 +3,10 @@
 #include "base/source/fobject.h"
 #include "pluginterfaces/base/funknown.h"
 #include "pluginterfaces/vst/vsttypes.h"
-
 namespace logica {
 
 class LogicaController;
-class LogicaEditor: public Steinberg::IPlugView {
+class LogicaEditor: public Steinberg::FObject, public Steinberg::IPlugView {
 public:
   explicit LogicaEditor(LogicaController* controller);
   ~LogicaEditor() = default;
@@ -33,9 +32,11 @@ public:
   tresult PLUGIN_API canResize() SMTG_OVERRIDE;
   tresult PLUGIN_API checkSizeConstraint(ViewRect* rect) SMTG_OVERRIDE;
 
+  OBJ_METHODS (LogicaEditor, FObject)
   DEFINE_INTERFACES
-  END_DEFINE_INTERFACES(IPlugView)
-  DELEGATE_REFCOUNT(IPlugView)
+    DEF_INTERFACE (IPlugView)
+  END_DEFINE_INTERFACES (FObject)
+  REFCOUNT_METHODS (FObject)
 private:
   LogicaController* controller_;
   ViewRect size_;

@@ -25,17 +25,31 @@ set(SMTG_VSTGUI_ROOT "${vst3sdk_SOURCE_DIR}")
 add_subdirectory(${vst3sdk_SOURCE_DIR} ${PROJECT_BINARY_DIR}/vst3sdk)
 smtg_enable_vst3_sdk()
 
-smtg_add_vst3plugin(Logica
-      src/version.h
-      src/LogicaCIDs.h
-      src/LogicaProcessor.h
-      src/LogicaProcessor.cpp
-      src/LogicaController.h
-      src/LogicaController.cpp
-      src/LogicaEditor.h
-      src/LogicaEditor.cpp
-      src/LogicaEntry.cpp
+set(IMGUI_SRCS
+    external/imgui/backends/imgui_impl_dx12.h
+    external/imgui/backends/imgui_impl_dx12.cpp
+    external/imgui/backends/imgui_impl_win32.h
+    external/imgui/backends/imgui_impl_win32.cpp
+    external/imgui/imgui.h
+    external/imgui/imgui.cpp
+    external/imgui/imgui_draw.cpp
+    external/imgui/imgui_tables.cpp
+    external/imgui/imgui_widgets.cpp
 )
+
+smtg_add_vst3plugin(Logica
+    src/version.h
+    src/LogicaCIDs.h
+    src/LogicaProcessor.h
+    src/LogicaProcessor.cpp
+    src/LogicaController.h
+    src/LogicaController.cpp
+    src/LogicaEditor.h
+    src/LogicaEditor.cpp
+    src/LogicaEntry.cpp
+    ${IMGUI_SRCS}
+)
+target_include_directories(Logica PRIVATE external/imgui)
 
 #- VSTGUI Wanted ----
 if(SMTG_ENABLE_VSTGUI_SUPPORT)

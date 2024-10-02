@@ -67,7 +67,7 @@ IPlugView* PLUGIN_API LogicaController::createView(FIDString name) {
   if (!FIDStringsEqual(name, Vst::ViewType::kEditor)) {
     return nullptr;
   }
-  return new LogicaEditor(this, );
+  return new LogicaEditor(this);
 }
 
 //------------------------------------------------------------------------

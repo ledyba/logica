@@ -1,45 +1,103 @@
 #include "LogicaEditor.h"
-#include "vstgui/lib/copenglview.h"
-
+#if SMTG_OS_WINDOWS
+#include <windef.h>
+#endif
 namespace logica {
 
-LogicaEditor::LogicaEditor(Steinberg::Vst::EditController* const controller, Steinberg::ViewRect* const size)
-:VSTGUIEditor(controller, size)
+using Steinberg::kResultTrue;
+using Steinberg::kResultFalse;
+using Steinberg::kInvalidArgument;
+
+LogicaEditor::LogicaEditor(LogicaController* controller)
+:controller_(controller)
+,size_(0, 0, 640, 480)
 {
-  setRect(*size);
 }
 
-bool LogicaEditor::open(void *parent, VSTGUI::PlatformType const& platformType) {
-  if (frame) {
-    return false;
+LogicaEditor::tresult LogicaEditor::isPlatformTypeSupported(LogicaEditor::FIDString type) {
+#if SMTG_OS_WINDOWS
+  using Steinberg::kPlatformTypeHWND;
+  if (strcmp (type, kPlatformTypeHWND) == 0)
+    return kResultTrue;
+
+#elif SMTG_OS_MACOS
+
+  using Steinberg::kPlatformTypeUIView;
+  #if TARGET_OS_IPHONE
+	if (strcmp (type, kPlatformTypeUIView) == 0)
+		return kResultTrue;
+#else
+  using Steinberg::kPlatformTypeNSView;
+	if (strcmp (type, kPlatformTypeNSView) == 0)
+		return kResultTrue;
+#endif // TARGET_OS_IPHONE
+
+#elif SMTG_OS_LINUX
+  using Steinberg::kPlatformTypeX11EmbedWindowID;
+	if (strcmp (type, kPlatformTypeX11EmbedWindowID) == 0)
+		return kResultTrue;
+#endif
+  return kInvalidArgument;
+}
+
+LogicaEditor::tresult LogicaEditor::attached(void* parent, LogicaEditor::FIDString type) {
+  if (isPlatformTypeSupported(type) != kResultTrue) {
+    return kResultFalse;
   }
-  auto rect = getRect();
-  VSTGUI::CRect size(rect.left, rect.top, rect.right, rect.bottom);
-  frame = new VSTGUI::CFrame(size, this);
-  frame->addView(new LogicaEditorView(size));
-  return frame->open(parent, platformType);
-}
-
-void LogicaEditor::close() {
-  if (frame != nullptr) {
-    frame->forget();
-    frame = nullptr;
+  if (frame_) {
+    frame_->resizeView(this, &this->size_);
   }
+#if SMTG_OS_WINDOWS
+  HWND hwnd = reinterpret_cast<HWND>(parent);
+#endif
+  return 0;
 }
 
-// https://forums.steinberg.net/t/what-should-we-be-doing-in-our-editor-onsize-method/792100
-Steinberg::tresult LogicaEditor::onSize(Steinberg::ViewRect* newSize) {
-  return VSTGUIEditor::onSize(newSize);
+LogicaEditor::tresult LogicaEditor::removed() {
+  return 0;
 }
 
-LogicaEditorView::LogicaEditorView(VSTGUI::CRect const& size)
-:COpenGLView(size)
-{
-
+LogicaEditor::tresult LogicaEditor::onWheel(float distance) {
+  return 0;
 }
 
-void LogicaEditorView::drawOpenGL(VSTGUI::CRect const& updateRect)
-{
+LogicaEditor::tresult
+LogicaEditor::onKeyDown(LogicaEditor::char16 key, LogicaEditor::int16 keyCode, LogicaEditor::int16 modifiers) {
+  return 0;
+}
+
+LogicaEditor::tresult
+LogicaEditor::onKeyUp(LogicaEditor::char16 key, LogicaEditor::int16 keyCode, LogicaEditor::int16 modifiers) {
+  return 0;
+}
+
+LogicaEditor::tresult LogicaEditor::getSize(LogicaEditor::ViewRect *size) {
+  if (size == nullptr) {
+    return kInvalidArgument;
+  }
+  *size = size_;
+  return kResultTrue;
+}
+
+LogicaEditor::tresult LogicaEditor::onSize(LogicaEditor::ViewRect *newSize) {
+  return 0;
+}
+
+LogicaEditor::tresult LogicaEditor::onFocus(LogicaEditor::TBool state) {
+  return 0;
+}
+
+LogicaEditor::tresult LogicaEditor::setFrame(LogicaEditor::IPlugFrame* frame) {
+  frame_ = frame;
+  return kResultTrue;
+}
+
+LogicaEditor::tresult LogicaEditor::canResize() {
+  return kResultTrue;
+}
+
+LogicaEditor::tresult LogicaEditor::checkSizeConstraint(LogicaEditor::ViewRect *rect) {
+  return kResultTrue;
 }
 
 } // logica

@@ -1,24 +1,45 @@
-# pragma once
-#include "public.sdk/source/vst/vstguieditor.h"
+#pragma once
+#include "pluginterfaces/gui/iplugview.h"
+#include "base/source/fobject.h"
+#include "pluginterfaces/base/funknown.h"
+#include "pluginterfaces/vst/vsttypes.h"
 
 namespace logica {
 
-class LogicaEditor: public Steinberg::Vst::VSTGUIEditor {
+class LogicaController;
+class LogicaEditor: public Steinberg::IPlugView {
 public:
-  LogicaEditor(Steinberg::Vst::EditController* controller, Steinberg::ViewRect * size);
-  ~LogicaEditor() override = default;
-
-  bool PLUGIN_API open(void* parent, VSTGUI::PlatformType const& platformType) SMTG_OVERRIDE;
-  void PLUGIN_API close() SMTG_OVERRIDE;
-  Steinberg::tresult PLUGIN_API onSize(Steinberg::ViewRect* newSize) SMTG_OVERRIDE;
-
-  DELEGATE_REFCOUNT(VSTGUIEditor)
-};
-
-class LogicaEditorView : public VSTGUI::COpenGLView {
+  explicit LogicaEditor(LogicaController* controller);
+  ~LogicaEditor() = default;
 public:
-  explicit LogicaEditorView (VSTGUI::CRect const& size);
-  void drawOpenGL(const VSTGUI::CRect& updateRect) override;
+  using FIDString = Steinberg::FIDString;
+  using char16 = Steinberg::char16;
+  using int16 = Steinberg::int16;
+  using TBool = Steinberg::TBool;
+  using ViewRect = Steinberg::ViewRect;
+  using IPlugFrame = Steinberg::IPlugFrame;
+  using tresult = Steinberg::tresult;
+
+  tresult PLUGIN_API isPlatformTypeSupported(FIDString type) SMTG_OVERRIDE;
+  tresult PLUGIN_API attached(void* parent, FIDString type) SMTG_OVERRIDE;
+  tresult PLUGIN_API removed() SMTG_OVERRIDE;
+  tresult PLUGIN_API onWheel(float distance) SMTG_OVERRIDE;
+  tresult PLUGIN_API onKeyDown(char16 key, int16 keyCode, int16 modifiers) SMTG_OVERRIDE;
+  tresult PLUGIN_API onKeyUp(char16 key, int16 keyCode, int16 modifiers) SMTG_OVERRIDE;
+  tresult PLUGIN_API getSize(ViewRect* size) SMTG_OVERRIDE;
+  tresult PLUGIN_API onSize(ViewRect* newSize) SMTG_OVERRIDE;
+  tresult PLUGIN_API onFocus(TBool state) SMTG_OVERRIDE;
+  tresult PLUGIN_API setFrame(IPlugFrame* frame) SMTG_OVERRIDE;
+  tresult PLUGIN_API canResize() SMTG_OVERRIDE;
+  tresult PLUGIN_API checkSizeConstraint(ViewRect* rect) SMTG_OVERRIDE;
+
+  DEFINE_INTERFACES
+  END_DEFINE_INTERFACES(IPlugView)
+  DELEGATE_REFCOUNT(IPlugView)
+private:
+  LogicaController* controller_;
+  ViewRect size_;
+  Steinberg::IPtr<IPlugFrame> frame_;
 };
 
 } // logica

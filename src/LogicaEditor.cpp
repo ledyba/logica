@@ -1,9 +1,8 @@
 #include "LogicaEditor.h"
+#include "LogicaGUI.h"
 #if SMTG_OS_WINDOWS
 #include <windows.h>
 #include <imgui.h>
-#include <backends/imgui_impl_win32.h>
-#include <backends/imgui_impl_dx12.h>
 #endif
 namespace logica {
 
@@ -14,6 +13,7 @@ using Steinberg::kInvalidArgument;
 LogicaEditor::LogicaEditor(LogicaController* controller)
 :controller_(controller)
 ,size_(0, 0, 640, 480)
+,gui_(nullptr)
 {
 }
 
@@ -49,13 +49,76 @@ LogicaEditor::tresult LogicaEditor::attached(void* parent, LogicaEditor::FIDStri
   }
 #if SMTG_OS_WINDOWS
   HWND hwnd = reinterpret_cast<HWND>(parent);
+  if (gui_) {
+    gui_->close();
+    gui_.reset();
+  }
 
+  // https://github.com/ocornut/imgui/tree/master/examples/example_win32_directx12
+  gui_ = std::make_unique<LogicaGUI>(hwnd);
+  if(!gui_->createDeviceD3D()) {
+    gui_->cleanupDeviceD3D();
+  }
+  // Show the window
+  ShowWindow(hwnd, SW_SHOWDEFAULT);
+  UpdateWindow(hwnd);
+  {
+    // Setup Dear ImGui context
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+
+    // Setup Dear ImGui style
+    ImGui::StyleColorsDark();
+    //ImGui::StyleColorsLight();
+
+    // Setup Platform/Renderer backends
+    ImGui_ImplWin32_Init(hwnd);
+    ImGui_ImplDX12_Init(gui_->d3d12Device(), LogicaGUI::NUM_FRAMES_IN_FLIGHT,
+                        DXGI_FORMAT_R8G8B8A8_UNORM, gui_->d3dSrvDescHeap(),
+                        gui_->d3dSrvDescHeap()->GetCPUDescriptorHandleForHeapStart(),
+                        gui_->d3dSrvDescHeap()->GetGPUDescriptorHandleForHeapStart());
+    // TODO: LOOP
+    ImGui_ImplDX12_NewFrame();
+    ImGui_ImplWin32_NewFrame();
+    ImGui::NewFrame();
+    {
+      ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+
+      ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
+
+      ImGui::Button("Button");
+      ImGui::SameLine();
+      ImGui::Text("counter = 1");
+
+      ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+      ImGui::End();
+    }
+    ImGui::Render();
+    gui_->renderFinish();
+  }
 #endif
   return 0;
 }
 
 LogicaEditor::tresult LogicaEditor::removed() {
-  return 0;
+  if(gui_) {
+    return kResultFalse;
+  }
+  // ImGUI cleanup
+  ImGui_ImplDX12_Shutdown();
+  ImGui_ImplWin32_Shutdown();
+  ImGui::DestroyContext();
+
+  // DX12 cleanup
+  gui_->waitForLastSubmittedFrame();
+  gui_->cleanupDeviceD3D();
+
+  // window cleanup
+  DestroyWindow(gui_->hwnd());
+  return kResultTrue;
 }
 
 LogicaEditor::tresult LogicaEditor::onWheel(float distance) {

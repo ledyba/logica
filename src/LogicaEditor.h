@@ -1,15 +1,19 @@
 #pragma once
+
+#include <memory>
 #include "pluginterfaces/gui/iplugview.h"
 #include "base/source/fobject.h"
 #include "pluginterfaces/base/funknown.h"
 #include "pluginterfaces/vst/vsttypes.h"
+
 namespace logica {
 
 class LogicaController;
+class LogicaGUI;
 class LogicaEditor: public Steinberg::FObject, public Steinberg::IPlugView {
 public:
   explicit LogicaEditor(LogicaController* controller);
-  ~LogicaEditor() = default;
+  ~LogicaEditor() override = default;
 public:
   using FIDString = Steinberg::FIDString;
   using char16 = Steinberg::char16;
@@ -41,6 +45,7 @@ private:
   LogicaController* controller_;
   ViewRect size_;
   Steinberg::IPtr<IPlugFrame> frame_;
+  std::unique_ptr<LogicaGUI> gui_;
 };
 
 } // logica

@@ -257,6 +257,7 @@ ImGuiContext* LogicaGUI::createImGuiContext() {
   setImGuiContext();
   return imguiContext_;
 }
+
 bool LogicaGUI::setImGuiContext() {
   if (imguiContext_) {
     ImGui::SetCurrentContext(imguiContext_);

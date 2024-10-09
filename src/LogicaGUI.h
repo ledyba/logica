@@ -40,21 +40,21 @@ private:
   D3D12_CPU_DESCRIPTOR_HANDLE mainRenderTargetDescriptor_[NUM_BACK_BUFFERS] = {};
 private:
   ImGuiContext* imguiContext_ = nullptr;
-public:
+private:
   bool createDeviceD3D();
   void createRenderTarget();
+  void createImGui();
   void cleanupDeviceD3D();
   void cleanupRenderTarget();
+  void cleanupImGui();
+public:
   void waitForLastSubmittedFrame();
   FrameContext* waitForNextFrameResources();
 public:
-  ImGuiContext* createImGuiContext();
-  bool setImGuiContext();
-public:
+  bool prepare();
+  bool useImGuiContext();
   void renderFinish();
   void cleanup();
-private:
-  void cleanupImGUI();
 public:
   [[nodiscard]] HWND hwnd() const { return hwnd_; }
   [[nodiscard]] ID3D12Device* d3d12Device() const { return pd3dDevice_; }

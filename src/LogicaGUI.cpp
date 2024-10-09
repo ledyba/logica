@@ -248,17 +248,30 @@ LogicaGUI::FrameContext *LogicaGUI::waitForNextFrameResources() {
   return frameCtx;
 }
 
-ImGuiContext* LogicaGUI::createImGuiContext() {
+void LogicaGUI::createImGui() {
   if (imguiContext_) {
-    return imguiContext_;
+    return;
   }
   IMGUI_CHECKVERSION();
   imguiContext_ = ImGui::CreateContext();
-  setImGuiContext();
-  return imguiContext_;
+  useImGuiContext();
+  ImGuiIO& io = ImGui::GetIO(); (void)io;
+  io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+  io.ConfigFlags |= ImGuiConfigFlags_NavEnableSetMousePos;  // Enable Mouse pos control
+  io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 }
 
-bool LogicaGUI::setImGuiContext() {
+void LogicaGUI::cleanupImGui() {
+  if (imguiContext_) {
+    useImGuiContext();
+    ImGui_ImplDX12_Shutdown();
+    ImGui_ImplWin32_Shutdown();
+    ImGui::DestroyContext(imguiContext_);
+    imguiContext_ = nullptr;
+  }
+}
+
+bool LogicaGUI::useImGuiContext() {
   if (imguiContext_) {
     ImGui::SetCurrentContext(imguiContext_);
     return true;
@@ -305,15 +318,20 @@ void LogicaGUI::renderFinish() {
   frameCtx->FenceValue = fenceValue;
 }
 
+bool LogicaGUI::prepare() {
+  // https://github.com/ocornut/imgui/tree/master/examples/example_win32_directx12
+  if(!createDeviceD3D()) {
+    cleanupDeviceD3D();
+    return false;
+  }
+  // Setup Dear ImGui context
+  createImGui();
+  return true;
+}
+
 void LogicaGUI::cleanup() {
   // Destroy ImGUI
-  if (imguiContext_) {
-    setImGuiContext();
-    ImGui_ImplDX12_Shutdown();
-    ImGui_ImplWin32_Shutdown();
-    ImGui::DestroyContext(imguiContext_);
-    imguiContext_ = nullptr;
-  }
+  cleanupImGui();
   // DX12 cleanup
   cleanupDeviceD3D();
   // window cleanup

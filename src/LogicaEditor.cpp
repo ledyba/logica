@@ -54,18 +54,13 @@ LogicaEditor::tresult LogicaEditor::attached(void* parent, LogicaEditor::FIDStri
     gui_.reset();
   }
 
-  // https://github.com/ocornut/imgui/tree/master/examples/example_win32_directx12
   gui_ = std::make_unique<LogicaGUI>(hwnd);
-  if(!gui_->createDeviceD3D()) {
-    gui_->cleanupDeviceD3D();
+  if(!gui_->prepare()) {
+    gui_->cleanup();
     gui_.reset();
     return kResultFalse;
   }
-  // Setup Dear ImGui context
-  gui_->createImGuiContext();
-  ImGuiIO& io = ImGui::GetIO(); (void)io;
-  io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-  io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+  gui_->useImGuiContext();
 
   // Setup Dear ImGui style
   ImGui::StyleColorsDark();

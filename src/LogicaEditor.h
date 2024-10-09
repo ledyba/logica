@@ -9,7 +9,13 @@
 namespace logica {
 
 class LogicaController;
+
+#if SMTG_OS_WINDOWS
+namespace win {
 class LogicaGUI;
+}
+using LogicaGUI = ::logica::win::LogicaGUI;
+#endif
 class LogicaEditor: public Steinberg::FObject, public Steinberg::IPlugView {
 public:
   explicit LogicaEditor(LogicaController* controller);

@@ -7,6 +7,7 @@
 #include <tchar.h>
 
 namespace logica {
+namespace win {
 
 class LogicaGUI {
 public:
@@ -61,4 +62,4 @@ public:
   [[nodiscard]] ID3D12DescriptorHeap* d3dSrvDescHeap() const { return pd3dSrvDescHeap_; }
 };
 
-}
+}}

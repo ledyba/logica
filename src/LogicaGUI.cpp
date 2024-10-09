@@ -5,6 +5,7 @@
 #include "LogicaGUI.h"
 
 namespace logica {
+namespace win {
 
 LogicaGUI::LogicaGUI(HWND hwnd)
 :hwnd_(hwnd)
@@ -295,7 +296,7 @@ void LogicaGUI::renderFinish() {
   pd3dCommandList_->ResourceBarrier(1, &barrier);
 
   // Render Dear ImGui graphics
-  const float clear_color_with_alpha[4] = { 0.45f, 0.55f, 0.60f, 1.00f };
+  const float clear_color_with_alpha[4] = { 0.1f, 0.1f, 0.1f, 1.00f };
   pd3dCommandList_->ClearRenderTargetView(mainRenderTargetDescriptor_[backBufferIdx], clear_color_with_alpha, 0, nullptr);
   pd3dCommandList_->OMSetRenderTargets(1, &mainRenderTargetDescriptor_[backBufferIdx], FALSE, nullptr);
   pd3dCommandList_->SetDescriptorHeaps(1, &pd3dSrvDescHeap_);
@@ -341,4 +342,4 @@ void LogicaGUI::cleanup() {
   }
 }
 
-}
+}}

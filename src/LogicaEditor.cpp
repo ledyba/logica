@@ -76,22 +76,24 @@ LogicaEditor::tresult LogicaEditor::attached(void* parent, LogicaEditor::FIDStri
                         gui_->d3dSrvDescHeap()->GetCPUDescriptorHandleForHeapStart(),
                         gui_->d3dSrvDescHeap()->GetGPUDescriptorHandleForHeapStart());
     // TODO: LOOP
-    ImGui_ImplDX12_NewFrame();
-    ImGui_ImplWin32_NewFrame();
-    ImGui::NewFrame();
-    {
-      ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+    for (auto i = 0; i < 10; ++i) {
+      ImGui_ImplDX12_NewFrame();
+      ImGui_ImplWin32_NewFrame();
+      ImGui::NewFrame();
+      {
+        ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
 
-      ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
+        ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
 
-      ImGui::Button("Button");
-      ImGui::SameLine();
-      ImGui::Text("counter = 1");
+        ImGui::Button("Button");
+        ImGui::SameLine();
+        ImGui::Text("counter = 1");
 
-      ImGui::End();
+        ImGui::End();
+      }
+      ImGui::Render();
+      gui_->renderFinish();
     }
-    ImGui::Render();
-    gui_->renderFinish();
   }
 #endif
   return 0;

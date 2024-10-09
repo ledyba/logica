@@ -58,22 +58,22 @@ LogicaEditor::tresult LogicaEditor::attached(void* parent, LogicaEditor::FIDStri
   gui_ = std::make_unique<LogicaGUI>(hwnd);
   if(!gui_->createDeviceD3D()) {
     gui_->cleanupDeviceD3D();
+    gui_.reset();
+    return kResultFalse;
   }
+  // Setup Dear ImGui context
+  gui_->createImGuiContext();
+  ImGuiIO& io = ImGui::GetIO(); (void)io;
+  io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+  io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+
+  // Setup Dear ImGui style
+  ImGui::StyleColorsDark();
+  //ImGui::StyleColorsLight();
   // Show the window
   ShowWindow(hwnd, SW_SHOWDEFAULT);
   UpdateWindow(hwnd);
   {
-    // Setup Dear ImGui context
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-
-    // Setup Dear ImGui style
-    ImGui::StyleColorsDark();
-    //ImGui::StyleColorsLight();
-
     // Setup Platform/Renderer backends
     ImGui_ImplWin32_Init(hwnd);
     ImGui_ImplDX12_Init(gui_->d3d12Device(), LogicaGUI::NUM_FRAMES_IN_FLIGHT,
@@ -93,7 +93,6 @@ LogicaEditor::tresult LogicaEditor::attached(void* parent, LogicaEditor::FIDStri
       ImGui::SameLine();
       ImGui::Text("counter = 1");
 
-      ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
       ImGui::End();
     }
     ImGui::Render();
@@ -107,17 +106,11 @@ LogicaEditor::tresult LogicaEditor::removed() {
   if(gui_) {
     return kResultFalse;
   }
-  // ImGUI cleanup
-  ImGui_ImplDX12_Shutdown();
-  ImGui_ImplWin32_Shutdown();
-  ImGui::DestroyContext();
-
-  // DX12 cleanup
+  // Wait last frame.
   gui_->waitForLastSubmittedFrame();
-  gui_->cleanupDeviceD3D();
 
-  // window cleanup
-  DestroyWindow(gui_->hwnd());
+  // ImGui cleanup & DX12 cleanup & windows cleanup
+  gui_->close();
   return kResultTrue;
 }
 

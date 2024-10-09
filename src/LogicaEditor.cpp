@@ -80,8 +80,10 @@ LogicaEditor::tresult LogicaEditor::attached(void* parent, LogicaEditor::FIDStri
       ImGui_ImplDX12_NewFrame();
       ImGui_ImplWin32_NewFrame();
       ImGui::NewFrame();
+      bool open = true;
       {
-        ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+        // Create a window called "Hello, world!" and append into it.
+        ImGui::Begin("Hello, world!", &open, ImGuiWindowFlags_AlwaysAutoResize);
 
         ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
 

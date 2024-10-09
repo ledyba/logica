@@ -50,7 +50,7 @@ LogicaEditor::tresult LogicaEditor::attached(void* parent, LogicaEditor::FIDStri
 #if SMTG_OS_WINDOWS
   HWND hwnd = reinterpret_cast<HWND>(parent);
   if (gui_) {
-    gui_->close();
+    gui_->cleanup();
     gui_.reset();
   }
 
@@ -110,7 +110,7 @@ LogicaEditor::tresult LogicaEditor::removed() {
   gui_->waitForLastSubmittedFrame();
 
   // ImGui cleanup & DX12 cleanup & windows cleanup
-  gui_->close();
+  gui_->cleanup();
   return kResultTrue;
 }
 

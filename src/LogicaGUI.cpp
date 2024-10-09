@@ -304,7 +304,7 @@ void LogicaGUI::renderFinish() {
   frameCtx->FenceValue = fenceValue;
 }
 
-void LogicaGUI::close() {
+void LogicaGUI::cleanup() {
   // Destroy ImGUI
   if (imguiContext_) {
     setImGuiContext();

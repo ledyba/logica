@@ -52,7 +52,7 @@ public:
   bool setImGuiContext();
 public:
   void renderFinish();
-  void close();
+  void cleanup();
 private:
   void cleanupImGUI();
 public:

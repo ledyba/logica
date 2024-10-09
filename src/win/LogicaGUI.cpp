@@ -337,7 +337,7 @@ void LogicaGUI::cleanup() {
   cleanupDeviceD3D();
   // window cleanup
   if (hwnd_) {
-    DestroyWindow(hwnd_);
+    // DestroyWindow(hwnd_); // called by host
     hwnd_ = nullptr;
   }
 }

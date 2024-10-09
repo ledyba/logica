@@ -96,18 +96,20 @@ LogicaEditor::tresult LogicaEditor::attached(void* parent, LogicaEditor::FIDStri
     }
   }
 #endif
-  return 0;
+  return kResultTrue;
 }
 
 LogicaEditor::tresult LogicaEditor::removed() {
-  if(gui_) {
+  if (!gui_) {
     return kResultFalse;
   }
+
   // Wait last frame.
   gui_->waitForLastSubmittedFrame();
 
   // ImGui cleanup & DX12 cleanup & windows cleanup
   gui_->cleanup();
+  gui_.reset();
   return kResultTrue;
 }
 

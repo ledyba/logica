@@ -47,8 +47,8 @@ smtg_add_vst3plugin(Logica
     src/LogicaEditor.h
     src/LogicaEditor.cpp
     src/LogicaEntry.cpp
-    src/LogicaGUI.h
-    src/LogicaGUI.cpp
+    src/win/LogicaGUI.h
+    src/win/LogicaGUI.cpp
     ${IMGUI_SRCS}
 )
 target_include_directories(Logica PRIVATE external/imgui)

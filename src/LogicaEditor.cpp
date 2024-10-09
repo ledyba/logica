@@ -1,5 +1,5 @@
 #include "LogicaEditor.h"
-#include "LogicaGUI.h"
+#include "win/LogicaGUI.h"
 #if SMTG_OS_WINDOWS
 #include <windows.h>
 #include <imgui.h>

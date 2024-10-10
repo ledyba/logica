@@ -3,6 +3,7 @@
 #if SMTG_OS_WINDOWS
 #include "win/LogicaGUI.h"
 #include <windows.h>
+#include <winuser.h>
 #include <imgui.h>
 #endif
 
@@ -68,8 +69,8 @@ LogicaEditor::tresult LogicaEditor::attached(void* parent, LogicaEditor::FIDStri
   ImGui::StyleColorsDark();
   //ImGui::StyleColorsLight();
   // Show the window
-  ShowWindow(hwnd, SW_SHOWDEFAULT);
-  UpdateWindow(hwnd);
+  //ShowWindow(hwnd, SW_SHOWDEFAULT);
+  //UpdateWindow(hwnd);
   {
     // Setup Platform/Renderer backends
     ImGui_ImplWin32_Init(hwnd);

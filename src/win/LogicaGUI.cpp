@@ -273,7 +273,8 @@ void LogicaGUI::cleanupDeviceD3D() {
 void LogicaGUI::cleanupRenderTarget() {
   for (UINT i = 0; i < NUM_BACK_BUFFERS; i++) {
     ID3D12Resource* pBackBuffer = nullptr;
-    pSwapChain_->GetBuffer(i, IID_PPV_ARGS(&pBackBuffer));
+    HRESULT result = pSwapChain_->GetBuffer(i, IID_PPV_ARGS(&pBackBuffer));
+    assert(SUCCEEDED(result) && "Failed to get buffer from swap chain.");
     pd3dDevice_->CreateRenderTargetView(pBackBuffer, nullptr, mainRenderTargetDescriptor_[i]);
     mainRenderTargetResource_[i] = pBackBuffer;
   }

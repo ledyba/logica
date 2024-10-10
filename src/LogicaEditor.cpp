@@ -51,13 +51,11 @@ LogicaEditor::tresult LogicaEditor::attached(void* parent, LogicaEditor::FIDStri
     frame_->resizeView(this, &this->size_);
   }
 #if SMTG_OS_WINDOWS
-  HWND hwnd = reinterpret_cast<HWND>(parent);
   if (gui_) {
     gui_->cleanup();
     gui_.reset();
   }
-
-  gui_ = std::make_unique<LogicaGUI>(hwnd);
+  gui_ = std::make_unique<LogicaGUI>(reinterpret_cast<HWND>(parent));
   if(!gui_->prepare()) {
     gui_->cleanup();
     gui_.reset();
@@ -69,11 +67,11 @@ LogicaEditor::tresult LogicaEditor::attached(void* parent, LogicaEditor::FIDStri
   ImGui::StyleColorsDark();
   //ImGui::StyleColorsLight();
   // Show the window
-  //ShowWindow(hwnd, SW_SHOWDEFAULT);
-  //UpdateWindow(hwnd);
+  ShowWindow(gui_->windowHandle(), SW_SHOWDEFAULT);
+  UpdateWindow(gui_->windowHandle());
   {
     // Setup Platform/Renderer backends
-    ImGui_ImplWin32_Init(hwnd);
+    ImGui_ImplWin32_Init(gui_->windowHandle());
     ImGui_ImplDX12_Init(gui_->d3d12Device(), LogicaGUI::NUM_FRAMES_IN_FLIGHT,
                         DXGI_FORMAT_R8G8B8A8_UNORM, gui_->d3dSrvDescHeap(),
                         gui_->d3dSrvDescHeap()->GetCPUDescriptorHandleForHeapStart(),

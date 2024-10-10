@@ -26,7 +26,7 @@ namespace logica::win {
 
 class LogicaGUI {
 public:
-  explicit LogicaGUI(HWND hwnd);
+  explicit LogicaGUI(HWND windowHandle);
 private:
   struct FrameContext {
     ID3D12CommandAllocator *CommandAllocator;
@@ -36,7 +36,9 @@ public:
   int static constexpr NUM_FRAMES_IN_FLIGHT = 3;
   int static constexpr NUM_BACK_BUFFERS = 3;
 private:
-  HWND hwnd_ = nullptr;
+  HWND windowHandle_ = nullptr;
+  WNDPROC originalWindowFunc_ = nullptr;
+  LONG_PTR originalWindowUserData_ = reinterpret_cast<LONG_PTR>(nullptr);
 private:
   FrameContext frameContext_[NUM_FRAMES_IN_FLIGHT] = {};
   UINT frameIndex_ = 0;
@@ -57,6 +59,10 @@ private:
 private:
   ImGuiContext* imguiContext_ = nullptr;
 private:
+  void createWindowProc();
+public:
+  LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+private:
   bool createDeviceD3D();
   void createRenderTarget();
   void createImGui();
@@ -72,7 +78,7 @@ public:
   void renderFinish();
   void cleanup();
 public:
-  [[nodiscard]] HWND hwnd() const { return hwnd_; }
+  [[nodiscard]] HWND windowHandle() { return windowHandle_; }
   [[nodiscard]] ID3D12Device* d3d12Device() const { return pd3dDevice_; }
   [[nodiscard]] ID3D12DescriptorHeap* d3dSrvDescHeap() const { return pd3dSrvDescHeap_; }
 };

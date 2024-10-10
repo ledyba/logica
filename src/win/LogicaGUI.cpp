@@ -1,16 +1,73 @@
 #include <pluginterfaces/base/funknown.h>
 #if SMTG_OS_WINDOWS
-
+#include <windows.h>
 #include "LogicaGUI.h"
+
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+static LRESULT CALLBACK LogicaWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+  // https://learn.microsoft.com/ja-jp/windows/win32/api/winuser/nf-winuser-getwindowlongptrw
+  auto const gui = reinterpret_cast<logica::win::LogicaGUI*>(GetWindowLongPtrW(hwnd, GWLP_USERDATA));
+  if (gui) {
+    return gui->WndProc(hwnd, msg, wParam, lParam);
+  }
+  return ::DefWindowProcW(hwnd, msg, wParam, lParam);
+}
 
 namespace logica::win {
 
 static constexpr float clearColorWithAlpha[4] = {0.1f, 0.1f, 0.1f, 1.00f };
 
-LogicaGUI::LogicaGUI(HWND hwnd)
-:hwnd_(hwnd)
+LogicaGUI::LogicaGUI(HWND windowHandle)
+:windowHandle_(windowHandle)
 {
+}
 
+/**************************************************************************************************
+ * Win32 Window
+ **************************************************************************************************/
+void LogicaGUI::createWindowProc() {
+  originalWindowFunc_ = reinterpret_cast<WNDPROC>(GetWindowLongPtrW(windowHandle_, GWLP_WNDPROC));
+  originalWindowUserData_ = GetWindowLongPtrW(windowHandle_, GWLP_USERDATA);
+  ::SetWindowLongPtrW(windowHandle_, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(LogicaWndProc));
+  ::SetWindowLongPtrW(windowHandle_, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
+}
+
+LRESULT WINAPI LogicaGUI::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+  if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam)) {
+    return true;
+  }
+
+  switch(msg) {
+    case WM_SIZE:
+      if (pd3dDevice_ != nullptr && wParam != SIZE_MINIMIZED) {
+        waitForLastSubmittedFrame();
+        cleanupRenderTarget();
+        HRESULT result = pSwapChain_->ResizeBuffers(0, (UINT)LOWORD(lParam), (UINT)HIWORD(lParam), DXGI_FORMAT_UNKNOWN, DXGI_SWAP_CHAIN_FLAG_FRAME_LATENCY_WAITABLE_OBJECT);
+        assert(SUCCEEDED(result) && "Failed to resize swap chain.");
+        createRenderTarget();
+      }
+      return 0;
+    case WM_SYSCOMMAND:
+      // Disable ALT application menu
+      if ((wParam & 0xfff0) == SC_KEYMENU) {
+        return 0;
+        }
+      break;
+    case WM_DESTROY:
+      ::PostQuitMessage(0);
+      return 0;
+    default:
+      if (originalWindowFunc_) {
+        ::SetWindowLongPtrW(windowHandle_, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(originalWindowFunc_));
+        ::SetWindowLongPtrW(windowHandle_, GWLP_USERDATA, originalWindowUserData_);
+        LRESULT r = CallWindowProcW(originalWindowFunc_, windowHandle_, msg, wParam, lParam);
+        ::SetWindowLongPtrW(windowHandle_, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(LogicaWndProc));
+        ::SetWindowLongPtrW(windowHandle_, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
+        return r;
+      }
+      return ::DefWindowProcW(hWnd, msg, wParam, lParam);
+  }
 }
 
 /**************************************************************************************************
@@ -126,7 +183,7 @@ bool LogicaGUI::createDeviceD3D() {
     IDXGISwapChain1* swapChain1 = nullptr;
     if (CreateDXGIFactory1(IID_PPV_ARGS(&dxgiFactory)) != S_OK)
       return false;
-    if (dxgiFactory->CreateSwapChainForHwnd(pd3dCommandQueue_, hwnd_, &sd, nullptr, nullptr, &swapChain1) != S_OK) {
+    if (dxgiFactory->CreateSwapChainForHwnd(pd3dCommandQueue_, windowHandle_, &sd, nullptr, nullptr, &swapChain1) != S_OK) {
       return false;
     }
     if (swapChain1->QueryInterface(IID_PPV_ARGS(&pSwapChain_)) != S_OK) {
@@ -263,8 +320,9 @@ void LogicaGUI::createImGui() {
   }
   IMGUI_CHECKVERSION();
   imguiContext_ = ImGui::CreateContext();
+  // Set configs.
   useImGuiContext();
-  ImGuiIO& io = ImGui::GetIO(); (void)io;
+  ImGuiIO& io = ImGui::GetIO();
   io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
   io.ConfigFlags |= ImGuiConfigFlags_NavEnableSetMousePos;  // Enable Mouse pos control
   io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
@@ -304,8 +362,7 @@ void LogicaGUI::renderFinish() {
   pd3dCommandList_->ResourceBarrier(1, &barrier);
 
   // Render Dear ImGui graphics
-  const float clear_color_with_alpha[4] = { 0.1f, 0.1f, 0.1f, 1.00f };
-  pd3dCommandList_->ClearRenderTargetView(mainRenderTargetDescriptor_[backBufferIdx], clear_color_with_alpha, 0, nullptr);
+  pd3dCommandList_->ClearRenderTargetView(mainRenderTargetDescriptor_[backBufferIdx], clearColorWithAlpha, 0, nullptr);
   pd3dCommandList_->OMSetRenderTargets(1, &mainRenderTargetDescriptor_[backBufferIdx], FALSE, nullptr);
   pd3dCommandList_->SetDescriptorHeaps(1, &pd3dSrvDescHeap_);
   ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), pd3dCommandList_);
@@ -328,6 +385,10 @@ void LogicaGUI::renderFinish() {
 }
 
 bool LogicaGUI::prepare() {
+  if (!windowHandle_) {
+    return false;
+  }
+  createWindowProc();
   // https://github.com/ocornut/imgui/tree/master/examples/example_win32_directx12
   if(!createDeviceD3D()) {
     cleanupDeviceD3D();
@@ -344,9 +405,9 @@ void LogicaGUI::cleanup() {
   // DX12 cleanup
   cleanupDeviceD3D();
   // window cleanup
-  if (hwnd_) {
-    // DestroyWindow(hwnd_); // called by host
-    hwnd_ = nullptr;
+  if (windowHandle_) {
+    //::DestroyWindow(windowHandle_);
+    windowHandle_ = nullptr;
   }
 }
 

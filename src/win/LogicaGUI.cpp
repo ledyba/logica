@@ -41,6 +41,7 @@ LRESULT WINAPI LogicaGUI::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPa
     if (imguiResult != 0) {
       return imguiResult;
     }
+    editor_->render();
   }
 
   switch(msg) {
@@ -72,9 +73,6 @@ LRESULT WINAPI LogicaGUI::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPa
         }
       }
       break;
-  }
-  if (useImGuiContext()) {
-    editor_->render();
   }
   return ::DefWindowProcW(hWnd, msg, wParam, lParam);
 }

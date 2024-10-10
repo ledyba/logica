@@ -436,10 +436,11 @@ void LogicaGUI::cleanup() {
 }
 
 bool LogicaGUI::resize(size_t width, size_t height) {
-  if (d3dDevice_ == nullptr) {
+  if (d3dDevice_ == nullptr || pSwapChain_ == nullptr) {
     return false;
   }
   waitForLastSubmittedFrame();
+
   cleanupRenderTarget();
   HRESULT result = pSwapChain_->ResizeBuffers(
       0,

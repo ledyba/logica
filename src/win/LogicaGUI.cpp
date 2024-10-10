@@ -109,7 +109,7 @@ bool LogicaGUI::createDeviceD3D() {
 
   // Create device
   D3D_FEATURE_LEVEL featureLevel = D3D_FEATURE_LEVEL_11_0;
-  if (D3D12CreateDevice(nullptr, featureLevel, IID_PPV_ARGS(&pd3dDevice_)) != S_OK) {
+  if (D3D12CreateDevice(nullptr, featureLevel, IID_PPV_ARGS(&d3dDevice_)) != S_OK) {
     return false;
   }
 
@@ -133,12 +133,12 @@ bool LogicaGUI::createDeviceD3D() {
     desc.NumDescriptors = NUM_BACK_BUFFERS;
     desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
     desc.NodeMask = 1;
-    if (pd3dDevice_->CreateDescriptorHeap(&desc, IID_PPV_ARGS(&pd3dRtvDescHeap_)) != S_OK) {
+    if (d3dDevice_->CreateDescriptorHeap(&desc, IID_PPV_ARGS(&d3dRtvDescHeap_)) != S_OK) {
       return false;
     }
 
-    SIZE_T rtvDescriptorSize = pd3dDevice_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-    D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = pd3dRtvDescHeap_->GetCPUDescriptorHandleForHeapStart();
+    SIZE_T rtvDescriptorSize = d3dDevice_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+    D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = d3dRtvDescHeap_->GetCPUDescriptorHandleForHeapStart();
     for (UINT i = 0; i < NUM_BACK_BUFFERS; i++) {
       mainRenderTargetDescriptor_[i] = rtvHandle;
       rtvHandle.ptr += rtvDescriptorSize;
@@ -150,7 +150,7 @@ bool LogicaGUI::createDeviceD3D() {
     desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
     desc.NumDescriptors = 1;
     desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-    if (pd3dDevice_->CreateDescriptorHeap(&desc, IID_PPV_ARGS(&pd3dSrvDescHeap_)) != S_OK) {
+    if (d3dDevice_->CreateDescriptorHeap(&desc, IID_PPV_ARGS(&d3dSrvDescHeap_)) != S_OK) {
       return false;
     }
   }
@@ -160,23 +160,23 @@ bool LogicaGUI::createDeviceD3D() {
     desc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
     desc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
     desc.NodeMask = 1;
-    if (pd3dDevice_->CreateCommandQueue(&desc, IID_PPV_ARGS(&pd3dCommandQueue_)) != S_OK) {
+    if (d3dDevice_->CreateCommandQueue(&desc, IID_PPV_ARGS(&d3dCommandQueue_)) != S_OK) {
       return false;
     }
   }
 
   for (UINT i = 0; i < NUM_FRAMES_IN_FLIGHT; i++)
-    if (pd3dDevice_->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&frameContext_[i].CommandAllocator)) != S_OK) {
+    if (d3dDevice_->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&frameContext_[i].CommandAllocator)) != S_OK) {
       return false;
     }
 
-  if (pd3dDevice_->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, frameContext_[0].CommandAllocator, nullptr, IID_PPV_ARGS(&pd3dCommandList_)) != S_OK ||
-      pd3dCommandList_->Close() != S_OK
+  if (d3dDevice_->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, frameContext_[0].CommandAllocator, nullptr, IID_PPV_ARGS(&d3dCommandList_)) != S_OK ||
+      d3dCommandList_->Close() != S_OK
   ) {
     return false;
   }
 
-  if (pd3dDevice_->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence_)) != S_OK) {
+  if (d3dDevice_->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence_)) != S_OK) {
     return false;
   }
 
@@ -190,7 +190,7 @@ bool LogicaGUI::createDeviceD3D() {
     IDXGISwapChain1* swapChain1 = nullptr;
     if (CreateDXGIFactory1(IID_PPV_ARGS(&dxgiFactory)) != S_OK)
       return false;
-    if (dxgiFactory->CreateSwapChainForHwnd(pd3dCommandQueue_, windowHandle_, &sd, nullptr, nullptr, &swapChain1) != S_OK) {
+    if (dxgiFactory->CreateSwapChainForHwnd(d3dCommandQueue_, windowHandle_, &sd, nullptr, nullptr, &swapChain1) != S_OK) {
       return false;
     }
     if (swapChain1->QueryInterface(IID_PPV_ARGS(&pSwapChain_)) != S_OK) {
@@ -210,7 +210,7 @@ void LogicaGUI::createRenderTarget() {
   for (UINT i = 0; i < NUM_BACK_BUFFERS; i++) {
     ID3D12Resource* pBackBuffer = nullptr;
     pSwapChain_->GetBuffer(i, IID_PPV_ARGS(&pBackBuffer));
-    pd3dDevice_->CreateRenderTargetView(pBackBuffer, nullptr, mainRenderTargetDescriptor_[i]);
+    d3dDevice_->CreateRenderTargetView(pBackBuffer, nullptr, mainRenderTargetDescriptor_[i]);
     mainRenderTargetResource_[i] = pBackBuffer;
   }
 }
@@ -233,21 +233,21 @@ void LogicaGUI::cleanupDeviceD3D() {
       frameContext_[i].CommandAllocator = nullptr;
     }
   }
-  if (pd3dCommandQueue_) {
-    pd3dCommandQueue_->Release();
-    pd3dCommandQueue_ = nullptr;
+  if (d3dCommandQueue_) {
+    d3dCommandQueue_->Release();
+    d3dCommandQueue_ = nullptr;
   }
-  if (pd3dCommandList_) {
-    pd3dCommandList_->Release();
-    pd3dCommandList_ = nullptr;
+  if (d3dCommandList_) {
+    d3dCommandList_->Release();
+    d3dCommandList_ = nullptr;
   }
-  if (pd3dRtvDescHeap_) {
-    pd3dRtvDescHeap_->Release();
-    pd3dRtvDescHeap_ = nullptr;
+  if (d3dRtvDescHeap_) {
+    d3dRtvDescHeap_->Release();
+    d3dRtvDescHeap_ = nullptr;
   }
-  if (pd3dSrvDescHeap_) {
-    pd3dSrvDescHeap_->Release();
-    pd3dSrvDescHeap_ = nullptr;
+  if (d3dSrvDescHeap_) {
+    d3dSrvDescHeap_->Release();
+    d3dSrvDescHeap_ = nullptr;
   }
   if (fence_) {
     fence_->Release();
@@ -257,9 +257,9 @@ void LogicaGUI::cleanupDeviceD3D() {
     CloseHandle(fenceEvent_);
     fenceEvent_ = nullptr;
   }
-  if (pd3dDevice_) {
-    pd3dDevice_->Release();
-    pd3dDevice_ = nullptr;
+  if (d3dDevice_) {
+    d3dDevice_->Release();
+    d3dDevice_ = nullptr;
   }
 
 #ifdef DX12_ENABLE_DEBUG_LAYER
@@ -273,12 +273,13 @@ void LogicaGUI::cleanupDeviceD3D() {
 }
 
 void LogicaGUI::cleanupRenderTarget() {
+  waitForLastSubmittedFrame();
+
   for (UINT i = 0; i < NUM_BACK_BUFFERS; i++) {
-    ID3D12Resource* pBackBuffer = nullptr;
-    HRESULT result = pSwapChain_->GetBuffer(i, IID_PPV_ARGS(&pBackBuffer));
-    assert(SUCCEEDED(result) && "Failed to get buffer from swap chain.");
-    pd3dDevice_->CreateRenderTargetView(pBackBuffer, nullptr, mainRenderTargetDescriptor_[i]);
-    mainRenderTargetResource_[i] = pBackBuffer;
+    if (mainRenderTargetResource_[i]) {
+      mainRenderTargetResource_[i]->Release();
+      mainRenderTargetResource_[i] = nullptr;
+    }
   }
 }
 
@@ -369,20 +370,20 @@ void LogicaGUI::renderFinish() {
   barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
   barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
   barrier.Transition.StateAfter  = D3D12_RESOURCE_STATE_RENDER_TARGET;
-  pd3dCommandList_->Reset(frameCtx->CommandAllocator, nullptr);
-  pd3dCommandList_->ResourceBarrier(1, &barrier);
+  d3dCommandList_->Reset(frameCtx->CommandAllocator, nullptr);
+  d3dCommandList_->ResourceBarrier(1, &barrier);
 
   // Render Dear ImGui graphics
-  pd3dCommandList_->ClearRenderTargetView(mainRenderTargetDescriptor_[backBufferIdx], clearColorWithAlpha, 0, nullptr);
-  pd3dCommandList_->OMSetRenderTargets(1, &mainRenderTargetDescriptor_[backBufferIdx], FALSE, nullptr);
-  pd3dCommandList_->SetDescriptorHeaps(1, &pd3dSrvDescHeap_);
-  ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), pd3dCommandList_);
+  d3dCommandList_->ClearRenderTargetView(mainRenderTargetDescriptor_[backBufferIdx], clearColorWithAlpha, 0, nullptr);
+  d3dCommandList_->OMSetRenderTargets(1, &mainRenderTargetDescriptor_[backBufferIdx], FALSE, nullptr);
+  d3dCommandList_->SetDescriptorHeaps(1, &d3dSrvDescHeap_);
+  ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), d3dCommandList_);
   barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
   barrier.Transition.StateAfter  = D3D12_RESOURCE_STATE_PRESENT;
-  pd3dCommandList_->ResourceBarrier(1, &barrier);
-  pd3dCommandList_->Close();
+  d3dCommandList_->ResourceBarrier(1, &barrier);
+  d3dCommandList_->Close();
 
-  pd3dCommandQueue_->ExecuteCommandLists(1, (ID3D12CommandList* const*)&pd3dCommandList_);
+  d3dCommandQueue_->ExecuteCommandLists(1, (ID3D12CommandList* const*)&d3dCommandList_);
 
   // Present
   HRESULT hr = pSwapChain_->Present(1, 0);   // Present with vsync
@@ -390,7 +391,7 @@ void LogicaGUI::renderFinish() {
   swapChainOccluded_ = (hr == DXGI_STATUS_OCCLUDED);
 
   UINT64 fenceValue = fenceLastSignaledValue_ + 1;
-  pd3dCommandQueue_->Signal(fence_, fenceValue);
+  d3dCommandQueue_->Signal(fence_, fenceValue);
   fenceLastSignaledValue_ = fenceValue;
   frameCtx->FenceValue = fenceValue;
 }
@@ -412,10 +413,10 @@ bool LogicaGUI::prepare() {
   //ImGui::StyleColorsLight();
   // Setup Platform/Renderer backends
   ImGui_ImplWin32_Init(windowHandle_);
-  ImGui_ImplDX12_Init(pd3dDevice_, LogicaGUI::NUM_FRAMES_IN_FLIGHT,
-                      DXGI_FORMAT_R8G8B8A8_UNORM, pd3dSrvDescHeap_,
-                      pd3dSrvDescHeap_->GetCPUDescriptorHandleForHeapStart(),
-                      pd3dSrvDescHeap_->GetGPUDescriptorHandleForHeapStart());
+  ImGui_ImplDX12_Init(d3dDevice_, LogicaGUI::NUM_FRAMES_IN_FLIGHT,
+                      DXGI_FORMAT_R8G8B8A8_UNORM, d3dSrvDescHeap_,
+                      d3dSrvDescHeap_->GetCPUDescriptorHandleForHeapStart(),
+                      d3dSrvDescHeap_->GetGPUDescriptorHandleForHeapStart());
   // Show the window
   ShowWindow(windowHandle_, SW_SHOWDEFAULT);
   UpdateWindow(windowHandle_);
@@ -435,7 +436,7 @@ void LogicaGUI::cleanup() {
 }
 
 bool LogicaGUI::resize(size_t width, size_t height) {
-  if (pd3dDevice_ == nullptr) {
+  if (d3dDevice_ == nullptr) {
     return false;
   }
   waitForLastSubmittedFrame();

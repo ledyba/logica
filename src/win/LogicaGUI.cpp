@@ -441,7 +441,13 @@ bool LogicaGUI::resize(size_t width, size_t height) {
   }
   waitForLastSubmittedFrame();
   cleanupRenderTarget();
-  HRESULT result = pSwapChain_->ResizeBuffers(0, (UINT)width, (UINT)height, DXGI_FORMAT_UNKNOWN, DXGI_SWAP_CHAIN_FLAG_FRAME_LATENCY_WAITABLE_OBJECT);
+  HRESULT result = pSwapChain_->ResizeBuffers(
+      0,
+      (UINT)width,
+      (UINT)height,
+      DXGI_FORMAT_R8G8B8A8_UNORM,
+      DXGI_SWAP_CHAIN_FLAG_FRAME_LATENCY_WAITABLE_OBJECT
+  );
   assert(SUCCEEDED(result) && "Failed to resize swap chain.");
   createRenderTarget();
   return true;

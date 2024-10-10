@@ -284,13 +284,13 @@ void LogicaGUI::cleanupRenderTarget() {
 }
 
 void LogicaGUI::waitForLastSubmittedFrame() {
-  FrameContext* frameCtx = &frameContext_[frameIndex_ % NUM_FRAMES_IN_FLIGHT];
+  FrameContext& frameCtx = frameContext_[frameIndex_ % NUM_FRAMES_IN_FLIGHT];
 
-  UINT64 fenceValue = frameCtx->FenceValue;
+  UINT64 fenceValue = frameCtx.FenceValue;
   if (fenceValue == 0)
     return; // No fence was signaled
 
-  frameCtx->FenceValue = 0;
+  frameCtx.FenceValue = 0;
   if (fence_->GetCompletedValue() >= fenceValue) {
     return;
   }

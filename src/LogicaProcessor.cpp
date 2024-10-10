@@ -135,7 +135,7 @@ tresult PLUGIN_API LogicaProcessor::process(Vst::ProcessData& data) {
 //------------------------------------------------------------------------
 tresult PLUGIN_API LogicaProcessor::setupProcessing(Vst::ProcessSetup& newSetup) {
   //--- called before any processing ----
-  return AudioEffect::setupProcessing (newSetup);
+  return AudioEffect::setupProcessing(newSetup);
 }
 
 //------------------------------------------------------------------------

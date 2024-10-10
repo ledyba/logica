@@ -1,11 +1,9 @@
-//
-// Created by kaede on 2024/10/03.
-//
+#include <pluginterfaces/base/funknown.h>
+#if SMTG_OS_WINDOWS
 
 #include "LogicaGUI.h"
 
-namespace logica {
-namespace win {
+namespace logica::win {
 
 LogicaGUI::LogicaGUI(HWND hwnd)
 :hwnd_(hwnd)
@@ -342,4 +340,6 @@ void LogicaGUI::cleanup() {
   }
 }
 
-}}
+}
+
+#endif

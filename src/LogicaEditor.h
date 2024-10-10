@@ -1,10 +1,10 @@
 #pragma once
 
 #include <memory>
-#include "pluginterfaces/gui/iplugview.h"
-#include "base/source/fobject.h"
-#include "pluginterfaces/base/funknown.h"
-#include "pluginterfaces/vst/vsttypes.h"
+#include <pluginterfaces/gui/iplugview.h>
+#include <base/source/fobject.h>
+#include <pluginterfaces/base/funknown.h>
+#include <pluginterfaces/vst/vsttypes.h>
 
 namespace logica {
 

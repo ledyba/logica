@@ -1,4 +1,6 @@
 #pragma once
+#include <pluginterfaces/base/funknown.h>
+#if SMTG_OS_WINDOWS
 
 #include "backends/imgui_impl_win32.h"
 #include "backends/imgui_impl_dx12.h"
@@ -6,8 +8,8 @@
 #include <dxgi1_4.h>
 #include <tchar.h>
 
-namespace logica {
-namespace win {
+
+namespace logica::win {
 
 class LogicaGUI {
 public:
@@ -62,4 +64,5 @@ public:
   [[nodiscard]] ID3D12DescriptorHeap* d3dSrvDescHeap() const { return pd3dSrvDescHeap_; }
 };
 
-}}
+}
+#endif

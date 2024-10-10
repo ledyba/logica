@@ -42,12 +42,10 @@ LRESULT WINAPI LogicaGUI::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPa
 
   switch(msg) {
     case WM_SIZE:
-      if (pd3dDevice_ != nullptr && wParam != SIZE_MINIMIZED) {
-        waitForLastSubmittedFrame();
-        cleanupRenderTarget();
-        HRESULT result = pSwapChain_->ResizeBuffers(0, (UINT)LOWORD(lParam), (UINT)HIWORD(lParam), DXGI_FORMAT_UNKNOWN, DXGI_SWAP_CHAIN_FLAG_FRAME_LATENCY_WAITABLE_OBJECT);
-        assert(SUCCEEDED(result) && "Failed to resize swap chain.");
-        createRenderTarget();
+      if (wParam != SIZE_MINIMIZED) {
+        UINT width = (UINT)LOWORD(lParam);
+        UINT height = (UINT)HIWORD(lParam);
+        resize(width, height);
       }
       return 0;
     case WM_SYSCOMMAND:
@@ -413,6 +411,18 @@ void LogicaGUI::cleanup() {
     //::DestroyWindow(windowHandle_);
     windowHandle_ = nullptr;
   }
+}
+
+bool LogicaGUI::resize(size_t width, size_t height) {
+  if (pd3dDevice_ == nullptr) {
+    return false;
+  }
+  waitForLastSubmittedFrame();
+  cleanupRenderTarget();
+  HRESULT result = pSwapChain_->ResizeBuffers(0, (UINT)width, (UINT)height, DXGI_FORMAT_UNKNOWN, DXGI_SWAP_CHAIN_FLAG_FRAME_LATENCY_WAITABLE_OBJECT);
+  assert(SUCCEEDED(result) && "Failed to resize swap chain.");
+  createRenderTarget();
+  return true;
 }
 
 }

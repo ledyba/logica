@@ -12,6 +12,7 @@ namespace logica {
 using Steinberg::kResultTrue;
 using Steinberg::kResultFalse;
 using Steinberg::kInvalidArgument;
+using Steinberg::kNotInitialized;
 
 LogicaEditor::LogicaEditor(LogicaController* controller)
 :controller_(controller)
@@ -138,8 +139,15 @@ LogicaEditor::tresult LogicaEditor::getSize(LogicaEditor::ViewRect *size) {
   return kResultTrue;
 }
 
-LogicaEditor::tresult LogicaEditor::onSize(LogicaEditor::ViewRect *newSize) {
-  return 0;
+LogicaEditor::tresult LogicaEditor::onSize(LogicaEditor::ViewRect* newSize) {
+  if (!gui_) {
+    return kResultFalse;
+  }
+  if (gui_->resize(newSize->getWidth(), newSize->getHeight())) {
+    size_ = *newSize;
+    return kResultTrue;
+  }
+  return kResultFalse;
 }
 
 LogicaEditor::tresult LogicaEditor::onFocus(LogicaEditor::TBool state) {

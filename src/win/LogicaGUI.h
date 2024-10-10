@@ -77,6 +77,7 @@ public:
   bool useImGuiContext();
   void renderFinish();
   void cleanup();
+  bool resize(size_t width, size_t height);
 public:
   [[nodiscard]] HWND windowHandle() { return windowHandle_; }
   [[nodiscard]] ID3D12Device* d3d12Device() const { return pd3dDevice_; }

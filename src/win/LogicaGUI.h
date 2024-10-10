@@ -2,16 +2,18 @@
 
 #if 0
 #include <public.sdk/source/vst/vstguieditor.h>
+#include <vstgui/lib/platform/win32/win32frame.h>
 // See:
 // https://www.utsbox.com/?p=1186
 using VSTGUIEditor = Steinberg::Vst::VSTGUIEditor;
 using CFrame = VSTGUI::CFrame;
+using Win32Frame = VSTGUI::Win32Frame;
 #endif
 
-#include <pluginterfaces/base/fplatform.h>
-#if SMTG_OS_WINDOWS
-
 #include <tchar.h>
+#include <pluginterfaces/base/fplatform.h>
+
+#if SMTG_OS_WINDOWS
 
 // ImGUI Includes
 // https://github.com/ocornut/imgui/wiki/Getting-Started#example-if-you-are-using-raw-win32-api--directx12

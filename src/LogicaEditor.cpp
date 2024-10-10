@@ -56,49 +56,13 @@ LogicaEditor::tresult LogicaEditor::attached(void* parent, LogicaEditor::FIDStri
     gui_->cleanup();
     gui_.reset();
   }
-  gui_ = std::make_unique<LogicaGUI>(reinterpret_cast<HWND>(parent));
+  gui_ = std::make_unique<LogicaGUI>(reinterpret_cast<HWND>(parent), this);
   if(!gui_->prepare()) {
     gui_->cleanup();
     gui_.reset();
     return kResultFalse;
   }
-  gui_->useImGuiContext();
-
-  // Setup Dear ImGui style
-  ImGui::StyleColorsDark();
-  //ImGui::StyleColorsLight();
-  // Show the window
-  ShowWindow(gui_->windowHandle(), SW_SHOWDEFAULT);
-  UpdateWindow(gui_->windowHandle());
-  {
-    // Setup Platform/Renderer backends
-    ImGui_ImplWin32_Init(gui_->windowHandle());
-    ImGui_ImplDX12_Init(gui_->d3d12Device(), LogicaGUI::NUM_FRAMES_IN_FLIGHT,
-                        DXGI_FORMAT_R8G8B8A8_UNORM, gui_->d3dSrvDescHeap(),
-                        gui_->d3dSrvDescHeap()->GetCPUDescriptorHandleForHeapStart(),
-                        gui_->d3dSrvDescHeap()->GetGPUDescriptorHandleForHeapStart());
-    // TODO: LOOP
-    for (auto i = 0; i < 10; ++i) {
-      ImGui_ImplDX12_NewFrame();
-      ImGui_ImplWin32_NewFrame();
-      ImGui::NewFrame();
-      bool open = true;
-      {
-        // Create a window called "Hello, world!" and append into it.
-        ImGui::Begin("Hello, world!", &open, ImGuiWindowFlags_AlwaysAutoResize);
-
-        ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-
-        ImGui::Button("Button");
-        ImGui::SameLine();
-        ImGui::Text("counter = 1");
-
-        ImGui::End();
-      }
-      ImGui::Render();
-      gui_->renderFinish();
-    }
-  }
+  render();
 #endif
   return kResultTrue;
 }
@@ -107,10 +71,8 @@ LogicaEditor::tresult LogicaEditor::removed() {
   if (!gui_) {
     return kResultFalse;
   }
-
   // Wait last frame.
   gui_->waitForLastSubmittedFrame();
-
   // ImGui cleanup & DX12 cleanup & windows cleanup
   gui_->cleanup();
   gui_.reset();
@@ -165,6 +127,27 @@ LogicaEditor::tresult LogicaEditor::canResize() {
 
 LogicaEditor::tresult LogicaEditor::checkSizeConstraint(LogicaEditor::ViewRect *rect) {
   return kResultTrue;
+}
+
+void LogicaEditor::render() {
+  ImGui_ImplDX12_NewFrame();
+  ImGui_ImplWin32_NewFrame();
+  ImGui::NewFrame();
+  bool open = true;
+  {
+    // Create a window called "Hello, world!" and append into it.
+    ImGui::Begin("Hello, world!", &open, ImGuiWindowFlags_AlwaysAutoResize);
+
+    ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
+
+    ImGui::Button("Button");
+    ImGui::SameLine();
+    ImGui::Text("counter = 1");
+
+    ImGui::End();
+  }
+  ImGui::Render();
+  gui_->renderFinish();
 }
 
 } // logica

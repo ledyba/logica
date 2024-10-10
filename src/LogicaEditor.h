@@ -50,6 +50,8 @@ public:
     DEF_INTERFACE (IPlugView)
   END_DEFINE_INTERFACES (FObject)
   REFCOUNT_METHODS (FObject)
+public:
+  void render();
 private:
   LogicaController* controller_;
   ViewRect size_;

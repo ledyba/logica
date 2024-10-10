@@ -2,6 +2,7 @@
 #if SMTG_OS_WINDOWS
 #include <windows.h>
 #include "LogicaGUI.h"
+#include "../LogicaEditor.h"
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -18,8 +19,9 @@ namespace logica::win {
 
 static constexpr float clearColorWithAlpha[4] = {0.1f, 0.1f, 0.1f, 1.00f };
 
-LogicaGUI::LogicaGUI(HWND windowHandle)
+LogicaGUI::LogicaGUI(HWND windowHandle, LogicaEditor* editor)
 :windowHandle_(windowHandle)
+,editor_(editor)
 {
 }
 
@@ -34,10 +36,11 @@ void LogicaGUI::createWindowProc() {
 }
 
 LRESULT WINAPI LogicaGUI::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-  useImGuiContext();
-  LRESULT imguiResult = ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam);
-  if (imguiResult != 0) {
-    return imguiResult;
+  if (useImGuiContext()) {
+    LRESULT imguiResult = ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam);
+    if (imguiResult != 0) {
+      return imguiResult;
+    }
   }
 
   switch(msg) {
@@ -64,9 +67,14 @@ LRESULT WINAPI LogicaGUI::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPa
         LRESULT r = CallWindowProcW(originalWindowFunc_, windowHandle_, msg, wParam, lParam);
         ::SetWindowLongPtrW(windowHandle_, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(LogicaWndProc));
         ::SetWindowLongPtrW(windowHandle_, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
-        return r;
+        if (r != 0) {
+          return r;
+        }
       }
       break;
+  }
+  if (useImGuiContext()) {
+    editor_->render();
   }
   return ::DefWindowProcW(hWnd, msg, wParam, lParam);
 }
@@ -398,6 +406,18 @@ bool LogicaGUI::prepare() {
   }
   // Setup Dear ImGui context
   createImGui();
+  // Setup Dear ImGui style
+  ImGui::StyleColorsDark();
+  //ImGui::StyleColorsLight();
+  // Setup Platform/Renderer backends
+  ImGui_ImplWin32_Init(windowHandle_);
+  ImGui_ImplDX12_Init(pd3dDevice_, LogicaGUI::NUM_FRAMES_IN_FLIGHT,
+                      DXGI_FORMAT_R8G8B8A8_UNORM, pd3dSrvDescHeap_,
+                      pd3dSrvDescHeap_->GetCPUDescriptorHandleForHeapStart(),
+                      pd3dSrvDescHeap_->GetGPUDescriptorHandleForHeapStart());
+  // Show the window
+  ShowWindow(windowHandle_, SW_SHOWDEFAULT);
+  UpdateWindow(windowHandle_);
   return true;
 }
 

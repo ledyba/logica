@@ -22,11 +22,15 @@ using Win32Frame = VSTGUI::Win32Frame;
 #include <d3d12.h>
 #include <dxgi1_4.h>
 
+namespace logica {
+class LogicaEditor;
+}
+
 namespace logica::win {
 
 class LogicaGUI {
 public:
-  explicit LogicaGUI(HWND windowHandle);
+  explicit LogicaGUI(HWND windowHandle, LogicaEditor* editor);
 private:
   struct FrameContext {
     ID3D12CommandAllocator *CommandAllocator;
@@ -39,6 +43,7 @@ private:
   HWND windowHandle_ = nullptr;
   WNDPROC originalWindowFunc_ = nullptr;
   LONG_PTR originalWindowUserData_ = reinterpret_cast<LONG_PTR>(nullptr);
+  LogicaEditor* editor_;
 private:
   FrameContext frameContext_[NUM_FRAMES_IN_FLIGHT] = {};
   UINT frameIndex_ = 0;
@@ -58,6 +63,7 @@ private:
   D3D12_CPU_DESCRIPTOR_HANDLE mainRenderTargetDescriptor_[NUM_BACK_BUFFERS] = {};
 private:
   ImGuiContext* imguiContext_ = nullptr;
+  bool initialized = false;
 private:
   void createWindowProc();
 public:

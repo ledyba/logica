@@ -5,6 +5,8 @@
 
 namespace logica::win {
 
+static constexpr float clearColorWithAlpha[4] = {0.1f, 0.1f, 0.1f, 1.00f };
+
 LogicaGUI::LogicaGUI(HWND hwnd)
 :hwnd_(hwnd)
 {

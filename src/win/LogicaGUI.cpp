@@ -34,8 +34,10 @@ void LogicaGUI::createWindowProc() {
 }
 
 LRESULT WINAPI LogicaGUI::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-  if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam)) {
-    return true;
+  useImGuiContext();
+  LRESULT imguiResult = ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam);
+  if (imguiResult != 0) {
+    return imguiResult;
   }
 
   switch(msg) {
@@ -52,7 +54,7 @@ LRESULT WINAPI LogicaGUI::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPa
       // Disable ALT application menu
       if ((wParam & 0xfff0) == SC_KEYMENU) {
         return 0;
-        }
+      }
       break;
     case WM_DESTROY:
       ::PostQuitMessage(0);
@@ -66,8 +68,9 @@ LRESULT WINAPI LogicaGUI::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPa
         ::SetWindowLongPtrW(windowHandle_, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
         return r;
       }
-      return ::DefWindowProcW(hWnd, msg, wParam, lParam);
+      break;
   }
+  return ::DefWindowProcW(hWnd, msg, wParam, lParam);
 }
 
 /**************************************************************************************************
@@ -326,6 +329,7 @@ void LogicaGUI::createImGui() {
   io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
   io.ConfigFlags |= ImGuiConfigFlags_NavEnableSetMousePos;  // Enable Mouse pos control
   io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+  io.WantCaptureMouse = true;
 }
 
 void LogicaGUI::cleanupImGui() {

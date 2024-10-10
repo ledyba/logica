@@ -217,8 +217,10 @@ void LogicaGUI::createRenderTarget() {
 
 void LogicaGUI::cleanupDeviceD3D() {
   cleanupRenderTarget();
+  HRESULT result;
   if (pSwapChain_) {
-    pSwapChain_->SetFullscreenState(false, nullptr);
+    result = pSwapChain_->SetFullscreenState(false, nullptr);
+    assert(SUCCEEDED(result) && "Failed to make swap chain to be not full screen.");
     pSwapChain_->Release();
     pSwapChain_ = nullptr;
   }

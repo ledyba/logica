@@ -1,9 +1,11 @@
 #include "LogicaEditor.h"
-#include "win/LogicaGUI.h"
+
 #if SMTG_OS_WINDOWS
+#include "win/LogicaGUI.h"
 #include <windows.h>
 #include <imgui.h>
 #endif
+
 namespace logica {
 
 using Steinberg::kResultTrue;

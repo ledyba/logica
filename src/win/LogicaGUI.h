@@ -1,13 +1,24 @@
 #pragma once
-#include <pluginterfaces/base/funknown.h>
+
+#if 0
+#include <public.sdk/source/vst/vstguieditor.h>
+// See:
+// https://www.utsbox.com/?p=1186
+using VSTGUIEditor = Steinberg::Vst::VSTGUIEditor;
+using CFrame = VSTGUI::CFrame;
+#endif
+
+#include <pluginterfaces/base/fplatform.h>
 #if SMTG_OS_WINDOWS
 
-#include "backends/imgui_impl_win32.h"
-#include "backends/imgui_impl_dx12.h"
-#include <d3d12.h>
-#include <dxgi1_4.h>
 #include <tchar.h>
 
+// ImGUI Includes
+// https://github.com/ocornut/imgui/wiki/Getting-Started#example-if-you-are-using-raw-win32-api--directx12
+#include <backends/imgui_impl_win32.h>
+#include <backends/imgui_impl_dx12.h>
+#include <d3d12.h>
+#include <dxgi1_4.h>
 
 namespace logica::win {
 

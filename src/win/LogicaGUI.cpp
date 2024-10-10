@@ -11,6 +11,10 @@ LogicaGUI::LogicaGUI(HWND hwnd)
 
 }
 
+/**************************************************************************************************
+ * DirectX12
+ **************************************************************************************************/
+
 bool LogicaGUI::createDeviceD3D() {
   // Setup swap chain
   DXGI_SWAP_CHAIN_DESC1 sd;
@@ -246,6 +250,10 @@ LogicaGUI::FrameContext *LogicaGUI::waitForNextFrameResources() {
 
   return frameCtx;
 }
+
+/**************************************************************************************************
+ * ImGUI
+ **************************************************************************************************/
 
 void LogicaGUI::createImGui() {
   if (imguiContext_) {

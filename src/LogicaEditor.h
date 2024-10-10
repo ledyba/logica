@@ -1,10 +1,12 @@
 #pragma once
 
 #include <memory>
+#include <pluginterfaces/base/fplatform.h>
+
 #include <pluginterfaces/gui/iplugview.h>
-#include <base/source/fobject.h>
 #include <pluginterfaces/base/funknown.h>
 #include <pluginterfaces/vst/vsttypes.h>
+#include <base/source/fobject.h>
 
 namespace logica {
 
@@ -16,6 +18,7 @@ class LogicaGUI;
 }
 using LogicaGUI = ::logica::win::LogicaGUI;
 #endif
+
 class LogicaEditor: public Steinberg::FObject, public Steinberg::IPlugView {
 public:
   explicit LogicaEditor(LogicaController* controller);

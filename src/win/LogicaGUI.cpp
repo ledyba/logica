@@ -521,8 +521,8 @@ bool LogicaGUI::resize(ViewRect size) {
   cleanupRenderTarget();
   HRESULT result = pSwapChain_->ResizeBuffers(
       0,
-      (UINT)size.getWidth(),
-      (UINT)size.getHeight(),
+      static_cast<UINT>(size.getWidth()),
+      static_cast<UINT>(size.getHeight()),
       DXGI_FORMAT_R8G8B8A8_UNORM,
       DXGI_SWAP_CHAIN_FLAG_FRAME_LATENCY_WAITABLE_OBJECT
   );

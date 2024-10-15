@@ -3,6 +3,10 @@
 
 #include "Util.h"
 
+Steinberg::ViewRect makeViewRect(int width, int height) {
+  return {0, 0, width, height};
+}
+
 bool isParentLayered(HWND parent)
 {
   WINDOWINFO info;
@@ -24,12 +28,3 @@ bool isParentLayered(HWND parent)
 }
 
 #endif
-
-Steinberg::ViewRect makeViewRect(int width, int height) {
-  Steinberg::ViewRect r;
-  r.left = 0;
-  r.top = 0;
-  r.right = width;
-  r.bottom = height;
-  return r;
-}

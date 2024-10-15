@@ -68,7 +68,6 @@ private:
   D3D12_CPU_DESCRIPTOR_HANDLE mainRenderTargetDescriptor_[NUM_BACK_BUFFERS] = {};
 private:
   ImGuiContext* imguiContext_ = nullptr;
-  bool initialized = false;
 private:
   bool createWindow();
   void cleanupWindow();
@@ -92,6 +91,7 @@ public:
   bool resize(ViewRect size);
 public:
   [[nodiscard]] HWND parentWindowHandle() { return parentWindowHandle_; }
+  [[nodiscard]] HWND windowHandle() { return windowHandle_; }
   [[nodiscard]] ID3D12Device* d3d12Device() const { return d3dDevice_; }
   [[nodiscard]] ID3D12DescriptorHeap* d3dSrvDescHeap() const { return d3dSrvDescHeap_; }
   [[nodiscard]] ViewRect size() const { return size_; }

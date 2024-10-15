@@ -47,8 +47,7 @@ LogicaEditor::tresult LogicaEditor::attached(void* parent, LogicaEditor::FIDStri
     return kResultFalse;
   }
   if (frame_) {
-    ViewRect size = gui_ ? gui_->size() : LogicaGUI::DEFAULT_SIZE;
-    frame_->resizeView(this, &size);
+    frame_->resizeView(this, &LogicaGUI::DEFAULT_SIZE);
   }
 #if SMTG_OS_WINDOWS
   if (gui_) {
@@ -103,10 +102,18 @@ LogicaEditor::tresult LogicaEditor::getSize(LogicaEditor::ViewRect *size) {
 }
 
 LogicaEditor::tresult LogicaEditor::onSize(LogicaEditor::ViewRect* newSize) {
-  if (!gui_) {
-    return kResultFalse;
+  if (gui_ && newSize) {
+    SetWindowPos(
+        gui_->windowHandle(),
+        nullptr,
+        newSize->left,
+        newSize->top,
+        newSize->getWidth(),
+        newSize->getHeight(),
+        SWP_SHOWWINDOW
+    );
   }
-  if (gui_->resize(*newSize)) {
+  if (!gui_ && gui_->resize(*newSize)) {
     return kResultTrue;
   }
   return kResultFalse;

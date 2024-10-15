@@ -76,6 +76,7 @@ bool LogicaGUI::createWindow() {
   }
   // Creating window
   DWORD exStyle = isParentLayered(parentWindowHandle_) ? WS_EX_TRANSPARENT : 0;
+  // https://learn.microsoft.com/ja-jp/windows/win32/winmsg/window-features#child-windows
   DWORD style = WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
 
   windowHandle_ = CreateWindowExW(
@@ -114,10 +115,43 @@ void LogicaGUI::cleanupWindow() {
   }
 }
 
+void LogicaGUI::render() {
+  { // Window resizing
+    RECT currentParentRect;
+    RECT currentRect;
+    GetClientRect (parentWindowHandle_, &currentParentRect);
+    GetClientRect(windowHandle_, &currentRect);
+    bool changed = currentParentRect.left != size_.left ||
+                   currentParentRect.top != size_.top ||
+                   currentParentRect.right != size_.right ||
+                   currentParentRect.bottom != size_.bottom;
+    if (changed) {
+      ViewRect nextSize = {
+          currentRect.left,
+          currentRect.top,
+          currentRect.left + (currentParentRect.right - currentParentRect.left),
+          currentRect.top + (currentParentRect.bottom - currentParentRect.top),
+      };
+      MoveWindow(
+          windowHandle_,
+          currentRect.left,
+          currentRect.top,
+          (int)nextSize.getWidth(),
+          (int)nextSize.getHeight(),
+          true
+      );
+      resize(nextSize);
+    }
+  }
+  if (editor_) {
+    editor_->render();
+  }
+}
+
 LRESULT WINAPI LogicaGUI::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
   if (useImGuiContext()) {
     LRESULT imguiResult = ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam);
-    editor_->render();
+    render();
     if (imguiResult != 0) {
       return imguiResult;
     }
@@ -128,10 +162,7 @@ LRESULT WINAPI LogicaGUI::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPa
       if (wParam != SIZE_MINIMIZED) {
         auto width = static_cast<int>(LOWORD(lParam));
         auto height = static_cast<int>(HIWORD(lParam));
-        ViewRect r;
-        r.right = width;
-        r.bottom = height;
-        resize(r);
+        resize(ViewRect(0, 0, width, height));
       }
       return 0;
     case WM_SYSCOMMAND:
@@ -140,12 +171,18 @@ LRESULT WINAPI LogicaGUI::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPa
         return 0;
       }
       break;
+    case WM_PAINT:
+      if (useImGuiContext()) {
+        render();
+      }
+      return 0;
     case WM_DESTROY:
       ::PostQuitMessage(0);
       return 0;
     default:
       break;
   }
+
   return ::DefWindowProcW(hWnd, msg, wParam, lParam);
 }
 

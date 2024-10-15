@@ -1,6 +1,6 @@
 #pragma once
 
-#if 0
+#if 1
 #include <public.sdk/source/vst/vstguieditor.h>
 #include <vstgui/lib/platform/win32/win32frame.h>
 // See:
@@ -71,6 +71,7 @@ private:
 private:
   bool createWindow();
   void cleanupWindow();
+  void render();
 public:
   LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 private:

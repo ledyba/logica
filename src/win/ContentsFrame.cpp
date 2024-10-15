@@ -16,15 +16,15 @@ using Win32Frame = VSTGUI::Win32Frame;
 
 #include <Windows.h>
 #include <WinUser.h>
-#include "LogicaGUI.h"
+#include "ContentsFrame.h"
 #include "Util.h"
-#include "../LogicaEditor.h"
+#include "../LogicaPluginView.h"
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 static LRESULT CALLBACK LogicaWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
   // https://learn.microsoft.com/ja-jp/windows/win32/api/winuser/nf-winuser-getwindowlongptrw
-  auto const gui = reinterpret_cast<logica::win::LogicaGUI*>(GetWindowLongPtrW(hwnd, GWLP_USERDATA));
+  auto const gui = reinterpret_cast<logica::win::ContentsFrame*>(GetWindowLongPtrW(hwnd, GWLP_USERDATA));
   if (gui) {
     return gui->WndProc(hwnd, msg, wParam, lParam);
   }
@@ -35,9 +35,9 @@ namespace logica::win {
 
 static constexpr float clearColorWithAlpha[4] = {0.1f, 0.1f, 0.1f, 1.00f };
 
-LogicaGUI::ViewRect LogicaGUI::DEFAULT_SIZE = makeViewRect(640, 480);
+ContentsFrame::ViewRect ContentsFrame::DEFAULT_SIZE = makeViewRect(640, 480);
 
-LogicaGUI::LogicaGUI(HWND parentWindowHandle, LogicaEditor* editor)
+ContentsFrame::ContentsFrame(HWND parentWindowHandle, LogicaPluginView* editor)
 :parentWindowHandle_(parentWindowHandle)
 ,editor_(editor)
 ,size_(DEFAULT_SIZE)
@@ -47,8 +47,8 @@ LogicaGUI::LogicaGUI(HWND parentWindowHandle, LogicaEditor* editor)
 /**************************************************************************************************
  * Win32 Window
  **************************************************************************************************/
-size_t LogicaGUI::windowClassUsingCount = 0;
-bool LogicaGUI::createWindow() {
+size_t ContentsFrame::windowClassUsingCount = 0;
+bool ContentsFrame::createWindow() {
   windowClassUsingCount++;
   // Registering WindowClass.
   if (windowClassUsingCount == 1) {
@@ -101,7 +101,7 @@ bool LogicaGUI::createWindow() {
   return windowHandle_ != nullptr;
 }
 
-void LogicaGUI::cleanupWindow() {
+void ContentsFrame::cleanupWindow() {
   if (windowHandle_) {
     SetWindowLongPtrW(windowHandle_, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(nullptr));
     DestroyWindow(windowHandle_);
@@ -115,7 +115,7 @@ void LogicaGUI::cleanupWindow() {
   }
 }
 
-LRESULT WINAPI LogicaGUI::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+LRESULT WINAPI ContentsFrame::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
   if (useImGuiContext()) {
     LRESULT imguiResult = ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam);
     editor_->render();
@@ -157,7 +157,7 @@ LRESULT WINAPI LogicaGUI::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPa
  * DirectX12
  **************************************************************************************************/
 
-bool LogicaGUI::createDeviceD3D() {
+bool ContentsFrame::createDeviceD3D() {
   // Setup swap chain
   DXGI_SWAP_CHAIN_DESC1 sd;
   {
@@ -282,7 +282,7 @@ bool LogicaGUI::createDeviceD3D() {
   return true;
 }
 
-void LogicaGUI::createRenderTarget() {
+void ContentsFrame::createRenderTarget() {
   for (UINT i = 0; i < NUM_BACK_BUFFERS; i++) {
     ID3D12Resource* pBackBuffer = nullptr;
     pSwapChain_->GetBuffer(i, IID_PPV_ARGS(&pBackBuffer));
@@ -291,7 +291,7 @@ void LogicaGUI::createRenderTarget() {
   }
 }
 
-void LogicaGUI::cleanupDeviceD3D() {
+void ContentsFrame::cleanupDeviceD3D() {
   cleanupRenderTarget();
   HRESULT result;
   if (pSwapChain_) {
@@ -348,7 +348,7 @@ void LogicaGUI::cleanupDeviceD3D() {
 #endif
 }
 
-void LogicaGUI::cleanupRenderTarget() {
+void ContentsFrame::cleanupRenderTarget() {
   waitForLastSubmittedFrame();
 
   for (UINT i = 0; i < NUM_BACK_BUFFERS; i++) {
@@ -359,7 +359,7 @@ void LogicaGUI::cleanupRenderTarget() {
   }
 }
 
-void LogicaGUI::waitForLastSubmittedFrame() {
+void ContentsFrame::waitForLastSubmittedFrame() {
   FrameContext& frameCtx = frameContext_[frameIndex_ % NUM_FRAMES_IN_FLIGHT];
 
   UINT64 fenceValue = frameCtx.FenceValue;
@@ -375,7 +375,7 @@ void LogicaGUI::waitForLastSubmittedFrame() {
   WaitForSingleObject(fenceEvent_, INFINITE);
 }
 
-LogicaGUI::FrameContext *LogicaGUI::waitForNextFrameResources() {
+ContentsFrame::FrameContext *ContentsFrame::waitForNextFrameResources() {
   UINT nextFrameIndex = frameIndex_ + 1;
   frameIndex_ = nextFrameIndex;
 
@@ -401,7 +401,7 @@ LogicaGUI::FrameContext *LogicaGUI::waitForNextFrameResources() {
  * ImGUI
  **************************************************************************************************/
 
-void LogicaGUI::createImGui() {
+void ContentsFrame::createImGui() {
   if (imguiContext_) {
     return;
   }
@@ -419,7 +419,7 @@ void LogicaGUI::createImGui() {
   io.LogFilename = nullptr;
 }
 
-void LogicaGUI::cleanupImGui() {
+void ContentsFrame::cleanupImGui() {
   if (imguiContext_) {
     useImGuiContext();
     ImGui_ImplDX12_Shutdown();
@@ -429,7 +429,7 @@ void LogicaGUI::cleanupImGui() {
   }
 }
 
-bool LogicaGUI::useImGuiContext() {
+bool ContentsFrame::useImGuiContext() {
   if (imguiContext_) {
     ImGui::SetCurrentContext(imguiContext_);
     return true;
@@ -437,7 +437,7 @@ bool LogicaGUI::useImGuiContext() {
   return false;
 }
 
-void LogicaGUI::renderFinish() {
+void ContentsFrame::renderFinish() {
   FrameContext* frameCtx = waitForNextFrameResources();
   UINT backBufferIdx = pSwapChain_->GetCurrentBackBufferIndex();
   frameCtx->CommandAllocator->Reset();
@@ -475,7 +475,7 @@ void LogicaGUI::renderFinish() {
   frameCtx->FenceValue = fenceValue;
 }
 
-bool LogicaGUI::prepare() {
+bool ContentsFrame::prepare() {
   if (!parentWindowHandle_) {
     return false;
   }
@@ -494,7 +494,7 @@ bool LogicaGUI::prepare() {
   //ImGui::StyleColorsLight();
   // Setup Platform/Renderer backends
   ImGui_ImplWin32_Init(windowHandle_);
-  ImGui_ImplDX12_Init(d3dDevice_, LogicaGUI::NUM_FRAMES_IN_FLIGHT,
+  ImGui_ImplDX12_Init(d3dDevice_, ContentsFrame::NUM_FRAMES_IN_FLIGHT,
                       DXGI_FORMAT_R8G8B8A8_UNORM, d3dSrvDescHeap_,
                       d3dSrvDescHeap_->GetCPUDescriptorHandleForHeapStart(),
                       d3dSrvDescHeap_->GetGPUDescriptorHandleForHeapStart());
@@ -504,7 +504,7 @@ bool LogicaGUI::prepare() {
   return true;
 }
 
-void LogicaGUI::cleanup() {
+void ContentsFrame::cleanup() {
   // Destroy ImGUI
   cleanupImGui();
   // DX12 cleanup
@@ -516,7 +516,7 @@ void LogicaGUI::cleanup() {
   }
 }
 
-bool LogicaGUI::resize(ViewRect size) {
+bool ContentsFrame::resize(ViewRect size) {
   if (d3dDevice_ == nullptr || pSwapChain_ == nullptr) {
     return false;
   }
@@ -537,7 +537,7 @@ bool LogicaGUI::resize(ViewRect size) {
   return true;
 }
 
-HINSTANCE LogicaGUI::getInstance() {
+HINSTANCE ContentsFrame::getInstance() {
   return reinterpret_cast<HINSTANCE>(GetWindowLongPtrW(parentWindowHandle_, GWLP_HINSTANCE));
 }
 

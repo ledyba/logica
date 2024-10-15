@@ -14,15 +14,15 @@ class LogicaController;
 
 #if SMTG_OS_WINDOWS
 namespace win {
-class LogicaGUI;
+class ContentsFrame;
 }
-using LogicaGUI = ::logica::win::LogicaGUI;
+using ContentsFrame = ::logica::win::ContentsFrame;
 #endif
 
-class LogicaEditor: public Steinberg::FObject, public Steinberg::IPlugView {
+class LogicaPluginView: public Steinberg::FObject, public Steinberg::IPlugView {
 public:
-  explicit LogicaEditor(LogicaController* controller);
-  ~LogicaEditor() override = default;
+  explicit LogicaPluginView(LogicaController* controller);
+  ~LogicaPluginView() override = default;
 public:
   using FIDString = Steinberg::FIDString;
   using char16 = Steinberg::char16;
@@ -45,7 +45,7 @@ public:
   tresult PLUGIN_API canResize() SMTG_OVERRIDE;
   tresult PLUGIN_API checkSizeConstraint(ViewRect* rect) SMTG_OVERRIDE;
 
-  OBJ_METHODS (LogicaEditor, FObject)
+  OBJ_METHODS (LogicaPluginView, FObject)
   DEFINE_INTERFACES
     DEF_INTERFACE (IPlugView)
   END_DEFINE_INTERFACES (FObject)
@@ -54,8 +54,8 @@ public:
   void render();
 private:
   LogicaController* controller_;
-  Steinberg::IPtr<IPlugFrame> frame_;
-  std::unique_ptr<LogicaGUI> gui_;
+  Steinberg::IPtr<IPlugFrame> pluginFrame_;
+  std::unique_ptr<ContentsFrame> contentsFrame_;
 };
 
 } // logica

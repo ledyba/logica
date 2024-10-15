@@ -24,15 +24,15 @@ using Win32Frame = VSTGUI::Win32Frame;
 #include <dxgi1_4.h>
 
 namespace logica {
-class LogicaEditor;
+class LogicaPluginView;
 }
 
 namespace logica::win {
 
-class LogicaGUI {
+class ContentsFrame {
   using ViewRect = Steinberg::ViewRect;
 public:
-  explicit LogicaGUI(HWND parentWindowHandle, LogicaEditor* editor);
+  explicit ContentsFrame(HWND parentWindowHandle, LogicaPluginView* editor);
   static ViewRect DEFAULT_SIZE;
 private:
   struct FrameContext {
@@ -48,7 +48,7 @@ private:
   HWND parentWindowHandle_ = nullptr;
   HWND windowHandle_ = nullptr;
   ViewRect size_;
-  LogicaEditor* editor_;
+  LogicaPluginView* editor_;
 private:
   FrameContext frameContext_[NUM_FRAMES_IN_FLIGHT] = {};
   UINT frameIndex_ = 0;

@@ -44,11 +44,11 @@ smtg_add_vst3plugin(Logica
     src/LogicaProcessor.cpp
     src/LogicaController.h
     src/LogicaController.cpp
-    src/LogicaEditor.h
-    src/LogicaEditor.cpp
+    src/LogicaPluginView.h
+    src/LogicaPluginView.cpp
     src/LogicaEntry.cpp
-    src/win/LogicaGUI.h
-    src/win/LogicaGUI.cpp
+    src/win/ContentsFrame.h
+    src/win/ContentsFrame.cpp
     src/win/Util.h
     src/win/Util.cpp
     ${IMGUI_SRCS}

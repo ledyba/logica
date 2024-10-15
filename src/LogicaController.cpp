@@ -4,7 +4,7 @@
 
 #include "LogicaController.h"
 #include "LogicaCIDs.h"
-#include "LogicaEditor.h"
+#include "LogicaPluginView.h"
 
 using namespace Steinberg;
 
@@ -66,7 +66,7 @@ IPlugView* PLUGIN_API LogicaController::createView(FIDString name) {
   if (!FIDStringsEqual(name, Vst::ViewType::kEditor)) {
     return nullptr;
   }
-  return new LogicaEditor(this);
+  return new LogicaPluginView(this);
 }
 
 //------------------------------------------------------------------------

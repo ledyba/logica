@@ -1,7 +1,7 @@
-#include "LogicaEditor.h"
+#include "LogicaPluginView.h"
 
 #if SMTG_OS_WINDOWS
-#include "win/LogicaGUI.h"
+#include "win/ContentsFrame.h"
 #include <windows.h>
 #include <winuser.h>
 #include <imgui.h>
@@ -14,12 +14,12 @@ using Steinberg::kResultFalse;
 using Steinberg::kInvalidArgument;
 using Steinberg::kNotInitialized;
 
-LogicaEditor::LogicaEditor(LogicaController* controller)
+LogicaPluginView::LogicaPluginView(LogicaController* controller)
 :controller_(controller)
 {
 }
 
-LogicaEditor::tresult LogicaEditor::isPlatformTypeSupported(LogicaEditor::FIDString type) {
+LogicaPluginView::tresult LogicaPluginView::isPlatformTypeSupported(LogicaPluginView::FIDString type) {
 #if SMTG_OS_WINDOWS
   using Steinberg::kPlatformTypeHWND;
   if (strcmp (type, kPlatformTypeHWND) == 0)
@@ -42,21 +42,21 @@ LogicaEditor::tresult LogicaEditor::isPlatformTypeSupported(LogicaEditor::FIDStr
   return kInvalidArgument;
 }
 
-LogicaEditor::tresult LogicaEditor::attached(void* parent, LogicaEditor::FIDString type) {
+LogicaPluginView::tresult LogicaPluginView::attached(void* parent, LogicaPluginView::FIDString type) {
   if (isPlatformTypeSupported(type) != kResultTrue) {
     return kResultFalse;
   }
-  if (frame_) {
-    frame_->resizeView(this, &LogicaGUI::DEFAULT_SIZE);
+  if (pluginFrame_) {
+    pluginFrame_->resizeView(this, &LogicaGUI::DEFAULT_SIZE);
   }
 #if SMTG_OS_WINDOWS
-  if (gui_) {
-    gui_->cleanup();
-    gui_.reset();
+  if (contentsFrame_) {
+    contentsFrame_->cleanup();
+    contentsFrame_.reset();
   }
-  gui_ = std::make_unique<LogicaGUI>(reinterpret_cast<HWND>(parent), this);
-  if(!gui_->prepare()) {
-    gui_->cleanup();
+  contentsFrame_ = std::make_unique<LogicaGUI>(reinterpret_cast<HWND>(parent), this);
+  if(!contentsFrame_->prepare()) {
+    contentsFrame_->cleanup();
     return kResultFalse;
   }
   render();
@@ -64,47 +64,47 @@ LogicaEditor::tresult LogicaEditor::attached(void* parent, LogicaEditor::FIDStri
   return kResultTrue;
 }
 
-LogicaEditor::tresult LogicaEditor::removed() {
-  if (!gui_) {
+LogicaPluginView::tresult LogicaPluginView::removed() {
+  if (!contentsFrame_) {
     return kResultFalse;
   }
   // Wait last frame.
-  gui_->waitForLastSubmittedFrame();
+  contentsFrame_->waitForLastSubmittedFrame();
   // ImGui cleanup & DX12 cleanup & windows cleanup
-  gui_->cleanup();
-  gui_.reset();
+  contentsFrame_->cleanup();
+  contentsFrame_.reset();
   return kResultTrue;
 }
 
-LogicaEditor::tresult LogicaEditor::onWheel(float distance) {
+LogicaPluginView::tresult LogicaPluginView::onWheel(float distance) {
   return 0;
 }
 
-LogicaEditor::tresult
-LogicaEditor::onKeyDown(LogicaEditor::char16 key, LogicaEditor::int16 keyCode, LogicaEditor::int16 modifiers) {
+LogicaPluginView::tresult
+LogicaPluginView::onKeyDown(LogicaPluginView::char16 key, LogicaPluginView::int16 keyCode, LogicaPluginView::int16 modifiers) {
   return 0;
 }
 
-LogicaEditor::tresult
-LogicaEditor::onKeyUp(LogicaEditor::char16 key, LogicaEditor::int16 keyCode, LogicaEditor::int16 modifiers) {
+LogicaPluginView::tresult
+LogicaPluginView::onKeyUp(LogicaPluginView::char16 key, LogicaPluginView::int16 keyCode, LogicaPluginView::int16 modifiers) {
   return 0;
 }
 
-LogicaEditor::tresult LogicaEditor::getSize(LogicaEditor::ViewRect *size) {
+LogicaPluginView::tresult LogicaPluginView::getSize(LogicaPluginView::ViewRect *size) {
   if (size == nullptr) {
     return kInvalidArgument;
   }
-  if (!gui_) {
+  if (!contentsFrame_) {
     return kResultFalse;
   }
-  *size = gui_->size();
+  *size = contentsFrame_->size();
   return kResultTrue;
 }
 
-LogicaEditor::tresult LogicaEditor::onSize(LogicaEditor::ViewRect* newSize) {
-  if (gui_ && newSize) {
+LogicaPluginView::tresult LogicaPluginView::onSize(LogicaPluginView::ViewRect* newSize) {
+  if (contentsFrame_ && newSize) {
     BOOL r = MoveWindow(
-        gui_->windowHandle(),
+        contentsFrame_->windowHandle(),
         newSize->left,
         newSize->top,
         newSize->getWidth(),
@@ -116,24 +116,24 @@ LogicaEditor::tresult LogicaEditor::onSize(LogicaEditor::ViewRect* newSize) {
   return kResultFalse;
 }
 
-LogicaEditor::tresult LogicaEditor::onFocus(LogicaEditor::TBool state) {
+LogicaPluginView::tresult LogicaPluginView::onFocus(LogicaPluginView::TBool state) {
   return 0;
 }
 
-LogicaEditor::tresult LogicaEditor::setFrame(LogicaEditor::IPlugFrame* frame) {
-  frame_ = frame;
+LogicaPluginView::tresult LogicaPluginView::setFrame(LogicaPluginView::IPlugFrame* frame) {
+  pluginFrame_ = frame;
   return kResultTrue;
 }
 
-LogicaEditor::tresult LogicaEditor::canResize() {
+LogicaPluginView::tresult LogicaPluginView::canResize() {
   return kResultTrue;
 }
 
-LogicaEditor::tresult LogicaEditor::checkSizeConstraint(LogicaEditor::ViewRect *rect) {
+LogicaPluginView::tresult LogicaPluginView::checkSizeConstraint(LogicaPluginView::ViewRect *rect) {
   return kResultTrue;
 }
 
-void LogicaEditor::render() {
+void LogicaPluginView::render() {
   ImGui_ImplDX12_NewFrame();
   ImGui_ImplWin32_NewFrame();
   ImGui::NewFrame();
@@ -151,7 +151,7 @@ void LogicaEditor::render() {
     ImGui::End();
   }
   ImGui::Render();
-  gui_->renderFinish();
+  contentsFrame_->renderFinish();
 }
 
 } // logica

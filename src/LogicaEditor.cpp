@@ -103,7 +103,7 @@ LogicaEditor::tresult LogicaEditor::getSize(LogicaEditor::ViewRect *size) {
 
 LogicaEditor::tresult LogicaEditor::onSize(LogicaEditor::ViewRect* newSize) {
   if (gui_ && newSize) {
-    SetWindowPos(
+    int r = SetWindowPos(
         gui_->windowHandle(),
         nullptr,
         newSize->left,
@@ -112,9 +112,7 @@ LogicaEditor::tresult LogicaEditor::onSize(LogicaEditor::ViewRect* newSize) {
         newSize->getHeight(),
         SWP_SHOWWINDOW
     );
-  }
-  if (!gui_ && gui_->resize(*newSize)) {
-    return kResultTrue;
+    return r ? kResultTrue : kResultFalse;
   }
   return kResultFalse;
 }

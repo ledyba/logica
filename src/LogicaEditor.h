@@ -54,7 +54,6 @@ public:
   void render();
 private:
   LogicaController* controller_;
-  ViewRect size_;
   Steinberg::IPtr<IPlugFrame> frame_;
   std::unique_ptr<LogicaGUI> gui_;
 };

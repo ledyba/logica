@@ -16,8 +16,6 @@ using Steinberg::kNotInitialized;
 
 LogicaEditor::LogicaEditor(LogicaController* controller)
 :controller_(controller)
-,size_(0, 0, 640, 480)
-,gui_(nullptr)
 {
 }
 
@@ -49,7 +47,8 @@ LogicaEditor::tresult LogicaEditor::attached(void* parent, LogicaEditor::FIDStri
     return kResultFalse;
   }
   if (frame_) {
-    frame_->resizeView(this, &this->size_);
+    ViewRect size = gui_ ? gui_->size() : LogicaGUI::DEFAULT_SIZE;
+    frame_->resizeView(this, &size);
   }
 #if SMTG_OS_WINDOWS
   if (gui_) {
@@ -59,7 +58,6 @@ LogicaEditor::tresult LogicaEditor::attached(void* parent, LogicaEditor::FIDStri
   gui_ = std::make_unique<LogicaGUI>(reinterpret_cast<HWND>(parent), this);
   if(!gui_->prepare()) {
     gui_->cleanup();
-    gui_.reset();
     return kResultFalse;
   }
   render();
@@ -97,7 +95,10 @@ LogicaEditor::tresult LogicaEditor::getSize(LogicaEditor::ViewRect *size) {
   if (size == nullptr) {
     return kInvalidArgument;
   }
-  *size = size_;
+  if (!gui_) {
+    return kResultFalse;
+  }
+  *size = gui_->size();
   return kResultTrue;
 }
 
@@ -105,8 +106,7 @@ LogicaEditor::tresult LogicaEditor::onSize(LogicaEditor::ViewRect* newSize) {
   if (!gui_) {
     return kResultFalse;
   }
-  if (gui_->resize(newSize->getWidth(), newSize->getHeight())) {
-    size_ = *newSize;
+  if (gui_->resize(*newSize)) {
     return kResultTrue;
   }
   return kResultFalse;

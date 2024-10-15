@@ -1,7 +1,23 @@
 #include <pluginterfaces/base/funknown.h>
 #if SMTG_OS_WINDOWS
-#include <windows.h>
+
+// Refs:
+#if 0
+#include "public.sdk/source/vst/vstguieditor.h"
+#include "vstgui/lib/platform/win32/win32factory.h"
+#include "vstgui/lib/platform/win32/win32frame.h"
+using VSTGUIEditor = Steinberg::Vst::VSTGUIEditor;
+using CFrame = VSTGUI::CFrame;
+using Win32Factory = VSTGUI::Win32Factory;
+using Win32Frame = VSTGUI::Win32Frame;
+#endif
+
+// ------------------------------------------------------------------------------------------------
+
+#include <Windows.h>
+#include <WinUser.h>
 #include "LogicaGUI.h"
+#include "Util.h"
 #include "../LogicaEditor.h"
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -19,37 +35,103 @@ namespace logica::win {
 
 static constexpr float clearColorWithAlpha[4] = {0.1f, 0.1f, 0.1f, 1.00f };
 
+LogicaGUI::ViewRect LogicaGUI::DEFAULT_SIZE = makeViewRect(640, 480);
+
 LogicaGUI::LogicaGUI(HWND parentWindowHandle, LogicaEditor* editor)
-: parentWindowHandle_(parentWindowHandle)
-, editor_(editor)
+:parentWindowHandle_(parentWindowHandle)
+,editor_(editor)
+,size_(DEFAULT_SIZE)
 {
 }
 
 /**************************************************************************************************
  * Win32 Window
  **************************************************************************************************/
-void LogicaGUI::createWindowProc() {
-  originalWindowFunc_ = reinterpret_cast<WNDPROC>(GetWindowLongPtrW(parentWindowHandle_, GWLP_WNDPROC));
-  originalWindowUserData_ = GetWindowLongPtrW(parentWindowHandle_, GWLP_USERDATA);
-  ::SetWindowLongPtrW(parentWindowHandle_, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(LogicaWndProc));
-  ::SetWindowLongPtrW(parentWindowHandle_, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
+size_t LogicaGUI::windowClassUsingCount = 0;
+bool LogicaGUI::createWindow() {
+  windowClassUsingCount++;
+  // Registering WindowClass.
+  if (windowClassUsingCount == 1) {
+    // Ref:
+    // Win32Frame::initWindowClass();
+    OleInitialize (nullptr);
+    WNDCLASS windowClass = {};
+    windowClass.style = CS_GLOBALCLASS | CS_DBLCLKS;//|CS_OWNDC; // add Private-DC constant
+
+    windowClass.lpfnWndProc = LogicaWndProc;
+    windowClass.cbClsExtra  = 0;
+    windowClass.cbWndExtra  = 0;
+    windowClass.hInstance   = getInstance();
+    windowClass.hIcon = nullptr;
+
+    windowClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
+#if DEBUG_DRAWING
+    windowClass.hbrBackground = GetSysColorBrush (COLOR_BTNFACE);
+#else
+    windowClass.hbrBackground = nullptr;
+#endif
+    windowClass.lpszMenuName  = nullptr;
+    windowClass.lpszClassName = TEXT("Logica");
+    RegisterClassW(&windowClass);
+  }
+  // Creating window
+  DWORD exStyle = isParentLayered(parentWindowHandle_) ? WS_EX_TRANSPARENT : 0;
+  DWORD style = WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
+
+  windowHandle_ = CreateWindowExW(
+      exStyle,
+      TEXT("Logica"),
+      TEXT ("Window"),
+      style,
+      size_.left,
+      size_.top,
+      static_cast<int>(size_.getWidth()),
+      static_cast<int>(size_.getHeight()),
+      parentWindowHandle_,
+      nullptr,
+      getInstance(),
+      nullptr
+  );
+
+  if (windowHandle_) {
+    SetWindowLongPtr(windowHandle_, GWLP_USERDATA, (LONG_PTR)this);
+  }
+
+  return windowHandle_ != nullptr;
+}
+
+void LogicaGUI::cleanupWindow() {
+  if (windowHandle_) {
+    SetWindowLongPtrW(windowHandle_, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(nullptr));
+    DestroyWindow(windowHandle_);
+    windowHandle_ = nullptr;
+  }
+
+  --windowClassUsingCount;
+  if (windowClassUsingCount == 0) {
+    UnregisterClassW(TEXT("Logica"), getInstance());
+    OleUninitialize();
+  }
 }
 
 LRESULT WINAPI LogicaGUI::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
   if (useImGuiContext()) {
     LRESULT imguiResult = ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam);
+    editor_->render();
     if (imguiResult != 0) {
       return imguiResult;
     }
-    editor_->render();
   }
 
   switch(msg) {
     case WM_SIZE:
       if (wParam != SIZE_MINIMIZED) {
-        UINT width = (UINT)LOWORD(lParam);
-        UINT height = (UINT)HIWORD(lParam);
-        resize(width, height);
+        auto width = static_cast<int>(LOWORD(lParam));
+        auto height = static_cast<int>(HIWORD(lParam));
+        ViewRect r;
+        r.right = width;
+        r.bottom = height;
+        resize(r);
       }
       return 0;
     case WM_SYSCOMMAND:
@@ -62,16 +144,6 @@ LRESULT WINAPI LogicaGUI::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPa
       ::PostQuitMessage(0);
       return 0;
     default:
-      if (originalWindowFunc_) {
-        ::SetWindowLongPtrW(parentWindowHandle_, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(originalWindowFunc_));
-        ::SetWindowLongPtrW(parentWindowHandle_, GWLP_USERDATA, originalWindowUserData_);
-        LRESULT r = CallWindowProcW(originalWindowFunc_, parentWindowHandle_, msg, wParam, lParam);
-        ::SetWindowLongPtrW(parentWindowHandle_, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(LogicaWndProc));
-        ::SetWindowLongPtrW(parentWindowHandle_, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
-        if (r != 0) {
-          return r;
-        }
-      }
       break;
   }
   return ::DefWindowProcW(hWnd, msg, wParam, lParam);
@@ -190,7 +262,7 @@ bool LogicaGUI::createDeviceD3D() {
     IDXGISwapChain1* swapChain1 = nullptr;
     if (CreateDXGIFactory1(IID_PPV_ARGS(&dxgiFactory)) != S_OK)
       return false;
-    if (dxgiFactory->CreateSwapChainForHwnd(d3dCommandQueue_, parentWindowHandle_, &sd, nullptr, nullptr, &swapChain1) != S_OK) {
+    if (dxgiFactory->CreateSwapChainForHwnd(d3dCommandQueue_, windowHandle_, &sd, nullptr, nullptr, &swapChain1) != S_OK) {
       return false;
     }
     if (swapChain1->QueryInterface(IID_PPV_ARGS(&pSwapChain_)) != S_OK) {
@@ -403,7 +475,9 @@ bool LogicaGUI::prepare() {
   if (!parentWindowHandle_) {
     return false;
   }
-  createWindowProc();
+  if (!createWindow()) {
+    return false;
+  }
   // https://github.com/ocornut/imgui/tree/master/examples/example_win32_directx12
   if(!createDeviceD3D()) {
     cleanupDeviceD3D();
@@ -415,14 +489,14 @@ bool LogicaGUI::prepare() {
   ImGui::StyleColorsDark();
   //ImGui::StyleColorsLight();
   // Setup Platform/Renderer backends
-  ImGui_ImplWin32_Init(parentWindowHandle_);
+  ImGui_ImplWin32_Init(windowHandle_);
   ImGui_ImplDX12_Init(d3dDevice_, LogicaGUI::NUM_FRAMES_IN_FLIGHT,
                       DXGI_FORMAT_R8G8B8A8_UNORM, d3dSrvDescHeap_,
                       d3dSrvDescHeap_->GetCPUDescriptorHandleForHeapStart(),
                       d3dSrvDescHeap_->GetGPUDescriptorHandleForHeapStart());
   // Show the window
-  ShowWindow(parentWindowHandle_, SW_SHOWDEFAULT);
-  UpdateWindow(parentWindowHandle_);
+  ShowWindow(windowHandle_, SW_SHOWDEFAULT);
+  UpdateWindow(windowHandle_);
   return true;
 }
 
@@ -432,13 +506,13 @@ void LogicaGUI::cleanup() {
   // DX12 cleanup
   cleanupDeviceD3D();
   // window cleanup
+  cleanupWindow();
   if (parentWindowHandle_) {
-    //::DestroyWindow(parentWindowHandle_);
     parentWindowHandle_ = nullptr;
   }
 }
 
-bool LogicaGUI::resize(size_t width, size_t height) {
+bool LogicaGUI::resize(ViewRect size) {
   if (d3dDevice_ == nullptr || pSwapChain_ == nullptr) {
     return false;
   }
@@ -447,14 +521,20 @@ bool LogicaGUI::resize(size_t width, size_t height) {
   cleanupRenderTarget();
   HRESULT result = pSwapChain_->ResizeBuffers(
       0,
-      (UINT)width,
-      (UINT)height,
+      (UINT)size.getWidth(),
+      (UINT)size.getHeight(),
       DXGI_FORMAT_R8G8B8A8_UNORM,
       DXGI_SWAP_CHAIN_FLAG_FRAME_LATENCY_WAITABLE_OBJECT
   );
   assert(SUCCEEDED(result) && "Failed to resize swap chain.");
   createRenderTarget();
+
+  size_ = size;
   return true;
+}
+
+HINSTANCE LogicaGUI::getInstance() {
+  return reinterpret_cast<HINSTANCE>(GetWindowLongPtrW(parentWindowHandle_, GWLP_HINSTANCE));
 }
 
 }

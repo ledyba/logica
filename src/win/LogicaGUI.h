@@ -12,6 +12,7 @@ using Win32Frame = VSTGUI::Win32Frame;
 
 #include <tchar.h>
 #include <pluginterfaces/base/fplatform.h>
+#include <pluginterfaces/gui/iplugview.h>
 
 #if SMTG_OS_WINDOWS
 
@@ -29,8 +30,10 @@ class LogicaEditor;
 namespace logica::win {
 
 class LogicaGUI {
+  using ViewRect = Steinberg::ViewRect;
 public:
   explicit LogicaGUI(HWND parentWindowHandle, LogicaEditor* editor);
+  static ViewRect DEFAULT_SIZE;
 private:
   struct FrameContext {
     ID3D12CommandAllocator *CommandAllocator;
@@ -40,9 +43,11 @@ public:
   static constexpr int NUM_FRAMES_IN_FLIGHT = 3;
   static constexpr int NUM_BACK_BUFFERS = 3;
 private:
+  static size_t windowClassUsingCount;
+private:
   HWND parentWindowHandle_ = nullptr;
-  WNDPROC originalWindowFunc_ = nullptr;
-  LONG_PTR originalWindowUserData_ = reinterpret_cast<LONG_PTR>(nullptr);
+  HWND windowHandle_ = nullptr;
+  ViewRect size_;
   LogicaEditor* editor_;
 private:
   FrameContext frameContext_[NUM_FRAMES_IN_FLIGHT] = {};
@@ -65,7 +70,8 @@ private:
   ImGuiContext* imguiContext_ = nullptr;
   bool initialized = false;
 private:
-  void createWindowProc();
+  bool createWindow();
+  void cleanupWindow();
 public:
   LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 private:
@@ -83,11 +89,13 @@ public:
   bool useImGuiContext();
   void renderFinish();
   void cleanup();
-  bool resize(size_t width, size_t height);
+  bool resize(ViewRect size);
 public:
   [[nodiscard]] HWND parentWindowHandle() { return parentWindowHandle_; }
   [[nodiscard]] ID3D12Device* d3d12Device() const { return d3dDevice_; }
   [[nodiscard]] ID3D12DescriptorHeap* d3dSrvDescHeap() const { return d3dSrvDescHeap_; }
+  [[nodiscard]] ViewRect size() const { return size_; }
+  [[nodiscard]] HINSTANCE getInstance();
 };
 
 }

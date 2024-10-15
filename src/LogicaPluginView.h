@@ -20,9 +20,12 @@ using ContentsFrame = ::logica::win::ContentsFrame;
 #endif
 
 class LogicaPluginView: public Steinberg::FObject, public Steinberg::IPlugView {
+  using ViewRect = Steinberg::ViewRect;
 public:
   explicit LogicaPluginView(LogicaController* controller);
   ~LogicaPluginView() override = default;
+public:
+  static ViewRect DEFAULT_SIZE;
 public:
   using FIDString = Steinberg::FIDString;
   using char16 = Steinberg::char16;
@@ -50,8 +53,6 @@ public:
     DEF_INTERFACE (IPlugView)
   END_DEFINE_INTERFACES (FObject)
   REFCOUNT_METHODS (FObject)
-public:
-  void render();
 private:
   LogicaController* controller_;
   Steinberg::IPtr<IPlugFrame> pluginFrame_;

@@ -22,6 +22,7 @@ using Win32Frame = VSTGUI::Win32Frame;
 #include <backends/imgui_impl_dx12.h>
 #include <d3d12.h>
 #include <dxgi1_4.h>
+#include "../LogicaUI.h"
 
 namespace logica {
 class LogicaPluginView;
@@ -32,8 +33,7 @@ namespace logica::win {
 class ContentsFrame {
   using ViewRect = Steinberg::ViewRect;
 public:
-  explicit ContentsFrame(HWND parentWindowHandle, LogicaPluginView* pluginView);
-  static ViewRect DEFAULT_SIZE;
+  explicit ContentsFrame(HWND parentWindowHandle, ViewRect size, LogicaUI* ui);
 private:
   struct FrameContext {
     ID3D12CommandAllocator *CommandAllocator;
@@ -48,7 +48,7 @@ private:
   HWND parentWindowHandle_ = nullptr;
   HWND windowHandle_ = nullptr;
   ViewRect size_;
-  LogicaPluginView* pluginView_;
+  LogicaUI* ui_;
 private:
   FrameContext frameContext_[NUM_FRAMES_IN_FLIGHT] = {};
   UINT frameIndex_ = 0;
@@ -86,6 +86,7 @@ public:
 public:
   bool prepare();
   bool useImGuiContext();
+  void render();
   void renderFinish();
   void cleanup();
   bool resize(ViewRect size);

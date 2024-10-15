@@ -1,4 +1,5 @@
 #include "LogicaPluginView.h"
+#include "LogicaController.h"
 
 #if SMTG_OS_WINDOWS
 #include "win/ContentsFrame.h"
@@ -13,6 +14,8 @@ using Steinberg::kResultTrue;
 using Steinberg::kResultFalse;
 using Steinberg::kInvalidArgument;
 using Steinberg::kNotInitialized;
+
+LogicaPluginView::ViewRect LogicaPluginView::DEFAULT_SIZE = {0, 0, 800, 600};
 
 LogicaPluginView::LogicaPluginView(LogicaController* controller)
 :controller_(controller)
@@ -46,20 +49,16 @@ LogicaPluginView::tresult LogicaPluginView::attached(void* parent, LogicaPluginV
   if (isPlatformTypeSupported(type) != kResultTrue) {
     return kResultFalse;
   }
-  if (pluginFrame_) {
-    pluginFrame_->resizeView(this, &LogicaGUI::DEFAULT_SIZE);
-  }
 #if SMTG_OS_WINDOWS
   if (contentsFrame_) {
     contentsFrame_->cleanup();
     contentsFrame_.reset();
   }
-  contentsFrame_ = std::make_unique<LogicaGUI>(reinterpret_cast<HWND>(parent), this);
+  contentsFrame_ = std::make_unique<ContentsFrame>(reinterpret_cast<HWND>(parent), DEFAULT_SIZE, controller_);
   if(!contentsFrame_->prepare()) {
     contentsFrame_->cleanup();
     return kResultFalse;
   }
-  render();
 #endif
   return kResultTrue;
 }
@@ -131,27 +130,6 @@ LogicaPluginView::tresult LogicaPluginView::canResize() {
 
 LogicaPluginView::tresult LogicaPluginView::checkSizeConstraint(LogicaPluginView::ViewRect *rect) {
   return kResultTrue;
-}
-
-void LogicaPluginView::render() {
-  ImGui_ImplDX12_NewFrame();
-  ImGui_ImplWin32_NewFrame();
-  ImGui::NewFrame();
-  bool open = true;
-  {
-    // Create a window called "Hello, world!" and append into it.
-    ImGui::Begin("Hello, world!", &open, ImGuiWindowFlags_AlwaysAutoResize);
-
-    ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-
-    ImGui::Button("Button");
-    ImGui::SameLine();
-    ImGui::Text("counter = 1");
-
-    ImGui::End();
-  }
-  ImGui::Render();
-  contentsFrame_->renderFinish();
 }
 
 } // logica

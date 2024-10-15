@@ -35,12 +35,10 @@ namespace logica::win {
 
 static constexpr float clearColorWithAlpha[4] = {0.1f, 0.1f, 0.1f, 1.00f };
 
-ContentsFrame::ViewRect ContentsFrame::DEFAULT_SIZE = makeViewRect(640, 480);
-
-ContentsFrame::ContentsFrame(HWND parentWindowHandle, LogicaPluginView* pluginView)
-: parentWindowHandle_(parentWindowHandle)
-, pluginView_(pluginView)
-, size_(DEFAULT_SIZE)
+ContentsFrame::ContentsFrame(HWND parentWindowHandle, ViewRect size, LogicaUI* ui)
+:parentWindowHandle_(parentWindowHandle)
+,ui_(ui)
+,size_(size)
 {
 }
 
@@ -118,7 +116,7 @@ void ContentsFrame::cleanupWindow() {
 LRESULT WINAPI ContentsFrame::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
   if (useImGuiContext()) {
     LRESULT imguiResult = ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam);
-    pluginView_->render();
+    render();
     if (imguiResult != 0) {
       return imguiResult;
     }
@@ -139,9 +137,7 @@ LRESULT WINAPI ContentsFrame::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
       }
       break;
     case WM_PAINT:
-      if (useImGuiContext()) {
-        pluginView_->render();
-      }
+      render();
       return 0;
     case WM_DESTROY:
       ::PostQuitMessage(0);
@@ -435,6 +431,19 @@ bool ContentsFrame::useImGuiContext() {
     return true;
   }
   return false;
+}
+
+void ContentsFrame::render() {
+  if (useImGuiContext()) {
+    ImGui_ImplDX12_NewFrame();
+    ImGui_ImplWin32_NewFrame();
+    ImGui::NewFrame();
+    if (ui_) {
+      ui_->render();
+    }
+    ImGui::Render();
+    renderFinish();
+  }
 }
 
 void ContentsFrame::renderFinish() {

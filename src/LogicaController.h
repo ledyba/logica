@@ -5,19 +5,21 @@
 #pragma once
 
 #include "public.sdk/source/vst/vsteditcontroller.h"
+#include "LogicaUI.h"
 
 namespace logica {
 
 //------------------------------------------------------------------------
 //  LogicaController
 //------------------------------------------------------------------------
-class LogicaController : public Steinberg::Vst::EditControllerEx1 {
+class LogicaController : public Steinberg::Vst::EditControllerEx1, public LogicaUI
+{
 public:
 //------------------------------------------------------------------------
-  LogicaController () = default;
-  ~LogicaController () SMTG_OVERRIDE = default;
+  LogicaController() = default;
+  ~LogicaController() SMTG_OVERRIDE = default;
 
-    // Create function
+  // Create function
   static Steinberg::FUnknown* createInstance(void* /*context*/) {
     return (Steinberg::Vst::IEditController*) new LogicaController;
   }
@@ -41,6 +43,12 @@ public:
 
 //------------------------------------------------------------------------
 protected:
+public:
+  bool open_ = true;
+  int counter_ = 0;
+  float f_ = 0;
+  float clearColor_[3] = {0, 0, 0};
+  void render() override;
 };
 
 //------------------------------------------------------------------------

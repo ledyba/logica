@@ -24,9 +24,9 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 
 static LRESULT CALLBACK LogicaWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
   // https://learn.microsoft.com/ja-jp/windows/win32/api/winuser/nf-winuser-getwindowlongptrw
-  auto const gui = reinterpret_cast<logica::win::ContentsFrame*>(GetWindowLongPtrW(hwnd, GWLP_USERDATA));
-  if (gui) {
-    return gui->WndProc(hwnd, msg, wParam, lParam);
+  auto const frame = reinterpret_cast<logica::win::ContentsFrame*>(GetWindowLongPtrW(hwnd, GWLP_USERDATA));
+  if (frame) {
+    return frame->WndProc(hwnd, msg, wParam, lParam);
   }
   return ::DefWindowProcW(hwnd, msg, wParam, lParam);
 }

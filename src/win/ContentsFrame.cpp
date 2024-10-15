@@ -37,10 +37,10 @@ static constexpr float clearColorWithAlpha[4] = {0.1f, 0.1f, 0.1f, 1.00f };
 
 ContentsFrame::ViewRect ContentsFrame::DEFAULT_SIZE = makeViewRect(640, 480);
 
-ContentsFrame::ContentsFrame(HWND parentWindowHandle, LogicaPluginView* editor)
-:parentWindowHandle_(parentWindowHandle)
-,editor_(editor)
-,size_(DEFAULT_SIZE)
+ContentsFrame::ContentsFrame(HWND parentWindowHandle, LogicaPluginView* pluginView)
+: parentWindowHandle_(parentWindowHandle)
+, pluginView_(pluginView)
+, size_(DEFAULT_SIZE)
 {
 }
 
@@ -118,7 +118,7 @@ void ContentsFrame::cleanupWindow() {
 LRESULT WINAPI ContentsFrame::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
   if (useImGuiContext()) {
     LRESULT imguiResult = ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam);
-    editor_->render();
+    pluginView_->render();
     if (imguiResult != 0) {
       return imguiResult;
     }
@@ -140,7 +140,7 @@ LRESULT WINAPI ContentsFrame::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
       break;
     case WM_PAINT:
       if (useImGuiContext()) {
-        editor_->render();
+        pluginView_->render();
       }
       return 0;
     case WM_DESTROY:

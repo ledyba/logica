@@ -32,7 +32,7 @@ namespace logica::win {
 class ContentsFrame {
   using ViewRect = Steinberg::ViewRect;
 public:
-  explicit ContentsFrame(HWND parentWindowHandle, LogicaPluginView* editor);
+  explicit ContentsFrame(HWND parentWindowHandle, LogicaPluginView* pluginView);
   static ViewRect DEFAULT_SIZE;
 private:
   struct FrameContext {
@@ -48,7 +48,7 @@ private:
   HWND parentWindowHandle_ = nullptr;
   HWND windowHandle_ = nullptr;
   ViewRect size_;
-  LogicaPluginView* editor_;
+  LogicaPluginView* pluginView_;
 private:
   FrameContext frameContext_[NUM_FRAMES_IN_FLIGHT] = {};
   UINT frameIndex_ = 0;

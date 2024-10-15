@@ -115,43 +115,10 @@ void LogicaGUI::cleanupWindow() {
   }
 }
 
-void LogicaGUI::render() {
-  { // Window resizing
-    RECT currentParentRect;
-    RECT currentRect;
-    GetClientRect (parentWindowHandle_, &currentParentRect);
-    GetClientRect(windowHandle_, &currentRect);
-    bool changed = currentParentRect.left != size_.left ||
-                   currentParentRect.top != size_.top ||
-                   currentParentRect.right != size_.right ||
-                   currentParentRect.bottom != size_.bottom;
-    if (changed) {
-      ViewRect nextSize = {
-          currentRect.left,
-          currentRect.top,
-          currentRect.left + (currentParentRect.right - currentParentRect.left),
-          currentRect.top + (currentParentRect.bottom - currentParentRect.top),
-      };
-      MoveWindow(
-          windowHandle_,
-          currentRect.left,
-          currentRect.top,
-          (int)nextSize.getWidth(),
-          (int)nextSize.getHeight(),
-          true
-      );
-      resize(nextSize);
-    }
-  }
-  if (editor_) {
-    editor_->render();
-  }
-}
-
 LRESULT WINAPI LogicaGUI::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
   if (useImGuiContext()) {
     LRESULT imguiResult = ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam);
-    render();
+    editor_->render();
     if (imguiResult != 0) {
       return imguiResult;
     }
@@ -173,7 +140,7 @@ LRESULT WINAPI LogicaGUI::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPa
       break;
     case WM_PAINT:
       if (useImGuiContext()) {
-        render();
+        editor_->render();
       }
       return 0;
     case WM_DESTROY:

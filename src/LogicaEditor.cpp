@@ -103,14 +103,13 @@ LogicaEditor::tresult LogicaEditor::getSize(LogicaEditor::ViewRect *size) {
 
 LogicaEditor::tresult LogicaEditor::onSize(LogicaEditor::ViewRect* newSize) {
   if (gui_ && newSize) {
-    int r = SetWindowPos(
+    BOOL r = MoveWindow(
         gui_->windowHandle(),
-        nullptr,
         newSize->left,
         newSize->top,
         newSize->getWidth(),
         newSize->getHeight(),
-        SWP_SHOWWINDOW
+        true
     );
     return r ? kResultTrue : kResultFalse;
   }

@@ -71,7 +71,6 @@ private:
 private:
   bool createWindow();
   void cleanupWindow();
-  void render();
 public:
   LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 private:

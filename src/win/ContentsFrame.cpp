@@ -93,7 +93,7 @@ bool ContentsFrame::createWindow() {
   );
 
   if (windowHandle_) {
-    SetWindowLongPtr(windowHandle_, GWLP_USERDATA, (LONG_PTR)this);
+    SetWindowLongPtrW(windowHandle_, GWLP_USERDATA, (LONG_PTR)this);
   }
 
   return windowHandle_ != nullptr;

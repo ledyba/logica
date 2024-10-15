@@ -337,7 +337,10 @@ void LogicaGUI::createImGui() {
   io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
   io.ConfigFlags |= ImGuiConfigFlags_NavEnableSetMousePos;  // Enable Mouse pos control
   io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-  io.WantCaptureMouse = true;
+  // Do not save to external file!
+  io.IniFilename = nullptr;
+  // Do not log to external file!
+  io.LogFilename = nullptr;
 }
 
 void LogicaGUI::cleanupImGui() {

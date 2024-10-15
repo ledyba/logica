@@ -508,8 +508,12 @@ bool ContentsFrame::prepare() {
                       d3dSrvDescHeap_->GetCPUDescriptorHandleForHeapStart(),
                       d3dSrvDescHeap_->GetGPUDescriptorHandleForHeapStart());
   // Show the window
+  /*
   ShowWindow(windowHandle_, SW_SHOWDEFAULT);
   UpdateWindow(windowHandle_);
+  ShowWindow(parentWindowHandle_, SW_SHOWDEFAULT);
+  UpdateWindow(parentWindowHandle_);
+   */
   return true;
 }
 

@@ -19,9 +19,9 @@ namespace logica::win {
 
 static constexpr float clearColorWithAlpha[4] = {0.1f, 0.1f, 0.1f, 1.00f };
 
-LogicaGUI::LogicaGUI(HWND windowHandle, LogicaEditor* editor)
-:windowHandle_(windowHandle)
-,editor_(editor)
+LogicaGUI::LogicaGUI(HWND parentWindowHandle, LogicaEditor* editor)
+: parentWindowHandle_(parentWindowHandle)
+, editor_(editor)
 {
 }
 
@@ -29,10 +29,10 @@ LogicaGUI::LogicaGUI(HWND windowHandle, LogicaEditor* editor)
  * Win32 Window
  **************************************************************************************************/
 void LogicaGUI::createWindowProc() {
-  originalWindowFunc_ = reinterpret_cast<WNDPROC>(GetWindowLongPtrW(windowHandle_, GWLP_WNDPROC));
-  originalWindowUserData_ = GetWindowLongPtrW(windowHandle_, GWLP_USERDATA);
-  ::SetWindowLongPtrW(windowHandle_, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(LogicaWndProc));
-  ::SetWindowLongPtrW(windowHandle_, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
+  originalWindowFunc_ = reinterpret_cast<WNDPROC>(GetWindowLongPtrW(parentWindowHandle_, GWLP_WNDPROC));
+  originalWindowUserData_ = GetWindowLongPtrW(parentWindowHandle_, GWLP_USERDATA);
+  ::SetWindowLongPtrW(parentWindowHandle_, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(LogicaWndProc));
+  ::SetWindowLongPtrW(parentWindowHandle_, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
 }
 
 LRESULT WINAPI LogicaGUI::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
@@ -63,11 +63,11 @@ LRESULT WINAPI LogicaGUI::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPa
       return 0;
     default:
       if (originalWindowFunc_) {
-        ::SetWindowLongPtrW(windowHandle_, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(originalWindowFunc_));
-        ::SetWindowLongPtrW(windowHandle_, GWLP_USERDATA, originalWindowUserData_);
-        LRESULT r = CallWindowProcW(originalWindowFunc_, windowHandle_, msg, wParam, lParam);
-        ::SetWindowLongPtrW(windowHandle_, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(LogicaWndProc));
-        ::SetWindowLongPtrW(windowHandle_, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
+        ::SetWindowLongPtrW(parentWindowHandle_, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(originalWindowFunc_));
+        ::SetWindowLongPtrW(parentWindowHandle_, GWLP_USERDATA, originalWindowUserData_);
+        LRESULT r = CallWindowProcW(originalWindowFunc_, parentWindowHandle_, msg, wParam, lParam);
+        ::SetWindowLongPtrW(parentWindowHandle_, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(LogicaWndProc));
+        ::SetWindowLongPtrW(parentWindowHandle_, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
         if (r != 0) {
           return r;
         }
@@ -190,7 +190,7 @@ bool LogicaGUI::createDeviceD3D() {
     IDXGISwapChain1* swapChain1 = nullptr;
     if (CreateDXGIFactory1(IID_PPV_ARGS(&dxgiFactory)) != S_OK)
       return false;
-    if (dxgiFactory->CreateSwapChainForHwnd(d3dCommandQueue_, windowHandle_, &sd, nullptr, nullptr, &swapChain1) != S_OK) {
+    if (dxgiFactory->CreateSwapChainForHwnd(d3dCommandQueue_, parentWindowHandle_, &sd, nullptr, nullptr, &swapChain1) != S_OK) {
       return false;
     }
     if (swapChain1->QueryInterface(IID_PPV_ARGS(&pSwapChain_)) != S_OK) {
@@ -400,7 +400,7 @@ void LogicaGUI::renderFinish() {
 }
 
 bool LogicaGUI::prepare() {
-  if (!windowHandle_) {
+  if (!parentWindowHandle_) {
     return false;
   }
   createWindowProc();
@@ -415,14 +415,14 @@ bool LogicaGUI::prepare() {
   ImGui::StyleColorsDark();
   //ImGui::StyleColorsLight();
   // Setup Platform/Renderer backends
-  ImGui_ImplWin32_Init(windowHandle_);
+  ImGui_ImplWin32_Init(parentWindowHandle_);
   ImGui_ImplDX12_Init(d3dDevice_, LogicaGUI::NUM_FRAMES_IN_FLIGHT,
                       DXGI_FORMAT_R8G8B8A8_UNORM, d3dSrvDescHeap_,
                       d3dSrvDescHeap_->GetCPUDescriptorHandleForHeapStart(),
                       d3dSrvDescHeap_->GetGPUDescriptorHandleForHeapStart());
   // Show the window
-  ShowWindow(windowHandle_, SW_SHOWDEFAULT);
-  UpdateWindow(windowHandle_);
+  ShowWindow(parentWindowHandle_, SW_SHOWDEFAULT);
+  UpdateWindow(parentWindowHandle_);
   return true;
 }
 
@@ -432,9 +432,9 @@ void LogicaGUI::cleanup() {
   // DX12 cleanup
   cleanupDeviceD3D();
   // window cleanup
-  if (windowHandle_) {
-    //::DestroyWindow(windowHandle_);
-    windowHandle_ = nullptr;
+  if (parentWindowHandle_) {
+    //::DestroyWindow(parentWindowHandle_);
+    parentWindowHandle_ = nullptr;
   }
 }
 

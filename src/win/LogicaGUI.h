@@ -30,7 +30,7 @@ namespace logica::win {
 
 class LogicaGUI {
 public:
-  explicit LogicaGUI(HWND windowHandle, LogicaEditor* editor);
+  explicit LogicaGUI(HWND parentWindowHandle, LogicaEditor* editor);
 private:
   struct FrameContext {
     ID3D12CommandAllocator *CommandAllocator;
@@ -40,7 +40,7 @@ public:
   static constexpr int NUM_FRAMES_IN_FLIGHT = 3;
   static constexpr int NUM_BACK_BUFFERS = 3;
 private:
-  HWND windowHandle_ = nullptr;
+  HWND parentWindowHandle_ = nullptr;
   WNDPROC originalWindowFunc_ = nullptr;
   LONG_PTR originalWindowUserData_ = reinterpret_cast<LONG_PTR>(nullptr);
   LogicaEditor* editor_;
@@ -85,7 +85,7 @@ public:
   void cleanup();
   bool resize(size_t width, size_t height);
 public:
-  [[nodiscard]] HWND windowHandle() { return windowHandle_; }
+  [[nodiscard]] HWND parentWindowHandle() { return parentWindowHandle_; }
   [[nodiscard]] ID3D12Device* d3d12Device() const { return d3dDevice_; }
   [[nodiscard]] ID3D12DescriptorHeap* d3dSrvDescHeap() const { return d3dSrvDescHeap_; }
 };

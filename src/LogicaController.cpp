@@ -5,7 +5,16 @@
 #include "LogicaController.h"
 #include "LogicaCIDs.h"
 #include "LogicaEditor.h"
-#include "vstgui/plugin-bindings/vst3editor.h"
+
+// See:
+
+#include "public.sdk/source/vst/vstguieditor.h"
+#include "vstgui/lib/platform/win32/win32factory.h"
+#include "vstgui/lib/platform/win32/win32frame.h"
+using VSTGUIEditor = Steinberg::Vst::VSTGUIEditor;
+using CFrame = VSTGUI::CFrame;
+using Win32Factory = VSTGUI::Win32Factory;
+using Win32Frame = VSTGUI::Win32Frame;
 
 using namespace Steinberg;
 

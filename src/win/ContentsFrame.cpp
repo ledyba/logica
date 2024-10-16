@@ -381,8 +381,7 @@ ContentsFrame::FrameContext *ContentsFrame::waitForNextFrameResources() {
 
   FrameContext* frameCtx = &frameContext_[nextFrameIndex % NUM_FRAMES_IN_FLIGHT];
   UINT64 fenceValue = frameCtx->FenceValue;
-  if (fenceValue != 0) // means no fence was signaled
-  {
+  if (fenceValue != 0) { // means no fence was signaled
     frameCtx->FenceValue = 0;
     fence_->SetEventOnCompletion(fenceValue, fenceEvent_);
     waitableObjects[1] = fenceEvent_;

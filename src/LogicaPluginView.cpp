@@ -1,5 +1,6 @@
 #include "LogicaPluginView.h"
 #include "LogicaController.h"
+#include "Util.h"
 
 #if SMTG_OS_WINDOWS
 #include "win/ContentsFrame.h"
@@ -15,7 +16,7 @@ using Steinberg::kResultFalse;
 using Steinberg::kInvalidArgument;
 using Steinberg::kNotInitialized;
 
-LogicaPluginView::ViewRect LogicaPluginView::DEFAULT_SIZE = {0, 0, 800, 600};
+LogicaPluginView::ViewRect LogicaPluginView::DEFAULT_SIZE = makeViewRect(800, 600);
 
 LogicaPluginView::LogicaPluginView(LogicaController* controller)
 :controller_(controller)

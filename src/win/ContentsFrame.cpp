@@ -15,10 +15,9 @@ using Win32Frame = VSTGUI::Win32Frame;
 // ------------------------------------------------------------------------------------------------
 
 #include <Windows.h>
-#include <WinUser.h>
 #include "ContentsFrame.h"
 #include "Util.h"
-#include "../LogicaPluginView.h"
+#include "../Util.h"
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -127,7 +126,7 @@ LRESULT WINAPI ContentsFrame::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
       if (wParam != SIZE_MINIMIZED) {
         auto width = static_cast<int>(LOWORD(lParam));
         auto height = static_cast<int>(HIWORD(lParam));
-        resize(ViewRect(0, 0, width, height));
+        resize(makeViewRect(width, height));
       }
       return 0;
     case WM_SYSCOMMAND:

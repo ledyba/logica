@@ -114,11 +114,8 @@ void ContentsFrame::cleanupWindow() {
 
 LRESULT WINAPI ContentsFrame::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
   if (useImGuiContext()) {
-    LRESULT imguiResult = ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam);
+    ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam);
     render();
-    if (imguiResult != 0) {
-      return imguiResult;
-    }
   }
 
   switch(msg) {
@@ -128,7 +125,7 @@ LRESULT WINAPI ContentsFrame::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
         auto height = static_cast<int>(HIWORD(lParam));
         resize(makeViewRect(width, height));
       }
-      return 0;
+      break;
     case WM_SYSCOMMAND:
       // Disable ALT application menu
       if ((wParam & 0xfff0) == SC_KEYMENU) {
@@ -137,7 +134,7 @@ LRESULT WINAPI ContentsFrame::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
       break;
     case WM_PAINT:
       render();
-      return 0;
+      break;
     case WM_DESTROY:
       ::PostQuitMessage(0);
       return 0;

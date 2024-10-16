@@ -32,7 +32,7 @@ tresult PLUGIN_API LogicaProcessor::initialize(FUnknown* context) {
   //---always initialize the parent-------
   tresult result = AudioEffect::initialize(context);
   // if everything Ok, continue
-  if (result != kResultOk) {
+  if (result != kResultTrue) {
     return result;
   }
 
@@ -43,7 +43,7 @@ tresult PLUGIN_API LogicaProcessor::initialize(FUnknown* context) {
   /* If you don't need an event bus, you can remove the next line */
   addEventInput(STR16("Event In"), 1);
 
-  return kResultOk;
+  return kResultTrue;
 }
 
 //------------------------------------------------------------------------
@@ -130,7 +130,7 @@ tresult PLUGIN_API LogicaProcessor::process(Vst::ProcessData& data) {
     }
   }
 
-  return kResultOk;
+  return kResultTrue;
 }
 
 //------------------------------------------------------------------------
@@ -157,7 +157,7 @@ tresult PLUGIN_API LogicaProcessor::setState(IBStream* state) {
   // called when we load a preset, the model has to be reloaded
   IBStreamer streamer(state, kLittleEndian);
   
-  return kResultOk;
+  return kResultTrue;
 }
 
 //------------------------------------------------------------------------
@@ -166,7 +166,7 @@ tresult PLUGIN_API LogicaProcessor::getState(IBStream* state)
   // here we need to save the model
   IBStreamer streamer(state, kLittleEndian);
 
-  return kResultOk;
+  return kResultTrue;
 }
 
 //------------------------------------------------------------------------

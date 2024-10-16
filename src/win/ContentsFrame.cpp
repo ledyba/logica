@@ -114,6 +114,8 @@ void ContentsFrame::cleanupWindow() {
 
 LRESULT WINAPI ContentsFrame::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
   if (useImGuiContext()) {
+    // MEMO:
+    //   If ignore the message, parent and grand parents' message are not processed at all.
     ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam);
     render();
   }

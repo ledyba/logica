@@ -70,6 +70,8 @@ IPlugView* PLUGIN_API LogicaController::createView(FIDString name) {
   return new LogicaPluginView(this);
 }
 
+//------------------------------------------------------------------------
+
 void LogicaController::render() {
   ImGui::Begin("Hello, world!", &open_, ImGuiWindowFlags_MenuBar);                          // Create a window called "Hello, world!" and append into it.
 
@@ -87,5 +89,4 @@ void LogicaController::render() {
   ImGui::End();
 }
 
-//------------------------------------------------------------------------
 } // namespace Logica

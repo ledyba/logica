@@ -36,7 +36,7 @@ public:
   explicit ContentsFrame(HWND parentWindowHandle, ViewRect size, LogicaUI* ui);
 private:
   struct FrameContext {
-    ID3D12CommandAllocator *CommandAllocator;
+    ID3D12CommandAllocator* CommandAllocator;
     UINT64 FenceValue;
   };
 public:

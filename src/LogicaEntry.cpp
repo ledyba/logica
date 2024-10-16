@@ -2,12 +2,12 @@
 // Copyright(c) 2024 My Plug-in Company.
 //------------------------------------------------------------------------
 
+#include <public.sdk/source/main/pluginfactory.h>
+
 #include "LogicaProcessor.h"
 #include "LogicaController.h"
 #include "LogicaCIDs.h"
 #include "version.h"
-
-#include "public.sdk/source/main/pluginfactory.h"
 
 #define stringPluginName "Logica"
 
@@ -19,10 +19,10 @@ using namespace logica;
 //------------------------------------------------------------------------
 
 BEGIN_FACTORY_DEF (
-    "My Plug-in Company",
+    "ledyba",
     "https://7io.org",
     "mailto:psi@7io.org"
-    )
+  )
 
   //---First Plug-in included in this factory-------
   // its kVstAudioEffectClass component

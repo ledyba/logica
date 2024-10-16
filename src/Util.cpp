@@ -1,4 +1,3 @@
-
 #include "Util.h"
 
 namespace logica {

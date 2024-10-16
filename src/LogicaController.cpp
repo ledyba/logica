@@ -2,6 +2,8 @@
 // Copyright(c) 2024 My Plug-in Company.
 //------------------------------------------------------------------------
 
+#include <pluginterfaces/base/ibstream.h> // To use IBStream
+
 #include "LogicaController.h"
 #include "LogicaCIDs.h"
 #include "LogicaPluginView.h"

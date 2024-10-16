@@ -2,11 +2,12 @@
 // Copyright(c) 2024 My Plug-in Company.
 //------------------------------------------------------------------------
 
-#include "LogicaProcessor.h"
-#include "LogicaCIDs.h"
+#include <base/source/fstreamer.h>
+#include <pluginterfaces/vst/ivstparameterchanges.h>
+#include <pluginterfaces/base/ibstream.h> // To use IBStream
 
-#include "base/source/fstreamer.h"
-#include "pluginterfaces/vst/ivstparameterchanges.h"
+#include "LogicaCIDs.h"
+#include "LogicaProcessor.h"
 
 using namespace Steinberg;
 

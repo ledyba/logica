@@ -3,10 +3,10 @@
 #include "Util.h"
 
 #if SMTG_OS_WINDOWS
-#include "win/ContentsFrame.h"
 #include <windows.h>
 #include <winuser.h>
 #include <imgui.h>
+#include "win/ContentsFrame.h"
 #endif
 
 namespace logica {
@@ -58,6 +58,7 @@ LogicaPluginView::tresult LogicaPluginView::attached(void* parent, LogicaPluginV
   contentsFrame_ = std::make_unique<ContentsFrame>(reinterpret_cast<HWND>(parent), DEFAULT_SIZE, controller_);
   if(!contentsFrame_->prepare()) {
     contentsFrame_->cleanup();
+    contentsFrame_.reset();
     return kResultFalse;
   }
 #endif

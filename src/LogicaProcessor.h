@@ -17,8 +17,7 @@ public:
   ~LogicaProcessor() SMTG_OVERRIDE;
 
     // Create function
-  static Steinberg::FUnknown* createInstance(void* /*context*/)
-  { 
+  static Steinberg::FUnknown* createInstance(void* /*context*/) {
     return (Steinberg::Vst::IAudioProcessor*) new LogicaProcessor;
   }
 

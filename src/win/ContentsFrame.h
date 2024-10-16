@@ -22,6 +22,8 @@ using Win32Frame = VSTGUI::Win32Frame;
 #include <backends/imgui_impl_dx12.h>
 #include <d3d12.h>
 #include <dxgi1_4.h>
+
+// Our includes
 #include "../LogicaUI.h"
 
 namespace logica {

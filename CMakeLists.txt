@@ -50,6 +50,7 @@ smtg_add_vst3plugin(Logica
     src/LogicaUI.h
     src/Util.h
     src/Util.cpp
+    src/win/main.cpp
     src/win/ContentsFrame.h
     src/win/ContentsFrame.cpp
     src/win/Util.h

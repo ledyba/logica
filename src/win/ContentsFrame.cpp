@@ -34,7 +34,7 @@ namespace logica::win {
 
 static constexpr float clearColorWithAlpha[4] = {0.1f, 0.1f, 0.1f, 1.00f };
 
-ContentsFrame::ContentsFrame(HWND const parentWindowHandle, ViewRect const size, LogicaUI* const ui)
+ContentsFrame::ContentsFrame(HWND parentWindowHandle, ViewRect const size, LogicaUI* const ui)
 :parentWindowHandle_(parentWindowHandle)
 ,ui_(ui)
 ,size_(size)

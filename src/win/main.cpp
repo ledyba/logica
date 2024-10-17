@@ -53,12 +53,10 @@ int main(int argc, char** argv) {
   ::UpdateWindow(hwnd);
   bool done = false;
   while (!done) {
-    // Poll and handle messages (inputs, window resize, etc.)
-    // See the WndProc() function below for our to dispatch events to the Win32 backend.
     MSG msg;
-    while (::PeekMessage(&msg, nullptr, 0U, 0U, PM_REMOVE)) {
+    while (::PeekMessageW(&msg, nullptr, 0U, 0U, PM_REMOVE)) {
       ::TranslateMessage(&msg);
-      ::DispatchMessage(&msg);
+      ::DispatchMessageW(&msg);
       if (msg.message == WM_QUIT) {
         done = true;
       }

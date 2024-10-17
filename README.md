@@ -5,6 +5,7 @@
 ## VST3 plugin
 
 - [VST3プラグイン開発12 – 最小構成のVST GUIコード | C++でVST作り](https://www.utsbox.com/?p=1186)
+- [hotwatermorning/Vst3SampleHost: VST3ホストのサンプルアプリケーション](https://github.com/hotwatermorning/Vst3SampleHost)
 
 ## ImGUI
 

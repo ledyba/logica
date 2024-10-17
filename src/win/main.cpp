@@ -2,8 +2,13 @@
 
 #if SMTG_OS_WINDOWS
 #include <Windows.h>
+#include <memory>
+#include "ContentsFrame.h"
+#include "../Util.h"
+#include "../LogicaController.h"
 
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+  RECT rcClient;
   switch (msg) {
     case WM_SYSCOMMAND:
       if ((wParam & 0xfff0) == SC_KEYMENU) {// Disable ALT application menu
@@ -12,6 +17,9 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
       break;
     case WM_DESTROY:
       ::PostQuitMessage(0);
+      return 0;
+    case WM_CLOSE:
+      DestroyWindow(hWnd);
       return 0;
     default:
       break;
@@ -32,7 +40,7 @@ int main(int argc, char** argv) {
       nullptr,
       nullptr,
       L"Logica",
-      nullptr
+      LoadCursor(nullptr, IDC_ARROW)
   };
   ::RegisterClassExW(&wc);
   HWND hwnd = ::CreateWindowExW(
@@ -51,20 +59,20 @@ int main(int argc, char** argv) {
   );
   ::ShowWindow(hwnd, SW_SHOWDEFAULT);
   ::UpdateWindow(hwnd);
-  bool done = false;
-  while (!done) {
-    MSG msg;
-    while (::PeekMessageW(&msg, nullptr, 0U, 0U, PM_REMOVE)) {
-      ::TranslateMessage(&msg);
-      ::DispatchMessageW(&msg);
-      if (msg.message == WM_QUIT) {
-        done = true;
+  auto* ui = new logica::LogicaController();
+  auto frame_ = std::make_unique<logica::win::ContentsFrame>(hwnd, logica::makeViewRect(1280, 800), ui);
+  if (frame_->prepare()) {
+    MSG msg = {};
+    while (msg.message != WM_QUIT) {
+      if (::PeekMessageW(&msg, nullptr, 0U, 0U, PM_REMOVE)) {
+        ::TranslateMessage(&msg);
+        ::DispatchMessageW(&msg);
+        frame_->render();
       }
     }
-    if (done) {
-      break;
-    }
   }
+  frame_->cleanup();
+  ui->release();
   ::DestroyWindow(hwnd);
   ::UnregisterClassW(wc.lpszClassName, wc.hInstance);
   return 0;

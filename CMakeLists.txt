@@ -37,8 +37,7 @@ set(IMGUI_SRCS
     external/imgui/imgui_widgets.cpp
 )
 
-smtg_add_vst3plugin(Logica
-    ${IMGUI_SRCS}
+set(LOGICA_SRCS
     src/version.h
     src/LogicaCIDs.h
     src/LogicaProcessor.h
@@ -55,6 +54,11 @@ smtg_add_vst3plugin(Logica
     src/win/ContentsFrame.cpp
     src/win/Util.h
     src/win/Util.cpp
+)
+
+smtg_add_vst3plugin(Logica
+    ${IMGUI_SRCS}
+    ${LOGICA_SRCS}
 )
 target_include_directories(Logica PRIVATE external/imgui)
 target_link_libraries(Logica PRIVATE "d3d12.lib" "dxgi.lib" "d3dcompiler.lib")
@@ -118,10 +122,21 @@ endif(SMTG_MAC)
 
 add_executable(
     standalone
+    ${IMGUI_SRCS}
+    ${LOGICA_SRCS}
     src/win/main.cpp
-    ${SOURCES}
 )
+target_include_directories(standalone PRIVATE external/imgui)
+target_include_directories(standalone PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+
 target_link_libraries(standalone
     PRIVATE
+    base
     sdk
+    sdk_common
+    sdk_hosting
+    pluginterfaces
+    vstgui
+    vstgui_support
+    "d3d12.lib" "dxgi.lib" "d3dcompiler.lib"
 )

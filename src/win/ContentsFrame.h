@@ -73,6 +73,7 @@ private:
 private:
   bool createWindow();
   void cleanupWindow();
+  void renderFinish();
 public:
   LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 private:
@@ -89,7 +90,6 @@ public:
   bool prepare();
   bool useImGuiContext();
   void render();
-  void renderFinish();
   void cleanup();
   bool resize(ViewRect size);
 public:

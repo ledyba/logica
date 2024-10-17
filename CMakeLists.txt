@@ -38,6 +38,7 @@ set(IMGUI_SRCS
 )
 
 smtg_add_vst3plugin(Logica
+    ${IMGUI_SRCS}
     src/version.h
     src/LogicaCIDs.h
     src/LogicaProcessor.h
@@ -50,12 +51,10 @@ smtg_add_vst3plugin(Logica
     src/LogicaUI.h
     src/Util.h
     src/Util.cpp
-    src/win/main.cpp
     src/win/ContentsFrame.h
     src/win/ContentsFrame.cpp
     src/win/Util.h
     src/win/Util.cpp
-    ${IMGUI_SRCS}
 )
 target_include_directories(Logica PRIVATE external/imgui)
 target_link_libraries(Logica PRIVATE "d3d12.lib" "dxgi.lib" "d3dcompiler.lib")
@@ -93,7 +92,7 @@ smtg_target_configure_version_file(Logica)
 if(SMTG_MAC)
   smtg_target_set_bundle(Logica
       BUNDLE_IDENTIFIER org.7io.logica
-      COMPANY_NAME "My Plug-in Company"
+      COMPANY_NAME "ledyba"
   )
   smtg_target_set_debug_executable(Logica
       "/Applications/VST3PluginTestHost.app"

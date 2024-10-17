@@ -111,3 +111,17 @@ elseif(SMTG_WIN)
     )
   endif()
 endif(SMTG_MAC)
+
+# -------------------------------------------------------------------------------------------------
+# Standalone
+# -------------------------------------------------------------------------------------------------
+
+add_executable(
+    standalone
+    src/win/main.cpp
+    ${SOURCES}
+)
+target_link_libraries(standalone
+    PRIVATE
+    sdk
+)

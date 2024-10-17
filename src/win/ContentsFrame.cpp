@@ -34,7 +34,7 @@ namespace logica::win {
 
 static constexpr float clearColorWithAlpha[4] = {0.1f, 0.1f, 0.1f, 1.00f };
 
-ContentsFrame::ContentsFrame(HWND parentWindowHandle, ViewRect size, LogicaUI* ui)
+ContentsFrame::ContentsFrame(HWND const parentWindowHandle, ViewRect const size, LogicaUI* const ui)
 :parentWindowHandle_(parentWindowHandle)
 ,ui_(ui)
 ,size_(size)
@@ -72,9 +72,9 @@ bool ContentsFrame::createWindow() {
     RegisterClassW(&windowClass);
   }
   // Creating window
-  DWORD exStyle = isParentLayered(parentWindowHandle_) ? WS_EX_TRANSPARENT : 0;
+  DWORD const exStyle = isParentLayered(parentWindowHandle_) ? WS_EX_TRANSPARENT : 0;
   // https://learn.microsoft.com/ja-jp/windows/win32/winmsg/window-features#child-windows
-  DWORD style = WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
+  DWORD const style = WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
 
   windowHandle_ = CreateWindowExW(
       exStyle,

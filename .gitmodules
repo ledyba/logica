@@ -1,6 +1,9 @@
 [submodule "external/vst3sdk"]
 	path = external/vst3sdk
-	url = git@github.com:steinbergmedia/vst3sdk.git
+	url = https://github.com/steinbergmedia/vst3sdk.git
 [submodule "external/imgui"]
 	path = external/imgui
-	url = git@github.com:ocornut/imgui.git
+	url = https://github.com/ocornut/imgui.git
+[submodule "external/imgui-node-editor"]
+	path = external/imgui-node-editor
+	url = https://github.com/thedmd/imgui-node-editor.git

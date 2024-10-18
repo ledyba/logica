@@ -53,7 +53,7 @@ bool ContentsFrame::createWindow() {
     // Win32Frame::initWindowClass();
     OleInitialize (nullptr);
     WNDCLASS windowClass = {};
-    windowClass.style = CS_GLOBALCLASS | CS_DBLCLKS;//|CS_OWNDC; // add Private-DC constant
+    windowClass.style = CS_GLOBALCLASS | CS_DBLCLKS;//| CS_OWNDC; // add Private-DC constant
 
     windowClass.lpfnWndProc = LogicaWndProc;
     windowClass.cbClsExtra  = 0;

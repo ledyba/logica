@@ -8,7 +8,6 @@
 #include "../LogicaController.h"
 
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-  RECT rcClient;
   switch (msg) {
     case WM_SYSCOMMAND:
       if ((wParam & 0xfff0) == SC_KEYMENU) {// Disable ALT application menu
@@ -30,17 +29,17 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 int main(int argc, char** argv) {
   WNDCLASSEXW wc = {
       sizeof(wc),
-      CS_CLASSDC,
+      CS_CLASSDC | CS_HREDRAW,
       WndProc,
       0L,
       0L,
       GetModuleHandle(nullptr),
       nullptr,
+      LoadCursor(nullptr, IDC_ARROW),
       nullptr,
       nullptr,
-      nullptr,
-      L"Logica",
-      LoadCursor(nullptr, IDC_ARROW)
+      L"LogicaParent",
+      nullptr
   };
   ::RegisterClassExW(&wc);
   HWND hwnd = ::CreateWindowExW(
@@ -67,7 +66,6 @@ int main(int argc, char** argv) {
       if (::PeekMessageW(&msg, nullptr, 0U, 0U, PM_REMOVE)) {
         ::TranslateMessage(&msg);
         ::DispatchMessageW(&msg);
-        frame_->render();
       }
     }
   }

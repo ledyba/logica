@@ -4,7 +4,9 @@
 
 #pragma once
 
-#include "public.sdk/source/vst/vsteditcontroller.h"
+#include <public.sdk/source/vst/vsteditcontroller.h>
+#include <imgui.h>
+#include <imgui_node_editor.h>
 #include "LogicaUI.h"
 
 namespace logica {
@@ -44,6 +46,7 @@ public:
 //------------------------------------------------------------------------
 protected:
 public:
+  ax::NodeEditor::EditorContext* nodeEditorContext_;
   bool open_ = true;
   int counter_ = 0;
   float f_ = 0;

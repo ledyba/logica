@@ -3,6 +3,7 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/external/imgui" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/external/imgui-node-editor" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/external/vst3sdk" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/external/vst3sdk/base" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/external/vst3sdk/cmake" vcs="Git" />

@@ -59,6 +59,7 @@ int main(int argc, char** argv) {
   ::ShowWindow(hwnd, SW_SHOWDEFAULT);
   ::UpdateWindow(hwnd);
   auto* ui = new logica::LogicaController();
+  ui->initialize(nullptr); // TODO: Error handling
   auto frame_ = std::make_unique<logica::win::ContentsFrame>(hwnd, logica::makeViewRect(1280, 800), ui);
   if (frame_->prepare()) {
     MSG msg = {};
@@ -70,6 +71,7 @@ int main(int argc, char** argv) {
     }
   }
   frame_->cleanup();
+  ui->terminate();
   ui->release();
   ::DestroyWindow(hwnd);
   ::UnregisterClassW(wc.lpszClassName, wc.hInstance);

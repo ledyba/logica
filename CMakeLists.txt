@@ -37,6 +37,24 @@ set(IMGUI_SRCS
     external/imgui/imgui_widgets.cpp
 )
 
+set(IMGUI_NODE_EDITOR_SRCS
+    external/imgui-node-editor/crude_json.cpp
+    external/imgui-node-editor/crude_json.h
+    external/imgui-node-editor/imgui_bezier_math.h
+    external/imgui-node-editor/imgui_bezier_math.inl
+    external/imgui-node-editor/imgui_canvas.cpp
+    external/imgui-node-editor/imgui_canvas.cpp
+    external/imgui-node-editor/imgui_canvas.h
+    external/imgui-node-editor/imgui_canvas.h
+    external/imgui-node-editor/imgui_extra_math.h
+    external/imgui-node-editor/imgui_extra_math.inl
+    external/imgui-node-editor/imgui_node_editor_api.cpp
+    external/imgui-node-editor/imgui_node_editor_internal.h
+    external/imgui-node-editor/imgui_node_editor_internal.inl
+    external/imgui-node-editor/imgui_node_editor.cpp
+    external/imgui-node-editor/imgui_node_editor.h
+)
+
 set(LOGICA_SRCS
     src/version.h
     src/LogicaCIDs.h
@@ -58,9 +76,11 @@ set(LOGICA_SRCS
 
 smtg_add_vst3plugin(Logica
     ${IMGUI_SRCS}
+    ${IMGUI_NODE_EDITOR_SRCS}
     ${LOGICA_SRCS}
 )
 target_include_directories(Logica PRIVATE external/imgui)
+target_include_directories(Logica PRIVATE external/imgui-node-editor)
 target_link_libraries(Logica PRIVATE "d3d12.lib" "dxgi.lib" "d3dcompiler.lib")
 
 #- VSTGUI Wanted ----
@@ -123,10 +143,12 @@ endif(SMTG_MAC)
 add_executable(
     StandaloneTest
     ${IMGUI_SRCS}
+    ${IMGUI_NODE_EDITOR_SRCS}
     ${LOGICA_SRCS}
     src/win/main.cpp
 )
 target_include_directories(StandaloneTest PRIVATE external/imgui)
+target_include_directories(StandaloneTest PRIVATE external/imgui-node-editor)
 target_include_directories(StandaloneTest PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
 target_link_libraries(StandaloneTest

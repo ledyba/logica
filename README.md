@@ -17,3 +17,4 @@
 
 - [imgui で GUI を作るときのメモ #imgui - Qiita](https://qiita.com/syoyo/items/85571b0697f1a9cbea71)
 - [awesome-dear-imgui: A collection of awesome dear imgui bindings, extensions and resources](https://github.com/TimoSalomaki/awesome-dear-imgui)
+- [thedmd/imgui-node-editor: Node Editor built using Dear ImGui](https://github.com/thedmd/imgui-node-editor)

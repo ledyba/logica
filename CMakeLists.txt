@@ -121,15 +121,15 @@ endif(SMTG_MAC)
 # -------------------------------------------------------------------------------------------------
 
 add_executable(
-    standalone
+    StandaloneTest
     ${IMGUI_SRCS}
     ${LOGICA_SRCS}
     src/win/main.cpp
 )
-target_include_directories(standalone PRIVATE external/imgui)
-target_include_directories(standalone PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+target_include_directories(StandaloneTest PRIVATE external/imgui)
+target_include_directories(StandaloneTest PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
-target_link_libraries(standalone
+target_link_libraries(StandaloneTest
     PRIVATE
     base
     sdk

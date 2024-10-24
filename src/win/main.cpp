@@ -20,8 +20,8 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
       return 0;
     case WM_SIZE:
       if (frame) {
-        auto width = static_cast<int>(LOWORD(lParam));
-        auto height = static_cast<int>(HIWORD(lParam));
+        auto const width = static_cast<int>(LOWORD(lParam));
+        auto const height = static_cast<int>(HIWORD(lParam));
         SetWindowPos(
             frame->windowHandle(),
             HWND_TOP,

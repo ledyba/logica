@@ -125,8 +125,8 @@ LRESULT WINAPI ContentsFrame::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
   switch(msg) {
     case WM_SIZE:
       if (wParam != SIZE_MINIMIZED) {
-        auto width = static_cast<int>(LOWORD(lParam));
-        auto height = static_cast<int>(HIWORD(lParam));
+        auto const width = static_cast<int>(LOWORD(lParam));
+        auto const height = static_cast<int>(HIWORD(lParam));
         resize(makeViewRect(width, height));
       }
       break;

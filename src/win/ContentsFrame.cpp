@@ -19,6 +19,8 @@ using Win32Frame = VSTGUI::Win32Frame;
 #include "Util.h"
 #include "../Util.h"
 
+static const wchar_t LOGICA_CHILD_WINDOW_CLASS_NAME[] = TEXT("Logica Child Window Class");
+
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 static LRESULT CALLBACK LogicaWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
@@ -68,7 +70,7 @@ bool ContentsFrame::createWindow() {
     windowClass.hbrBackground = nullptr;
 #endif
     windowClass.lpszMenuName  = nullptr;
-    windowClass.lpszClassName = TEXT("Logica");
+    windowClass.lpszClassName = LOGICA_CHILD_WINDOW_CLASS_NAME;
     RegisterClassW(&windowClass);
   }
   // Creating window
@@ -78,7 +80,7 @@ bool ContentsFrame::createWindow() {
 
   windowHandle_ = CreateWindowExW(
       exStyle,
-      TEXT("Logica"),
+      LOGICA_CHILD_WINDOW_CLASS_NAME,
       TEXT ("Window"),
       style,
       size_.left,

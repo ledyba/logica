@@ -17,6 +17,9 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     case WM_DESTROY:
       ::PostQuitMessage(0);
       return 0;
+    case WM_SIZE:
+
+      break;
     case WM_CLOSE:
       DestroyWindow(hWnd);
       return 0;

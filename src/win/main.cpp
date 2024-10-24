@@ -38,14 +38,14 @@ int main(int, char**) {
       LoadCursor(nullptr, IDC_ARROW),
       nullptr,
       nullptr,
-      L"LogicaParent",
+      TEXT("LogicaParent"),
       nullptr
   };
   ::RegisterClassExW(&wc);
   HWND hwnd = ::CreateWindowExW(
       0L,
       wc.lpszClassName,
-      L"Logica GUI Test",
+      TEXT("Logica GUI Test"),
       WS_OVERLAPPEDWINDOW,
       CW_USEDEFAULT,
       CW_USEDEFAULT,

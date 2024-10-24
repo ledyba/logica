@@ -8,6 +8,7 @@
 #include "../LogicaController.h"
 
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+  auto const frame = reinterpret_cast<logica::win::ContentsFrame*>(GetWindowLongPtrW(hWnd, GWLP_USERDATA));
   switch (msg) {
     case WM_SYSCOMMAND:
       if ((wParam & 0xfff0) == SC_KEYMENU) {// Disable ALT application menu
@@ -18,7 +19,17 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
       ::PostQuitMessage(0);
       return 0;
     case WM_SIZE:
-
+      if (frame) {
+        auto width = static_cast<int>(LOWORD(lParam));
+        auto height = static_cast<int>(HIWORD(lParam));
+        SetWindowPos(
+            frame->windowHandle(),
+            HWND_TOP,
+            0, 0,
+            width, height,
+            SWP_NOMOVE
+        );
+      }
       break;
     case WM_CLOSE:
       DestroyWindow(hWnd);
@@ -66,6 +77,7 @@ int main(int, char**) {
   auto frame_ = std::make_unique<logica::win::ContentsFrame>(hwnd, logica::makeViewRect(1280, 800), ui);
   if (frame_->prepare()) {
     MSG msg = {};
+    SetWindowLongPtrW(hwnd, GWLP_USERDATA, (LONG_PTR)frame_.get());
     while (msg.message != WM_QUIT) {
       if (::PeekMessageW(&msg, nullptr, 0U, 0U, PM_REMOVE)) {
         ::TranslateMessage(&msg);

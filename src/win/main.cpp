@@ -26,7 +26,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
   return ::DefWindowProcW(hWnd, msg, wParam, lParam);
 }
 
-int main(int argc, char** argv) {
+int main(int, char**) {
   WNDCLASSEXW wc = {
       sizeof(wc),
       CS_CLASSDC | CS_HREDRAW,

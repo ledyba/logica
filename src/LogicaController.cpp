@@ -90,14 +90,13 @@ void LogicaController::render() {
   namespace node = ax::NodeEditor;
   ImGuiIO& io = ImGui::GetIO();
   ImGuiViewport* viewport = ImGui::GetMainViewport();
-  printf("%f x %f\n", viewport->WorkSize.x, viewport->WorkSize.y);
   ImGui::SetNextWindowPos(viewport->WorkPos);
   ImGui::SetNextWindowSize(viewport->WorkSize);
   ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+  ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(0.f, 0.f));
+  ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 0.f));
 
   ImGui::GetStyle().WindowRounding = 0.0f;
-  ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
-  ImGui::SetNextWindowSize(ImGui::GetContentRegionAvail(), ImGuiCond_Always);
   ImGui::Begin("NodeEditor", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoResize);
   {
     node::SetCurrentEditor(nodeEditorContext_);
@@ -118,7 +117,7 @@ void LogicaController::render() {
     node::SetCurrentEditor(nullptr);
   }
   ImGui::End();
-  ImGui::PopStyleVar();
+  ImGui::PopStyleVar(3);
 //  ImGui::Begin("Hello, world!", &open_, ImGuiWindowFlags_MenuBar);                          // Create a window called "Hello, world!" and append into it.
 //
 //  ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)

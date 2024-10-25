@@ -27,7 +27,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             HWND_TOP,
             0, 0,
             width, height,
-            SWP_NOMOVE
+            SWP_NOMOVE | SWP_NOZORDER
         );
       }
       break;

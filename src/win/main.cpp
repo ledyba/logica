@@ -41,6 +41,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 }
 
 int main(int, char**) {
+  ImGui_ImplWin32_EnableDpiAwareness();
   WNDCLASSEXW wc = {
       sizeof(wc),
       CS_CLASSDC | CS_HREDRAW,

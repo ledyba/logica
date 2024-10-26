@@ -98,6 +98,7 @@ public:
   [[nodiscard]] ID3D12Device* d3d12Device() const { return d3dDevice_; }
   [[nodiscard]] ID3D12DescriptorHeap* d3dSrvDescHeap() const { return d3dSrvDescHeap_; }
   [[nodiscard]] HINSTANCE getInstance();
+  [[nodiscard]] ViewRect const& rect() const { return rect_; }
 };
 
 }

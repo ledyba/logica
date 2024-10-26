@@ -91,14 +91,14 @@ LogicaPluginView::onKeyUp(LogicaPluginView::char16 key, LogicaPluginView::int16 
   return 0;
 }
 
-LogicaPluginView::tresult LogicaPluginView::getSize(LogicaPluginView::ViewRect *size) {
-  if (size == nullptr) {
+LogicaPluginView::tresult LogicaPluginView::getSize(LogicaPluginView::ViewRect *rect) {
+  if (rect == nullptr) {
     return kInvalidArgument;
   }
   if (!contentsFrame_) {
     return kResultFalse;
   }
-  *size = contentsFrame_->size();
+  *rect = contentsFrame_->rect();
   return kResultTrue;
 }
 

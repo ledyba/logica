@@ -118,19 +118,6 @@ void LogicaController::render() {
   node::SetCurrentEditor(nullptr);
   ImGui::End();
   ImGui::PopStyleVar(3);
-//  ImGui::Begin("Hello, world!", &open_, ImGuiWindowFlags_MenuBar);                          // Create a window called "Hello, world!" and append into it.
-//
-//  ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-//
-//  ImGui::SliderFloat("float", &f_, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-//  ImGui::ColorEdit3("clear color", (float*)&clearColor_); // Edit 3 floats representing a color
-//
-//  if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-//    counter_++;
-//  ImGui::SameLine();
-//  ImGui::Text("counter = %d", counter_);
-//  ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-//  ImGui::End();
 }
 
 } // namespace Logica

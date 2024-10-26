@@ -47,10 +47,6 @@ public:
 protected:
 public:
   ax::NodeEditor::EditorContext* nodeEditorContext_;
-  bool open_ = true;
-  int counter_ = 0;
-  float f_ = 0;
-  float clearColor_[3] = {0, 0, 0};
   void render() override;
 };
 

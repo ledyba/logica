@@ -38,7 +38,7 @@ tresult PLUGIN_API LogicaController::initialize(FUnknown* context) {
     config.CanvasSizeMode = node::CanvasSizeMode::CenterOnly;
     nodeEditorContext_ = node::CreateEditor(&config);
     if (!nodeEditorContext_) {
-      return kResultFalse;
+      return kInternalError;
     }
   }
 

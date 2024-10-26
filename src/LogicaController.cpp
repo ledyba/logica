@@ -98,8 +98,8 @@ void LogicaController::render() {
 
   ImGui::GetStyle().WindowRounding = 0.0f;
   ImGui::Begin("NodeEditor", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoResize);
+  node::SetCurrentEditor(nodeEditorContext_);
   {
-    node::SetCurrentEditor(nodeEditorContext_);
     node::Begin("My Editor", viewport->WorkSize);
     int uniqueId = 1;
     // Start drawing nodes.
@@ -114,8 +114,8 @@ void LogicaController::render() {
     node::EndPin();
     node::EndNode();
     node::End();
-    node::SetCurrentEditor(nullptr);
   }
+  node::SetCurrentEditor(nullptr);
   ImGui::End();
   ImGui::PopStyleVar(3);
 //  ImGui::Begin("Hello, world!", &open_, ImGuiWindowFlags_MenuBar);                          // Create a window called "Hello, world!" and append into it.

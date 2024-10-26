@@ -20,7 +20,7 @@ tresult PLUGIN_API LogicaController::initialize(FUnknown* context) {
 
   //---do not forget to call parent ------
   tresult result = EditControllerEx1::initialize(context);
-  if (result != kResultOk) {
+  if (result != kResultTrue) {
     return result;
   }
 

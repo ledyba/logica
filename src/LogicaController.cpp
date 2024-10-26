@@ -55,7 +55,7 @@ tresult PLUGIN_API LogicaController::terminate() {
   }
 
   //---do not forget to call parent ------
-  return EditControllerEx1::terminate ();
+  return EditControllerEx1::terminate();
 }
 
 //------------------------------------------------------------------------

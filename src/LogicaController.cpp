@@ -42,7 +42,7 @@ tresult PLUGIN_API LogicaController::initialize(FUnknown* context) {
     }
   }
 
-  return result;
+  return kResultTrue;
 }
 
 //------------------------------------------------------------------------

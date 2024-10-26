@@ -37,7 +37,7 @@ tresult PLUGIN_API LogicaController::initialize(FUnknown* context) {
     config.EnableSmoothZoom = true;
     config.CanvasSizeMode = node::CanvasSizeMode::CenterOnly;
     nodeEditorContext_ = node::CreateEditor(&config);
-    if (nodeEditorContext_) {
+    if (!nodeEditorContext_) {
       return kResultFalse;
     }
   }

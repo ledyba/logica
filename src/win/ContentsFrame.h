@@ -49,7 +49,7 @@ private:
 private:
   HWND parentWindowHandle_ = nullptr;
   HWND windowHandle_ = nullptr;
-  ViewRect size_;
+  ViewRect rect_;
   LogicaUI* ui_;
 private:
   FrameContext frameContext_[NUM_FRAMES_IN_FLIGHT] = {};
@@ -91,13 +91,12 @@ public:
   bool useImGuiContext();
   void render();
   void cleanup();
-  bool resize(ViewRect size);
+  bool resize(ViewRect rect);
 public:
   [[nodiscard]] HWND parentWindowHandle() { return parentWindowHandle_; }
   [[nodiscard]] HWND windowHandle() { return windowHandle_; }
   [[nodiscard]] ID3D12Device* d3d12Device() const { return d3dDevice_; }
   [[nodiscard]] ID3D12DescriptorHeap* d3dSrvDescHeap() const { return d3dSrvDescHeap_; }
-  [[nodiscard]] ViewRect size() const { return size_; }
   [[nodiscard]] HINSTANCE getInstance();
 };
 

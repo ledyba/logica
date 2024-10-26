@@ -37,9 +37,9 @@ namespace logica::win {
 static constexpr float clearColorWithAlpha[4] = {0.1f, 0.1f, 0.1f, 1.00f };
 
 ContentsFrame::ContentsFrame(HWND parentWindowHandle, ViewRect const size, LogicaUI* const ui)
-:parentWindowHandle_(parentWindowHandle)
-,ui_(ui)
-,size_(size)
+: parentWindowHandle_(parentWindowHandle)
+, ui_(ui)
+, rect_(size)
 {
 }
 
@@ -83,10 +83,10 @@ bool ContentsFrame::createWindow() {
       LOGICA_CHILD_WINDOW_CLASS_NAME,
       TEXT ("Window"),
       style,
-      size_.left,
-      size_.top,
-      static_cast<int>(size_.getWidth()),
-      static_cast<int>(size_.getHeight()),
+      rect_.left,
+      rect_.top,
+      static_cast<int>(rect_.getWidth()),
+      static_cast<int>(rect_.getHeight()),
       parentWindowHandle_,
       nullptr,
       getInstance(),
@@ -529,7 +529,7 @@ void ContentsFrame::cleanup() {
   }
 }
 
-bool ContentsFrame::resize(ViewRect size) {
+bool ContentsFrame::resize(ViewRect const rect) {
   if (d3dDevice_ == nullptr || pSwapChain_ == nullptr) {
     return false;
   }
@@ -538,15 +538,15 @@ bool ContentsFrame::resize(ViewRect size) {
   cleanupRenderTarget();
   HRESULT result = pSwapChain_->ResizeBuffers(
       0,
-      static_cast<UINT>(size.getWidth()),
-      static_cast<UINT>(size.getHeight()),
+      static_cast<UINT>(rect.getWidth()),
+      static_cast<UINT>(rect.getHeight()),
       DXGI_FORMAT_R8G8B8A8_UNORM,
       DXGI_SWAP_CHAIN_FLAG_FRAME_LATENCY_WAITABLE_OBJECT
   );
   assert(SUCCEEDED(result) && "Failed to resize swap chain.");
   createRenderTarget();
 
-  size_ = size;
+  rect_ = rect;
   return true;
 }
 

@@ -27,7 +27,15 @@ tresult PLUGIN_API LogicaController::initialize(FUnknown* context) {
   // Here you could register some parameters
   {
     namespace node = ax::NodeEditor;
-    node::Config config = {};
+    node::Config config;
+    config.SaveNodeSettings = nullptr;
+    config.SaveSettings = nullptr;
+    config.LoadSettings = nullptr;
+    config.LoadNodeSettings = nullptr;
+    // config.SettingsFile = nullptr;
+    config.UserPointer = this;
+    config.EnableSmoothZoom = true;
+    config.CanvasSizeMode = node::CanvasSizeMode::CenterOnly;
     nodeEditorContext_ = node::CreateEditor(&config);
     if (nodeEditorContext_) {
       return kResultFalse;

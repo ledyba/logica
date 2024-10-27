@@ -108,7 +108,7 @@ void LogicaController::render() {
   ImGui::Begin("NodeEditor", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoResize);
   node::SetCurrentEditor(nodeEditorContext_);
   {
-    node::Begin("My Editor", viewport->WorkSize);
+    node::Begin("Node Editor", viewport->WorkSize);
     int uniqueId = 1;
     // Start drawing nodes.
     node::BeginNode(uniqueId++);

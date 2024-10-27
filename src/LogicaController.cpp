@@ -28,6 +28,7 @@ tresult PLUGIN_API LogicaController::initialize(FUnknown* context) {
   {
     namespace node = ax::NodeEditor;
     node::Config config;
+    config.NavigateButtonIndex = 2;
     config.SaveNodeSettings = nullptr;
     config.SaveSettings = nullptr;
     config.LoadSettings = nullptr;

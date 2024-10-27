@@ -97,36 +97,37 @@ IPlugView* PLUGIN_API LogicaController::createView(FIDString name) {
 
 void LogicaController::render() {
   namespace node = ax::NodeEditor;
-  ImGuiIO& io = ImGui::GetIO();
-  ImGuiViewport* viewport = ImGui::GetMainViewport();
-  ImGui::SetNextWindowPos(viewport->WorkPos);
-  ImGui::SetNextWindowSize(viewport->WorkSize);
-  ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-  ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(0.f, 0.f));
-  ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 0.f));
+  namespace g = ImGui;
+  ImGuiIO& io = g::GetIO();
+  ImGuiViewport* viewport = g::GetMainViewport();
+  g::SetNextWindowPos(viewport->WorkPos);
+  g::SetNextWindowSize(viewport->WorkSize);
+  g::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+  g::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(0.f, 0.f));
+  g::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 0.f));
 
-  ImGui::GetStyle().WindowRounding = 0.0f;
-  ImGui::Begin("NodeEditor", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoResize);
+  g::GetStyle().WindowRounding = 0.0f;
+  g::Begin("NodeEditor", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoResize);
   node::SetCurrentEditor(nodeEditorContext_);
   {
     node::Begin("Node Editor", viewport->WorkSize);
     int uniqueId = 1;
     // Start drawing nodes.
     node::BeginNode(uniqueId++);
-    ImGui::Text("Node A");
+    g::Text("Node A");
     node::BeginPin(uniqueId++, node::PinKind::Input);
-    ImGui::Text("-> In");
+    g::Text("-> In");
     node::EndPin();
-    ImGui::SameLine();
+    g::SameLine();
     node::BeginPin(uniqueId++, node::PinKind::Output);
-    ImGui::Text("Out ->");
+    g::Text("Out ->");
     node::EndPin();
     node::EndNode();
     node::End();
   }
   node::SetCurrentEditor(nullptr);
-  ImGui::End();
-  ImGui::PopStyleVar(3);
+  g::End();
+  g::PopStyleVar(3);
 }
 
 } // namespace Logica

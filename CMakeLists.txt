@@ -150,6 +150,7 @@ add_executable(
 target_include_directories(StandaloneLogica PRIVATE external/imgui)
 target_include_directories(StandaloneLogica PRIVATE external/imgui-node-editor)
 target_include_directories(StandaloneLogica PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+add_dependencies(StandaloneLogica Logica)
 
 target_link_libraries(StandaloneLogica
     PRIVATE

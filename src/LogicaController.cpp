@@ -96,6 +96,7 @@ IPlugView* PLUGIN_API LogicaController::createView(FIDString name) {
 //------------------------------------------------------------------------
 
 void LogicaController::render() {
+  // https://github.com/thedmd/imgui-node-editor/blob/master/examples/blueprints-example/blueprints-example.cpp
   namespace node = ax::NodeEditor;
   namespace gui = ImGui;
   ImGuiIO& io = gui::GetIO();

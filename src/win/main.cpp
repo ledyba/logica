@@ -7,7 +7,7 @@
 #include "../Util.h"
 #include "../LogicaController.h"
 
-LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+LRESULT WINAPI WndProc(HWND hWnd, UINT const msg, WPARAM const wParam, LPARAM const lParam) {
   auto const frame = reinterpret_cast<logica::win::ContentsFrame*>(GetWindowLongPtrW(hWnd, GWLP_USERDATA));
   switch (msg) {
     case WM_SYSCOMMAND:

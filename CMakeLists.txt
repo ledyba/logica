@@ -72,6 +72,11 @@ set(LOGICA_SRCS
     src/win/ContentsFrame.cpp
     src/win/Util.h
     src/win/Util.cpp
+    # Node/Pin
+    src/synth/node/pin/Pin.h
+    src/synth/node/pin/PinBase.h
+    src/synth/node/pin/MIDIInputPin.h
+    src/synth/node/pin/MIDIOutputPin.h
 )
 
 smtg_add_vst3plugin(Logica

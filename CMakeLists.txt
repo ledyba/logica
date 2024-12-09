@@ -73,6 +73,13 @@ set(LOGICA_SRCS
     src/win/Util.h
     src/win/Util.cpp
     # Node/Pin
+    src/synth/node/Const.h
+    src/synth/node/Node.h
+    src/synth/node/NodeBase.h
+    src/synth/node/Context.h
+    src/synth/node/Context.cpp
+    src/synth/node/InputNode.h
+    src/synth/node/InputNode.cpp
     src/synth/node/pin/Pin.h
     src/synth/node/pin/PinBase.h
     src/synth/node/pin/MIDIInputPin.h
